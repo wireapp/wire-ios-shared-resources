@@ -8,6 +8,6 @@ You can find the published source code at [github.com/wireapp/wire](https://gith
 
 For licensing information, see the attached LICENSE file and the list of third-party licenses at [wire.com/legal/licenses/](https://wire.com/legal/licenses/).
 
-# wire-ios-shared-ressources
+# wire-ios-shared-resources
 
 This repository contains shared resources used to build the Wire™ iOS application.
