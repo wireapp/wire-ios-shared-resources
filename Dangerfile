@@ -8,7 +8,7 @@ paths.each do |p|
   content = File.read(p).delete("\s").delete("\n")
   name = p.split('/').last
   warn "Missing copyright headers in #{name}" unless content.include? copyright_header
-  warn "TODO comment left in #{name}" if content.include? "//TODO"
+  warn "TODO comment left in #{name}" if content.downcase.include? "//todo"
 end
 
 # Warn if there are no labels attached to the PR
