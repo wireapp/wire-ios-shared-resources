@@ -6,7 +6,9 @@ touched = git.added_files | git.modified_files
 paths = touched.select { |f| f.end_with? ".h", ".m", ".swift", ".mm" }
 paths.each do |p|
   content = File.read(p).delete("\s").delete("\n")
-  warn "Missing copyright headers in #{p.split('/').last}" unless content.include? copyright_header
+  name = p.split('/').last
+  warn "Missing copyright headers in #{name}" unless content.include? copyright_header
+  warn "TODO comment left in #{name}" if content.include? "//TODO"
 end
 
 # Warn if there are no labels attached to the PR
