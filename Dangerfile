@@ -5,10 +5,14 @@ copyright_header = "////Wire//Copyright(C)2016WireSwissGmbH////Thisprogramisfree
 touched = git.added_files | git.modified_files
 paths = touched.select { |f| f.end_with? ".h", ".m", ".swift", ".mm" }
 paths.each do |p|
-  content = File.read(p).delete("\s").delete("\n")
   name = p.split('/').last
   warn "Missing copyright headers in #{name}" unless content.include? copyright_header
-  warn "TODO comment left in #{name}" if content.downcase.include? "//todo"
+  
+  content = File.read(p).delete("\s")
+  lines = content.split("\n")
+  lines.each_with_index do |line, index|
+    warn "TODO comment left in `#{name}` on line #{index+1}" if line.downcase =~ /\/\/todo/
+  end
 end
 
 # Warn if there are no labels attached to the PR
