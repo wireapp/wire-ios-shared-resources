@@ -6,9 +6,11 @@ touched = git.added_files | git.modified_files
 paths = touched.select { |f| f.end_with? ".h", ".m", ".swift", ".mm" }
 paths.each do |p|
   name = p.split('/').last
-  warn "Missing copyright headers in #{name}" unless content.include? copyright_header
-  
   content = File.read(p).delete("\s")
+  minified = content.delete("\n")
+
+  warn "Missing copyright headers in #{name}" unless minified.include? copyright_header
+
   lines = content.split("\n")
   lines.each_with_index do |line, index|
     warn "TODO comment left in `#{name}` on line #{index+1}" if line.downcase =~ /\/\/todo/
