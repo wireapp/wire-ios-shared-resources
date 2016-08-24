@@ -20,3 +20,18 @@ end
 
 # Warn if there are no labels attached to the PR
 warn "Please add labels to this PR" if github.pr_labels.count == 0
+
+
+# Warn if the Cartfile.resolved points to a commit SHA instead of a tag
+cartfile_name = 'Cartfile.resolved'
+
+if File.exists? cartfile_name
+  cartfile = File.read(cartfile_name)
+
+  cartfile.lines.each do |line|
+    elements = line.delete('\"').split(' ')
+    next unless elements.count == 3
+    framework, version = elements.drop(1)
+    warn "`#{framework}` is still pinned to `#{version}`" if version.length == 40
+  end
+end
