@@ -5,6 +5,7 @@ copyright_header = "////Wire//Copyright(C)2016WireSwissGmbH////Thisprogramisfree
 touched = git.added_files | git.modified_files
 paths = touched.select { |f| f.end_with? ".h", ".m", ".swift", ".mm" }
 paths.each do |p|
+  next unless File.exist?(p)
   name = p.split('/').last
   content = File.read(p).delete("\s")
   minified = content.delete("\n")
