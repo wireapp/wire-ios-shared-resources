@@ -10,14 +10,14 @@ paths.each do |p|
   minified = content.delete("\n")
 
   # Warn if touched files are missing the copyright header
-  message("Missing copyright headers", file: p, line: 1) unless minified.include? copyright_header
+  warn("Missing copyright headers", file: p, line: 1) unless minified.include? copyright_header
 
   lines = content.split("\n")
   lines.each_with_index do |line, index|
-    # message if there are any TODOs, NSLogs or prints left in the touched files
-    message("TODO comment left", file: p, line: index + 1) if line.downcase =~ /\/\/todo/
-    message("`NSLog` left", file: p, line: index + 1) if line.include? "NSLog("
-    message("`print` left", file: p, line: index + 1) if line.include? "print("
+    # warn if there are any TODOs, NSLogs or prints left in the touched files
+    warn("TODO comment left", file: p, line: index + 1) if line.downcase =~ /\/\/todo/
+    warn("`NSLog` left", file: p, line: index + 1) if line.include? "NSLog("
+    warn("`print` left", file: p, line: index + 1) if line.include? "print("
   end
 end
 
