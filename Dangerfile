@@ -6,19 +6,18 @@ paths = touched.select { |f| f.end_with? ".h", ".m", ".swift", ".mm" }
 
 paths.each do |p|
   next unless File.exist?(p)
-  fileName = p.split('/').last
   content = File.read(p).delete("\s")
   minified = content.delete("\n")
 
   # Warn if touched files are missing the copyright header
-  message("Missing copyright headers", file: fileName, line: 0) unless minified.include? copyright_header
+  message("Missing copyright headers", file: p, line: 0) unless minified.include? copyright_header
 
   lines = content.split("\n")
   lines.each_with_index do |line, index|
     # message if there are any TODOs, NSLogs or prints left in the touched files
-    message("TODO comment left", file: fileName, line: index + 1) if line.downcase =~ /\/\/todo/
-    message("`NSLog` left", file: fileName, line: index + 1) if line.include? "NSLog("
-    message("`print` left", file: fileName, line: index + 1) if line.include? "print("
+    message("TODO comment left", file: p, line: index + 1) if line.downcase =~ /\/\/todo/
+    message("`NSLog` left", file: p, line: index + 1) if line.include? "NSLog("
+    message("`print` left", file: p, line: index + 1) if line.include? "print("
   end
 end
 
