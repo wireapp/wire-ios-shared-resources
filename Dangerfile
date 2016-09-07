@@ -10,7 +10,7 @@ paths.each do |p|
   minified = content.delete("\n")
 
   # Warn if touched files are missing the copyright header
-  message("Missing copyright headers", file: p, line: 0) unless minified.include? copyright_header
+  message("Missing copyright headers", file: p, line: 1) unless minified.include? copyright_header
 
   lines = content.split("\n")
   lines.each_with_index do |line, index|
