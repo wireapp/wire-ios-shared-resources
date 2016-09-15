@@ -15,9 +15,9 @@ paths.each do |p|
   lines = content.split("\n")
   lines.each_with_index do |line, index|
     # warn if there are any TODOs, NSLogs or prints left in the touched files
-    warn("TODO comment left", file: p, line: index + 1) if line.downcase =~ /\/\/todo/
-    warn("`NSLog` left", file: p, line: index + 1) if line.include? "NSLog("
-    warn("`print` left", file: p, line: index + 1) if line.include? "print("
+    warn("TODO comment left", file: p, line: index + 1) if line.downcase =~ /\/\/\s?todo/
+    warn("`NSLog` left", file: p, line: index + 1) if line.downcase =~  /\sNSLog(@"/
+    warn("`print` left", file: p, line: index + 1) if line.downcase =~ /\sprint("/
   end
 end
 
