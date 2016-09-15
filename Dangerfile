@@ -6,8 +6,8 @@ paths = touched.select { |f| f.end_with? ".h", ".m", ".swift", ".mm" }
 
 paths.each do |p|
   next unless File.exist?(p)
-  content = File.read(p).delete("\s")
-  minified = content.delete("\n")
+  content = File.read(p)
+  minified = content.delete "\s\n"
 
   # Warn if touched files are missing the copyright header
   warn("Missing copyright headers", file: p, line: 1) unless minified.include? copyright_header
