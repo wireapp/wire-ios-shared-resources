@@ -21,9 +21,6 @@ paths.each do |p|
   end
 end
 
-# Warn if there are no labels attached to the PR
-warn "Please add labels to this PR" if github.pr_labels.count == 0
-
 # Warn if the Cartfile.resolved points to a commit SHA instead of a tag
 cartfile_name = 'Cartfile.resolved'
 
