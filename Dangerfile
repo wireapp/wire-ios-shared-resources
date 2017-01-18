@@ -1,5 +1,7 @@
 
-copyright_header = "////Wire//Copyright(C)2016WireSwissGmbH////Thisprogramisfreesoftware:youcanredistributeitand/ormodify//itunderthetermsoftheGNUGeneralPublicLicenseaspublishedby//theFreeSoftwareFoundation,eitherversion3oftheLicense,or//(atyouroption)anylaterversion.////Thisprogramisdistributedinthehopethatitwillbeuseful,//butWITHOUTANYWARRANTY;withouteventheimpliedwarrantyof//MERCHANTABILITYorFITNESSFORAPARTICULARPURPOSE.Seethe//GNUGeneralPublicLicenseformoredetails.////YoushouldhavereceivedacopyoftheGNUGeneralPublicLicense//alongwiththisprogram.Ifnot,seehttp://www.gnu.org/licenses/.//"
+def copyright_header(year = Time.new.year)
+  copyright_header = "////Wire//Copyright(C)#{year}WireSwissGmbH////Thisprogramisfreesoftware:youcanredistributeitand/ormodify//itunderthetermsoftheGNUGeneralPublicLicenseaspublishedby//theFreeSoftwareFoundation,eitherversion3oftheLicense,or//(atyouroption)anylaterversion.////Thisprogramisdistributedinthehopethatitwillbeuseful,//butWITHOUTANYWARRANTY;withouteventheimpliedwarrantyof//MERCHANTABILITYorFITNESSFORAPARTICULARPURPOSE.Seethe//GNUGeneralPublicLicenseformoredetails.////YoushouldhavereceivedacopyoftheGNUGeneralPublicLicense//alongwiththisprogram.Ifnot,seehttp://www.gnu.org/licenses/.//"
+end
 
 touched = git.added_files | git.modified_files
 paths = touched.select { |f| f.end_with? ".h", ".m", ".swift", ".mm" }
@@ -9,8 +11,12 @@ paths.each do |p|
   content = File.read(p)
   minified = content.delete "\s\n"
 
-  # Warn if touched files are missing the copyright header
-  warn("Missing copyright headers", file: p, line: 1) unless minified.include? copyright_header
+  # Warn if touched files do not have expected copyright header
+  if minified.include? copyright_header(Time.new.year - 1)     
+    warn("Your copyright header is so last year!", file: p, line: 1) 
+  else 
+    warn("Copyright header is missing or in wrong format", file: p, line: 1) unless minified.include? copyright_header
+  end
 
   lines = content.split("\n")
   lines.each_with_index do |line, index|
