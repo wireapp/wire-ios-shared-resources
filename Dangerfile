@@ -1,23 +1,25 @@
 
 def copyright_header(year = Time.new.year)
-  copyright_header = "////Wire//Copyright(C)#{year}WireSwissGmbH////Thisprogramisfreesoftware:youcanredistributeitand/ormodify//itunderthetermsoftheGNUGeneralPublicLicenseaspublishedby//theFreeSoftwareFoundation,eitherversion3oftheLicense,or//(atyouroption)anylaterversion.////Thisprogramisdistributedinthehopethatitwillbeuseful,//butWITHOUTANYWARRANTY;withouteventheimpliedwarrantyof//MERCHANTABILITYorFITNESSFORAPARTICULARPURPOSE.Seethe//GNUGeneralPublicLicenseformoredetails.////YoushouldhavereceivedacopyoftheGNUGeneralPublicLicense//alongwiththisprogram.Ifnot,seehttp://www.gnu.org/licenses/.//"
+  return "////Wire//Copyright(C)#{year}WireSwissGmbH////Thisprogramisfreesoftware:youcanredistributeitand/ormodify//itunderthetermsoftheGNUGeneralPublicLicenseaspublishedby//theFreeSoftwareFoundation,eitherversion3oftheLicense,or//(atyouroption)anylaterversion.////Thisprogramisdistributedinthehopethatitwillbeuseful,//butWITHOUTANYWARRANTY;withouteventheimpliedwarrantyof//MERCHANTABILITYorFITNESSFORAPARTICULARPURPOSE.Seethe//GNUGeneralPublicLicenseformoredetails.////YoushouldhavereceivedacopyoftheGNUGeneralPublicLicense//alongwiththisprogram.Ifnot,seehttp://www.gnu.org/licenses/.//"
 end
 
-touched = git.added_files | git.modified_files
-paths = touched.select { |f| f.end_with? ".h", ".m", ".swift", ".mm" }
 
-paths.each do |p|
+def filterFiles(files)
+  return files.select { |f| f.end_with? ".h", ".m", ".swift", ".mm" }
+end
+
+added_paths = filterFiles(git.added_files)
+touched_paths = filterFiles(git.added_files | git.modified_files)
+
+touched_paths.each do |p|
   next unless File.exist?(p)
   content = File.read(p)
   minified = content.delete "\s\n"
 
-  # Warn if touched files do not have expected copyright header
-  if minified.include? copyright_header(Time.new.year - 1)     
-    warn("Your copyright header is so last year!", file: p, line: 1) 
-  else 
+  unless minified.include? copyright_header(Time.new.year - 1)
     warn("Copyright header is missing or in wrong format", file: p, line: 1) unless minified.include? copyright_header
   end
-
+ 
   lines = content.split("\n")
   lines.each_with_index do |line, index|
     # warn if there are any TODOs, NSLogs or prints left in the touched files
@@ -26,6 +28,13 @@ paths.each do |p|
     warn("`NSLog` left", file: p, line: index + 1) if line.downcase =~ /\sNSLog\(@"/
     warn("`print` left", file: p, line: index + 1) if line.downcase =~ /\sprint\("/
   end
+end
+
+added_paths.each do |p|
+  next unless File.exist?(p)
+  minified = File.read(p).delete "\s\n"
+  # Warn if added files do not have expected copyright header
+  warn("Your copyright header is so last year!", file: p, line: 1) if minified.include? copyright_header(Time.new.year - 1)  
 end
 
 # Warn if the Cartfile.resolved points to a commit SHA instead of a tag
