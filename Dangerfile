@@ -34,7 +34,7 @@ added_paths.each do |p|
   next unless File.exist?(p)
   minified = File.read(p).delete "\s\n"
   # Warn if added files do not have expected copyright header
-  warn("Your copyright header is so last year!", file: p, line: 1) if minified.include? copyright_header(Time.new.year - 1)  
+  warn("Your copyright header is so last year!", file: p, line: 3) if minified.include? copyright_header(Time.new.year - 1)  
 end
 
 # Warn if the Cartfile.resolved points to a commit SHA instead of a tag
