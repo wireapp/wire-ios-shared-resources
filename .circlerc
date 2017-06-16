@@ -1,3 +1,0 @@
-export DESTINATION="platform=iOS Simulator,name=iPhone 6,OS=10.3"
-export SCHEME=$(xcodebuild -list | awk '/^[[:space:]]*Schemes:/{getline; print $0;}' | tr -d '[:space:]') 
-
