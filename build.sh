@@ -2,4 +2,4 @@
 
 set -euf -o pipefail
 
-xcodebuild -scheme "${SCHEME}" build-for-testing -enableCodeCoverage YES -destination "${DESTINATION}" | tee "${CIRCLE_ARTIFACTS}/xcode_build.log" | xcpretty
+xcodebuild -scheme "${SCHEME}" -enableCodeCoverage YES -destination "${DESTINATION}" build-for-testing | tee "${CIRCLE_ARTIFACTS}/xcode_build.log" | xcpretty
