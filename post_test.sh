@@ -13,8 +13,5 @@ mkdir "${CIRCLE_ARTIFACTS}/scripts" || EXIT=$?
 echo "Copying all shell scripts"
 cp *.sh "${CIRCLE_ARTIFACTS}/scripts" || EXIT=$?
 
-echo "Copying .circlerc"
-cp "${HOME}/.circlerc" "${CIRCLE_ARTIFACTS}/scripts" || EXIT=$?
-
 # Fail if any of the commands had exit status != 0
 exit $EXIT
