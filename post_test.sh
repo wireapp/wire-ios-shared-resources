@@ -3,6 +3,7 @@
 EXIT=0
 # bundle exec slather coverage --html --scheme "${SCHEME}" --output-directory $CIRCLE_TEST_REPORTS/code_coverage/ $PROJECT
 
+curl -O "${DEPENDENCIES_BASE_URL}/Dangerfile" || EXIT=$?
 bundle exec danger || EXIT=$?
 
 mkdir "${CIRCLE_ARTIFACTS}/scripts" || EXIT=$?
