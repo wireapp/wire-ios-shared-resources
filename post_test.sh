@@ -3,3 +3,7 @@
 set -euf -o pipefail
 
 bundle exec slather coverage --html --scheme "${SCHEME}" --output-directory $CIRCLE_TEST_REPORTS/code_coverage/ $PROJECT
+
+mkdir "${CIRCLE_ARTIFACTS}/scripts"
+cp *.sh "${CIRCLE_ARTIFACTS}/scripts"
+cp "${HOME}/.circlerc" "${CIRCLE_ARTIFACTS}/scripts"
