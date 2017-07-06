@@ -15,5 +15,8 @@ cp *.sh "${CIRCLE_ARTIFACTS}/scripts" || EXIT=$?
 
 if [ -d "SnapshotResults" ]; then echo "Copying snapshot results"; cp -R SnapshotResults $CIRCLE_ARTIFACTS/ || EXIT=$?; fi
 
+echo "Uploading coverage to codecov.io"
+bash <(curl -s https://codecov.io/bash) -J "^${SCHEME}$"|| EXIT=$?
+
 # Fail if any of the commands had exit status != 0
 exit $EXIT
