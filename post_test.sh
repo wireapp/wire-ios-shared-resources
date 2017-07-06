@@ -13,5 +13,7 @@ mkdir "${CIRCLE_ARTIFACTS}/scripts" || EXIT=$?
 echo "Copying all shell scripts"
 cp *.sh "${CIRCLE_ARTIFACTS}/scripts" || EXIT=$?
 
+if [ -d "SnapshotResults" ]; then echo "Copying snapshot results"; cp -R SnapshotResults $CIRCLE_ARTIFACTS/ || EXIT=$?; fi
+
 # Fail if any of the commands had exit status != 0
 exit $EXIT
