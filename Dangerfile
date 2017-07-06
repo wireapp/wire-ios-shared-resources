@@ -1,5 +1,5 @@
 # Skip Danger for work-in-progress PRs
-if github.pr_title.include? "[WIP]" || github.pr_title.include? "WIP:"
+if github.pr_title.include?("[WIP]") || github.pr_title.include?("WIP:")
   return
 end
 
