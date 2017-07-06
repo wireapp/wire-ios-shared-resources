@@ -2,7 +2,7 @@
 
 set -euf -o pipefail
 
-if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios"]; 
+if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios" ]; 
 then
 	# Preheat cocoapods main repo
 	echo "Downloading CocoaPods main repo"
