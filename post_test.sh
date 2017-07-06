@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 EXIT=0
 # bundle exec slather coverage --html --scheme "${SCHEME}" --output-directory $CIRCLE_TEST_REPORTS/code_coverage/ $PROJECT
