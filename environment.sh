@@ -1,6 +1,6 @@
 #! /bin/bash
 
-echo "export DESTINATION='platform=iOS Simulator,name=iPhone 6,OS=10.3'" >> $HOME/.circlerc
+echo "export DESTINATION='platform=iOS Simulator,name=iPhone 6,OS=11.0'" >> $HOME/.circlerc
 
 if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios" ]; 
 then
