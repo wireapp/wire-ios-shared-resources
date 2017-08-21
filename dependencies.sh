@@ -16,7 +16,16 @@ else
     echo "Downloading ${DEPENDENCIES_BASE_URL}/Gemfile.lock"
     curl -O "${DEPENDENCIES_BASE_URL}/Gemfile.lock"
 
+    echo "Downloading ${DEPENDENCIES_BASE_URL}/Romefile"
+    curl -O "${DEPENDENCIES_BASE_URL}/Romefile"
+
     bundle install --path ~/.gem
-    carthage bootstrap --platform iOS
+
+    echo "Installing Rome"
+    brew install blender/homebrew-tap/rome
+
+    rome download --platform iOS # download missing frameworks (or copy from local cache)
+    rome list --missing --platform ios | awk '{print $1}' | xargs carthage update --platform ios --cache-builds # list what is missing and update/build if needed
+    rome list --missing --platform ios | awk '{print $1}' | xargs rome upload --platform ios # upload what is missing
 fi
 
