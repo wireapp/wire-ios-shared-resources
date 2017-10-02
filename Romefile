@@ -1,5 +1,5 @@
 [Cache]
-  S3-Bucket = z-client
+  S3-Bucket = z-client/ci-dependency-cache
   local = ~/Rome/
 
 [RepositoryMap]
