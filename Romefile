@@ -13,3 +13,6 @@
   wire-ios-mocktransport = WireMockTransport
   wire-ios-request-strategy = WireRequestStrategy
   wire-ios-message-strategy = WireMessageStrategy
+  libPhoneNumber-iOS = libPhoneNumberiOS
+  protobuf-objc = ProtocolBuffers
+  wire-ios-protos = Protos
