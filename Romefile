@@ -1,4 +1,5 @@
 [Cache]
+  S3-Bucket = z-client
   local = ~/Rome/
 
 [RepositoryMap]
