@@ -15,4 +15,4 @@
   wire-ios-message-strategy = WireMessageStrategy
   libPhoneNumber-iOS = libPhoneNumberiOS
   protobuf-objc = ProtocolBuffers
-  wire-ios-protos = Protos
+  wire-ios-protos = WireProtos
