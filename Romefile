@@ -1,6 +1,5 @@
 [Cache]
   S3-Bucket = z-client/ci-dependency-cache
-  local = ~/Rome/
 
 [RepositoryMap]
   wire-ios-link-preview = WireLinkPreview
