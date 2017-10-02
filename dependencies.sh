@@ -19,6 +19,10 @@ else
     echo "Downloading ${DEPENDENCIES_BASE_URL}/Romefile"
     curl -O "${DEPENDENCIES_BASE_URL}/Romefile"
 
+    mkdir ~/.aws
+    echo "Downloading ${DEPENDENCIES_BASE_URL}/aws-config to ~/.aws/config"
+    curl -o ~/.aws/config "${DEPENDENCIES_BASE_URL}/aws-config"
+
     bundle install --path ~/.gem
 
     echo "Installing Rome"
