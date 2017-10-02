@@ -25,7 +25,7 @@ else
     brew install blender/homebrew-tap/rome
 
     rome download --platform iOS # download missing frameworks (or copy from local cache)
-    rome list --missing --platform ios | awk '{print $1}' | xargs carthage update --platform ios --cache-builds # list what is missing and update/build if needed
+    rome list --missing --platform ios | awk '{print $1}' | xargs carthage bootstrap --platform iOS --cache-builds # list what is missing and update/build if needed
     rome list --missing --platform ios | awk '{print $1}' | xargs rome upload --platform ios # upload what is missing
 fi
 
