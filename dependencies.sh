@@ -21,7 +21,7 @@ else
 
     bundle install --path ~/.gem
 
-    mkdir ~/.aws
+    mkdir -p ~/.aws
     echo "Downloading ${DEPENDENCIES_BASE_URL}/aws-config to ~/.aws/config"
     curl -o ~/.aws/config "${DEPENDENCIES_BASE_URL}/aws-config"
 
