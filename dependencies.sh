@@ -2,6 +2,19 @@
 
 set -euf -o pipefail
 
+echo "Downloading ${DEPENDENCIES_BASE_URL}/Romefile"
+curl -O "${DEPENDENCIES_BASE_URL}/Romefile"
+
+mkdir -p ~/.aws
+echo "Downloading ${DEPENDENCIES_BASE_URL}/aws-config to ~/.aws/config"
+curl -o ~/.aws/config "${DEPENDENCIES_BASE_URL}/aws-config"
+
+echo "Installing Rome"
+brew install blender/homebrew-tap/rome
+
+rome download --platform iOS # download missing frameworks (or copy from local cache)
+
+
 if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios" ]; 
 then
     # Preheat cocoapods main repo
@@ -16,21 +29,9 @@ else
     echo "Downloading ${DEPENDENCIES_BASE_URL}/Gemfile.lock"
     curl -O "${DEPENDENCIES_BASE_URL}/Gemfile.lock"
 
-    echo "Downloading ${DEPENDENCIES_BASE_URL}/Romefile"
-    curl -O "${DEPENDENCIES_BASE_URL}/Romefile"
-
     bundle install --path ~/.gem
 
-    mkdir -p ~/.aws
-    echo "Downloading ${DEPENDENCIES_BASE_URL}/aws-config to ~/.aws/config"
-    curl -o ~/.aws/config "${DEPENDENCIES_BASE_URL}/aws-config"
-
-
-    echo "Installing Rome"
-    brew install blender/homebrew-tap/rome
-
-    rome download --platform iOS # download missing frameworks (or copy from local cache)
     rome list --missing --platform ios | awk '{print $1}' | xargs carthage bootstrap --platform iOS --cache-builds # list what is missing and update/build if needed
-    rome list --missing --platform ios | awk '{print $1}' | xargs rome upload --platform ios # upload what is missing
 fi
 
+rome list --missing --platform ios | awk '{print $1}' | xargs rome upload --platform ios # upload what is missing
