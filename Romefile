@@ -13,6 +13,12 @@
   wire-ios-mocktransport = WireMockTransport
   wire-ios-request-strategy = WireRequestStrategy
   wire-ios-message-strategy = WireMessageStrategy
+  wire-ios-canvas = WireCanvas
+  wire-ios-share-engine = WireShareEngine
+  wire-ios-sync-engine = WireSyncEngine
+  wire-ios-ziphy = ziphy
   libPhoneNumber-iOS = libPhoneNumberiOS
   protobuf-objc = ProtocolBuffers
   wire-ios-protos = WireProtos
+  avs-ios-binaries = avs
+  CocoaLumberjack = CocoaLumberjackSwift
