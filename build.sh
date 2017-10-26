@@ -2,10 +2,9 @@
 
 set -euf -o pipefail
 
-echo "HOME = ${HOME}"
-echo "Sourcing .circlerc"
-tail -n 3 $HOME/.circlerc
-source $HOME/.circlerc
+echo "Sourcing env-vars"
+tail -n 3 env-vars
+source env-vars
 
 if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios" ]; 
 then
