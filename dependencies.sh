@@ -17,6 +17,6 @@ else
     curl -O "${DEPENDENCIES_BASE_URL}/Gemfile.lock"
 
     bundle install --path ~/.gem
-    carthage bootstrap --platform iOS
+    carthage bootstrap --platform iOS --cache-builds
 fi
 
