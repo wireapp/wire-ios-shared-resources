@@ -2,9 +2,12 @@
 
 set -euf -o pipefail
 
+echo "Sourcing env-vars"
+source env-vars
+
 if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios" ]; 
 then
-  xcodebuild -workspace "Wire-iOS.xcworkspace" -scheme "${SCHEME}" -enableCodeCoverage YES -destination "${DESTINATION}" test-without-building | tee "${CIRCLE_ARTIFACTS}/xcode_test.log" | xcpretty -r junit --output $CIRCLE_TEST_REPORTS/junit/tests.xml
+  xcodebuild -workspace "Wire-iOS.xcworkspace" -scheme "${SCHEME}" -enableCodeCoverage YES -destination "${DESTINATION}" test-without-building | tee "xcode_test.log" | xcpretty -r junit --output junit/tests.xml
 else
-  xcodebuild -scheme "${SCHEME}" -enableCodeCoverage YES -destination "${DESTINATION}" test-without-building | tee $CIRCLE_ARTIFACTS/xcode_test.log | xcpretty -r junit --output $CIRCLE_TEST_REPORTS/junit/tests.xml
+  xcodebuild -scheme "${SCHEME}" -enableCodeCoverage YES -destination "${DESTINATION}" test-without-building | tee xcode_test.log | xcpretty -r junit --output junit/tests.xml
 fi
