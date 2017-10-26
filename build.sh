@@ -3,7 +3,6 @@
 set -euf -o pipefail
 
 echo "Sourcing env-vars"
-tail -n 3 env-vars
 source env-vars
 
 if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios" ]; 
