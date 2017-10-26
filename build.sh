@@ -2,7 +2,7 @@
 
 set -euf -o pipefail
 
-echo "HOME = ${HOME}
+echo "HOME = ${HOME}"
 echo "Sourcing .circlerc"
 tail -n 3 $HOME/.circlerc
 source $HOME/.circlerc
