@@ -2,6 +2,8 @@
 
 set -euf -o pipefail
 
+echo "HOME = ${HOME}
+echo "Sourcing .circlerc, `wc -l $HOME/.circlerc` lines long"
 source $HOME/.circlerc
 
 if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios" ]; 
