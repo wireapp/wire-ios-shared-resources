@@ -54,3 +54,5 @@ if File.exists? cartfile_name
     warn "`#{framework}` is still pinned to `#{version}`" if version.length == 40
   end
 end
+
+xcode_summary.report 'xcodebuild.json'
