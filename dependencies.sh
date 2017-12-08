@@ -10,6 +10,7 @@ then
     echo "Running setup.sh"
     ./setup.sh
 else
+    bundle install --path ~/.gem
     carthage bootstrap --platform iOS --cache-builds
 fi
 
