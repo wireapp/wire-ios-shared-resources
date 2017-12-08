@@ -1,7 +1,6 @@
 #! /bin/bash
 
 EXIT=0
-# bundle exec slather coverage --html --scheme "${SCHEME}" --output-directory $CIRCLE_TEST_REPORTS/code_coverage/ $PROJECT
 
 echo "Downloading ${DEPENDENCIES_BASE_URL}/Dangerfile"
 curl -O "${DEPENDENCIES_BASE_URL}/Dangerfile" || EXIT=$?
