@@ -1,6 +1,6 @@
 #! /bin/bash
 
-echo "export DESTINATION='platform=iOS Simulator,name=iPhone 7,OS=11.0'" >> $BASH_ENV
+echo "export DESTINATION='platform=iOS Simulator,name=iPhone 7,OS=11.0.1'" >> $BASH_ENV
 
 if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios" ]; 
 then
