@@ -1,5 +1,12 @@
 #! /bin/bash
 
+curl -O "${DEPENDENCIES_BASE_URL}/.ruby-version"
+curl -O "${DEPENDENCIES_BASE_URL}/Gemfile"
+curl -O "${DEPENDENCIES_BASE_URL}/Gemfile.lock"
+curl -O "${DEPENDENCIES_BASE_URL}/dependencies.sh"
+curl -O "${DEPENDENCIES_BASE_URL}/build.sh"
+curl -O "${DEPENDENCIES_BASE_URL}/test.sh"
+
 echo "export DESTINATION='platform=iOS Simulator,name=iPhone 7,OS=11.0.1'" >> $BASH_ENV
 
 if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios" ]; 
