@@ -11,7 +11,7 @@ then
   echo "Skipping code coverage for UI project"
 else
   echo "Uploading coverage to codecov.io"
-  bash <(curl -s https://codecov.io/bash) -J "^${SCHEME}$"|| EXIT=$?
+  bash <(curl -s https://codecov.io/bash) -J "^${SCHEME}$" -D DerivedData || EXIT=$?
 fi
 
 # Fail if any of the commands had exit status != 0
