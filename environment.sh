@@ -6,6 +6,7 @@ curl -O "${DEPENDENCIES_BASE_URL}/Gemfile.lock"
 curl -O "${DEPENDENCIES_BASE_URL}/dependencies.sh"
 curl -O "${DEPENDENCIES_BASE_URL}/build.sh"
 curl -O "${DEPENDENCIES_BASE_URL}/test.sh"
+curl -O "${DEPENDENCIES_BASE_URL}/post_test.sh"
 
 echo "export DESTINATION='platform=iOS Simulator,name=iPhone 7,OS=11.0.1'" >> $BASH_ENV
 
