@@ -2,9 +2,18 @@
 
 set -euf -o pipefail
 
-if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios" ]; 
+arguments=( -scheme "${SCHEME}"  )
+arguments+=( -destination "${DESTINATION}" )
+arguments+=( -derivedDataPath DerivedData )
+
+if [ -z "$IS_UI_PROJECT" ]; 
 then
-  xcodebuild -workspace "Wire-iOS.xcworkspace" -scheme "${SCHEME}" -destination "${DESTINATION}" -derivedDataPath DerivedData build-for-testing | XCPRETTY_JSON_FILE_OUTPUT=xcodebuild.json bundle exec xcpretty -f `bundle exec xcpretty-json-formatter`
+	arguments+=( -workspace "${WORKSPACE}" ) # We need to append workspace argument for UI project
 else
-  xcodebuild -scheme "${SCHEME}" -enableCodeCoverage YES -destination "${DESTINATION}" -derivedDataPath DerivedData analyze build-for-testing | XCPRETTY_JSON_FILE_OUTPUT=xcodebuild.json bundle exec xcpretty -f `bundle exec xcpretty-json-formatter`
+	arguments+=( -enableCodeCoverage YES ) # Track code coverage in frameworks
+	arguments+=( analyze ) # Also analyze frameworks
 fi
+
+arguments+=( build-for-testing )
+
+xcodebuild "${arguments[@]}" | XCPRETTY_JSON_FILE_OUTPUT=xcodebuild.json bundle exec xcpretty -f `bundle exec xcpretty-json-formatter`
