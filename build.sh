@@ -6,7 +6,7 @@ arguments=( -scheme "${SCHEME}"  )
 arguments+=( -destination "${DESTINATION}" )
 arguments+=( -derivedDataPath DerivedData )
 
-if [ -z "$IS_UI_PROJECT" ]; 
+if [ "$IS_UI_PROJECT" -eq "1" ]; 
 then
 	arguments+=( -workspace "${WORKSPACE}" ) # We need to append workspace argument for UI project
 else
