@@ -6,7 +6,7 @@ echo "Downloading ${DEPENDENCIES_BASE_URL}/Dangerfile"
 curl -O "${DEPENDENCIES_BASE_URL}/Dangerfile" || EXIT=$?
 bundle exec danger || EXIT=$?
 
-if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios" ]; 
+if [ "$IS_UI_PROJECT" -eq "1" ]; 
 then
   echo "Skipping code coverage for UI project"
 else
