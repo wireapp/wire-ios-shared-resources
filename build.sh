@@ -16,4 +16,4 @@ fi
 
 arguments+=( build-for-testing )
 
-xcodebuild "${arguments[@]}" | XCPRETTY_JSON_FILE_OUTPUT=xcodebuild.json bundle exec xcpretty -f `bundle exec xcpretty-json-formatter`
+xcodebuild "${arguments[@]}" | XCPRETTY_JSON_FILE_OUTPUT=build/xcodebuild.json bundle exec xcpretty -f `bundle exec xcpretty-json-formatter`
