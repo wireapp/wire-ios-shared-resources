@@ -17,4 +17,6 @@ fi
 
 arguments+=( test-without-building )
 
+mkdir -p build/junit
+
 xcodebuild "${arguments[@]}" | tee build/xcode_test.log | bundle exec xcpretty -r junit --output build/junit/tests.xml
