@@ -10,13 +10,7 @@ then
     echo "Running setup.sh"
     ./setup.sh
 else
-    echo "Downloading ${DEPENDENCIES_BASE_URL}/Gemfile"
-    curl -O "${DEPENDENCIES_BASE_URL}/Gemfile"
-
-    echo "Downloading ${DEPENDENCIES_BASE_URL}/Gemfile.lock"
-    curl -O "${DEPENDENCIES_BASE_URL}/Gemfile.lock"
-
     bundle install --path ~/.gem
-    carthage bootstrap --platform iOS
+    carthage bootstrap --platform iOS --cache-builds
 fi
 

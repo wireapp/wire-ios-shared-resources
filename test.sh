@@ -1,10 +1,22 @@
 #! /bin/bash
 
-set -euf -o pipefail
+set -eu -o pipefail
 
-if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios" ]; 
+bundle install --path ~/.gem
+
+arguments=( -scheme "${SCHEME}"  )
+arguments+=( -destination "${DESTINATION}" )
+arguments+=( -derivedDataPath DerivedData )
+
+if [ "$IS_UI_PROJECT" -eq "1" ]; 
 then
-  xcodebuild -workspace "Wire-iOS.xcworkspace" -scheme "${SCHEME}" -enableCodeCoverage YES -destination "${DESTINATION}" test-without-building | tee "${CIRCLE_ARTIFACTS}/xcode_test.log" | xcpretty -r junit --output $CIRCLE_TEST_REPORTS/junit/tests.xml
+	arguments+=( -workspace "${WORKSPACE}" ) # We need to append workspace argument for UI project
 else
-  xcodebuild -scheme "${SCHEME}" -enableCodeCoverage YES -destination "${DESTINATION}" test-without-building | tee $CIRCLE_ARTIFACTS/xcode_test.log | xcpretty -r junit --output $CIRCLE_TEST_REPORTS/junit/tests.xml
+	arguments+=( -enableCodeCoverage YES ) # Track code coverage in frameworks
 fi
+
+arguments+=( test-without-building )
+
+mkdir -p build/junit
+
+xcodebuild "${arguments[@]}" | tee build/xcode_test.log | bundle exec xcpretty -r junit --output build/junit/tests.xml
