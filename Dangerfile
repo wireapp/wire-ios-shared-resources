@@ -18,11 +18,6 @@ touched_paths = filterFiles(git.added_files | git.modified_files)
 touched_paths.each do |p|
   next unless File.exist?(p)
   content = File.read(p)
-  minified = content.delete "\s\n"
-
-  unless minified.include? copyright_header(Time.new.year - 1)
-    warn("Copyright header is missing or in wrong format", file: p, line: 1) unless minified.include? copyright_header
-  end
  
   lines = content.split("\n")
   lines.each_with_index do |line, index|
@@ -37,8 +32,13 @@ end
 added_paths.each do |p|
   next unless File.exist?(p)
   minified = File.read(p).delete "\s\n"
-  # Warn if added files do not have expected copyright header
-  warn("Copyright header is from last year", file: p, line: 3) if minified.include? copyright_header(Time.new.year - 1)  
+  
+  if minified.include? copyright_header 
+    warn("Copyright header is missing or in wrong format", file: p, line: 1)
+  elsif minified.include? copyright_header(Time.new.year - 1)
+    warn("Copyright header is from last year", file: p, line: 3)
+  end
+ 
 end
 
 # Warn if the Cartfile.resolved points to a commit SHA instead of a tag
