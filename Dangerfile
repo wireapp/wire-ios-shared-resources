@@ -33,10 +33,10 @@ added_paths.each do |p|
   next unless File.exist?(p)
   minified = File.read(p).delete "\s\n"
   
-  if minified.include? copyright_header 
-    warn("Copyright header is missing or in wrong format", file: p, line: 1)
-  elsif minified.include? copyright_header(Time.new.year - 1)
+  if minified.include? copyright_header(Time.new.year - 1)
     warn("Copyright header is from last year", file: p, line: 3)
+  else 
+    warn("Copyright header is missing or in wrong format", file: p, line: 1) unless minified.include? copyright_header
   end
  
 end
