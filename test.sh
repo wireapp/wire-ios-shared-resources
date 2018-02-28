@@ -11,10 +11,9 @@ arguments+=( -derivedDataPath DerivedData )
 if [ "$IS_UI_PROJECT" -eq "1" ]; 
 then
 	arguments+=( -workspace "${WORKSPACE}" ) # We need to append workspace argument for UI project
-else
-	arguments+=( -enableCodeCoverage YES ) # Track code coverage in frameworks
 fi
 
+arguments+=( -enableCodeCoverage YES )
 arguments+=( test-without-building )
 
 mkdir -p build/junit
