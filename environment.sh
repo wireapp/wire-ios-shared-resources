@@ -20,5 +20,7 @@ else
 	echo "export SCHEME=\"$(xcodebuild -list | awk '/^[[:space:]]*Schemes:/{getline; print $0;}' | sed 's/^ *//;s/ *$//')\"" >> $BASH_ENV
 fi
 
+echo "export PRODUCT=\"$(xcodebuild -showBuildSettings 2>/dev/null | grep -i "^\s*PRODUCT_NAME" | sed -e 's/.*= \(.*\)/\1/')\"" >> $BASH_ENV
+
 ALL_PROJECTS=( *.xcodeproj )
 echo "export PROJECT='${ALL_PROJECTS[0]}'" >> $BASH_ENV
