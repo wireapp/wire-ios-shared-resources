@@ -11,10 +11,10 @@ then
     ./setup.sh
 else
     bundle install --path ~/.gem
-    if [ -e "Carfile" ]; then
+    if [ -e "Cartfile" ]; then
         carthage bootstrap --platform iOS --cache-builds
     else
-        echo "No Carthage found, skipping bootstrap"
+        echo "No Cartfile found, skipping bootstrap"
     fi 
 fi
 
