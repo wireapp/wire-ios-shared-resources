@@ -1,22 +1,6 @@
-# This file contains the fastlane.tools configuration
-# You can find the documentation at https://docs.fastlane.tools
-#
-# For a list of all available actions, check out
-#
-#     https://docs.fastlane.tools/actions
-#
-
-# Uncomment the line if you want fastlane to automatically update itself
-# update_fastlane
-
 default_platform(:ios)
 
 platform :ios do
-
-	desc "Find first scheme of the project"
-  	lane :find_scheme do
-		sh("cd .. && xcodebuild -list -json | python -c 'import json,sys;obj=json.load(sys.stdin);sys.stdout.write(obj[\"project\"][\"schemes\"][0])'")
-   	end
 
   	desc "Build for testing"
   	lane :build do
@@ -26,28 +10,33 @@ platform :ios do
   			cache_builds: true,
   			new_resolver: true
   		)
-  		xcodebuild(
-  			analyze: true,
-  			enable_code_coverage: true,
+  		scan(
+        build_for_testing: true,
+        xcargs: "analyze",
+        clean: true,
+        devices: ["iPhone 7"],
+        code_coverage: true,
+        output_directory: "build",
+        output_types: "junit",
   			buildlog_path: "build",
-  			derivedDataPath: "DerivedData",
-  			xcargs: "clean build-for-testing",
-  			scheme: find_scheme
+  			derived_data_path: "DerivedData",
+        formatter: "xcpretty-json-formatter"
   		)
-  		xcpretty_report(
-    		buildlog_path: 'build',
-    		output_path: 'reports',
-    		use_json_formatter: true
-	  	)
+
   	end
 
   	desc "Test without building"
   	lane :test do
-  		xcodebuild(
-  			enable_code_coverage: true,
-  			xcargs: "test-without-building",
-  			scheme: find_scheme
-  		)
+        scan(
+          test_without_building: true,
+          devices: ["iPhone 7"],
+          code_coverage: true,
+          output_directory: "test",
+          output_types: "junit",
+          buildlog_path: "test",
+          derived_data_path: "DerivedData"
+      )
 
+      trainer(output_directory: "build")
   	end
 end
