@@ -79,17 +79,15 @@ platform :ios do
       write_version(version)
     end
 
-    def changelog(version)
+    def release_details(version)
+      flattened_version = flatten_version(version)
       changelog_from_git_commits(
-        between: [flatten_version(version), "HEAD"],
+        between: [flattened_version, "HEAD"],
         pretty: "%h | %s",
         merge_commit_filtering: "exclude_merges"
       )
-    end
-
-    def release_details(version)
       changelog = changelog(version)
-      "Release #{flatten_version(version)}\n\n### Changelog\nCommit  | Details\n--------|------\n#{changelog}"
+      "Release #{flattened_version}\n\n### Changelog\nCommit  | Details\n--------|------\n#{changelog}"
     end
 
     def parse_version(version)
@@ -100,17 +98,17 @@ platform :ios do
       { "major" => result[1].to_i, "minor" => result[2].to_i, "patch" => result[3].to_i }
     end
 
-    def read_version()
-      versionFilePath = "../Resources/Configurations/version.xcconfig"
+    VERSION_FILE_PATH = "../Resources/Configurations/version.xcconfig"
 
-      data = File.read(versionFilePath)
+    def read_version()
+      data = File.read(VERSION_FILE_PATH)
       if data.nil?
-        UI.user_error! "Cannot read version from #{versionFilePath}"
+        UI.user_error! "Cannot read version from #{VERSION_FILE_PATH}"
       end
 
       matches = /^CURRENT_PROJECT_VERSION = (?<version>[\d\.]+)$/.match(data)
       if matches.nil?
-        UI.user_error! "Invalid CURRENT_PROJECT_VERSION in #{versionFilePath}"
+        UI.user_error! "Invalid CURRENT_PROJECT_VERSION in #{VERSION_FILE_PATH}"
       end
 
       parse_version(matches[:version])
@@ -121,12 +119,11 @@ platform :ios do
     end
 
     def write_version(version)
-      versionFilePath = "../Resources/Configurations/version.xcconfig"
       contents = <<~EOS
         MAJOR_VERSION = #{version["major"]}
         CURRENT_PROJECT_VERSION = #{flatten_version(version)}
       EOS
-      File.write(versionFilePath, contents)
+      File.write(VERSION_FILE_PATH, contents)
     end
 
 

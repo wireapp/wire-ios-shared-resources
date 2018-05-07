@@ -1,0 +1,143 @@
+default_platform(:ios)
+
+platform :ios do
+
+  	desc "Build for testing"
+  	lane :build do
+  		carthage(
+  			command: "bootstrap",
+  			platform: "iOS",
+  			cache_builds: true,
+  			new_resolver: true
+  		)
+  		scan(
+        build_for_testing: true,
+        xcargs: "analyze",
+        clean: true,
+        devices: ["iPhone 7"],
+        code_coverage: true,
+        output_directory: "build",
+        output_types: "junit",
+  			buildlog_path: "build",
+  			derived_data_path: "DerivedData",
+        formatter: "xcpretty-json-formatter"
+  		)
+
+  	end
+
+  	desc "Test without building"
+  	lane :test do
+        scan(
+          test_without_building: true,
+          devices: ["iPhone 7"],
+          code_coverage: true,
+          output_directory: "test",
+          output_types: "junit",
+          buildlog_path: "test",
+          derived_data_path: "DerivedData"
+      )
+
+      trainer(output_directory: "build")
+  	end
+
+	lane :release do |options|
+      bump = options[:type]
+      unless ["major", "minor", "patch"].include? bump
+        UI.user_error! "Invalid release type: '#{bump}', should be 'major', 'minor' or 'patch'"
+      end
+ 	  previous_version = Version.read_current()
+      ensure_git_branch(
+        branch: 'develop'
+      )
+      ensure_git_status_clean
+      new_version = previous_version.bumped(bump)
+      unless should_create_release(new_version)
+      	UI.user_error! "Version #{new_version} already exists!"
+      end
+      if options[:skip_tests]
+          UI.important 'Skipping tests'
+      else 
+      	build
+        test
+      end
+      UI.important "Bumping project version to #{new_version}"
+      new_version.write()
+      message = release_details(previous_version, new_version)
+      git_commit(path: "*.xcconfig", message: message)
+    end
+
+    # ------- Helpers -------
+
+    def should_create_release(version)
+      if git_tag_exists(tag: version.to_s, remote: true) 
+          UI.important "Tag #{version} already exists"
+          return false
+      end
+      return true
+    end
+
+    def release_details(old_version, new_version)
+      changelog = changelog_from_git_commits(
+        between: [old_version.to_s, "HEAD"],
+        pretty: "%h | %s",
+        merge_commit_filtering: "exclude_merges"
+      )
+      "Release #{new_version}\n\n### Changelog\nCommit  | Details\n--------|------\n#{changelog}"
+    end
+end 
+
+class Version
+
+    VERSION_FILE_PATH = "../Resources/Configurations/version.xcconfig"
+
+	def initialize(major, minor, patch)
+		@major = major
+		@minor = minor
+		@patch = patch
+	end 
+
+	def self.from_string(version_string)
+		result = /^(\d+)\.(\d+)\.(\d+)$/.match(version_string)
+      	if result.nil? || result.captures.count != 3
+	        UI.user_error! "Invalid version string"
+      	end
+      	Version.new(result[1].to_i, result[2].to_i, result[3].to_i)
+    end
+
+	def self.read_current
+		data = File.read(VERSION_FILE_PATH)
+		if data.nil?
+			UI.user_error! "Cannot read version from #{VERSION_FILE_PATH}"
+		end
+
+		matches = /^CURRENT_PROJECT_VERSION = (?<version>[\d\.]+)$/.match(data)
+		if matches.nil?
+			UI.user_error! "Invalid CURRENT_PROJECT_VERSION in #{VERSION_FILE_PATH}"
+		end
+
+
+		Version.from_string(matches[:version])
+	end 
+
+	def write
+		contents = <<~EOS
+        	MAJOR_VERSION = #{@major}
+        	CURRENT_PROJECT_VERSION = #{self}
+      	EOS
+      	File.write(VERSION_FILE_PATH, contents)
+	end
+
+	def bumped(bump)
+      if bump == "major"
+      	Version.new(@major + 1, 0, 0)
+      elsif bump == "minor"
+        Version.new(@major, @minor + 1, 0)
+      else 
+      	Version.new(@major, @minor, @patch + 1)
+  	  end
+	end
+
+	def to_s
+		"#{@major}.#{@minor}.#{@patch}"
+	end
+end
