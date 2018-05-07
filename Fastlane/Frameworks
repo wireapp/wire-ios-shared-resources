@@ -46,12 +46,11 @@ platform :ios do
         UI.user_error! "Invalid release type: '#{bump}', should be 'major', 'minor' or 'patch'"
       end
       config = Config.read_current()
-      UI.important config
  	  previous_version = Version.read_current()
-      # ensure_git_branch(
-      #   branch: 'develop'
-      # )
-      # ensure_git_status_clean
+      ensure_git_branch(
+        branch: 'develop'
+      )
+      ensure_git_status_clean
       new_version = previous_version.bumped(bump)
       unless should_create_release(new_version)
       	UI.user_error! "Version #{new_version} already exists!"
@@ -66,6 +65,22 @@ platform :ios do
       new_version.write()
       message = release_details(previous_version, new_version, config)
       git_commit(path: "*.xcconfig", message: message)
+      carthage_config = CarthageConfig.new(config.framework)
+	
+	  sh "rm -f ../#{carthage_config.archive_name} || true"
+	  sh "rm -rf ../#{carthage_config.build_result} || true"
+	  carthage(
+			command: "build",
+			no_skip_current: true,
+			platform: "iOS"
+		)
+	  # Swift frameworks need to be removed or Apple will reject the app
+	  sh "rm -rf ../#{carthage_config.build_result}/Frameworks"
+      carthage(
+			command: "archive",
+			frameworks: [carthage_config.framework],
+			output: carthage_config.archive_name,
+		)
     end
 
     # ------- Helpers -------
@@ -87,7 +102,29 @@ platform :ios do
       diff_link = "https://github.com/#{config.organization}/#{config.repository}/compare/#{old_version}...#{new_version}"
       "Release #{new_version}\n\nDiff with previous:\n#{diff_link}\n\nCommit  | Details\n--------|------\n#{changelog}"
     end
+
 end 
+
+class CarthageConfig
+
+	attr_reader :framework
+
+	def archive_name
+		"#{@framework}.framework.zip"
+	end
+
+	def build_result
+		"Carthage/Build/iOS/#{@framework}.framework"
+	end
+
+	def initialize(framework)
+		if framework.nil? 
+	      	UI.user_error! "Invalid framework in config"
+		end
+		@framework = framework
+	end
+
+end
 
 class Version
 
