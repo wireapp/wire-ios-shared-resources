@@ -81,6 +81,22 @@ platform :ios do
 			frameworks: [carthage_config.framework],
 			output: carthage_config.archive_name,
 		)
+
+      push_to_git_remote(
+		local_branch: "develop",
+		tags: false
+      )
+      push_git_tags(
+      	tag: new_version.to_s
+      )
+      set_github_release(
+		  repository_name: config.full_repo
+		  name: "Release #{new_version}",
+		  tag_name: new_version.to_s,
+		  description: message,
+		  commitish: "develop",
+		  upload_assets: [carthage_config.archive_name]
+	   )
     end
 
     # ------- Helpers -------
@@ -189,6 +205,10 @@ class Config
 	attr_reader :organization
 
 	CONFIG_FILE_PATH = "../Scripts/config.txt"
+
+	def full_repo
+		"#{organization}/#{repository}"
+	end
 
 	def initialize(values)
 		@framework = values["framework"]
