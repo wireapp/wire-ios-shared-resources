@@ -45,11 +45,13 @@ platform :ios do
       unless ["major", "minor", "patch"].include? bump
         UI.user_error! "Invalid release type: '#{bump}', should be 'major', 'minor' or 'patch'"
       end
+      config = Config.read_current()
+      UI.important config
  	  previous_version = Version.read_current()
-      ensure_git_branch(
-        branch: 'develop'
-      )
-      ensure_git_status_clean
+      # ensure_git_branch(
+      #   branch: 'develop'
+      # )
+      # ensure_git_status_clean
       new_version = previous_version.bumped(bump)
       unless should_create_release(new_version)
       	UI.user_error! "Version #{new_version} already exists!"
@@ -62,7 +64,7 @@ platform :ios do
       end
       UI.important "Bumping project version to #{new_version}"
       new_version.write()
-      message = release_details(previous_version, new_version)
+      message = release_details(previous_version, new_version, config)
       git_commit(path: "*.xcconfig", message: message)
     end
 
@@ -76,13 +78,14 @@ platform :ios do
       return true
     end
 
-    def release_details(old_version, new_version)
+    def release_details(old_version, new_version, config)
       changelog = changelog_from_git_commits(
         between: [old_version.to_s, "HEAD"],
         pretty: "%h | %s",
         merge_commit_filtering: "exclude_merges"
       )
-      "Release #{new_version}\n\n### Changelog\nCommit  | Details\n--------|------\n#{changelog}"
+      diff_link = "https://github.com/#{config.organization}/#{config.repository}/compare/#{old_version}...#{new_version}"
+      "Release #{new_version}\n\nDiff with previous:\n#{diff_link}\n\nCommit  | Details\n--------|------\n#{changelog}"
     end
 end 
 
@@ -139,5 +142,32 @@ class Version
 
 	def to_s
 		"#{@major}.#{@minor}.#{@patch}"
+	end
+end
+
+class Config
+
+	attr_reader :framework
+	attr_reader :repository
+	attr_reader :organization
+
+	CONFIG_FILE_PATH = "../Scripts/config.txt"
+
+	def initialize(values)
+		@framework = values["framework"]
+		@repository = values["repository"]
+		@organization = values["organization"]
+	end
+
+	def self.read_current
+		values = {}
+		File.readlines(CONFIG_FILE_PATH).each do |line|
+			items = line.split("=")
+			unless items.count == 2 
+				UI.user_error! "Malformed config in #{CONFIG_FILE_PATH}"
+			end
+			values[items[0]] = items[1].strip()
+		end
+		Config.new(values)
 	end
 end
