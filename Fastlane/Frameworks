@@ -86,6 +86,9 @@ platform :ios do
 		local_branch: "develop",
 		tags: false
       )
+      add_git_tag(
+      	tag: new_version.to_s
+      )
       push_git_tags(
       	tag: new_version.to_s
       )
