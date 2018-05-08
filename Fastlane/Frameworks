@@ -50,7 +50,6 @@ platform :ios do
       ensure_git_branch(
         branch: 'develop'
       )
-      ensure_git_status_clean
       new_version = previous_version.bumped(bump)
       unless should_create_release(new_version)
           UI.user_error! "Version #{new_version} already exists!"
