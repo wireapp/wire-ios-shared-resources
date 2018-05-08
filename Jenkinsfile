@@ -1,5 +1,10 @@
 pipeline {
     agent any
+    environment { 
+        DEPENDENCIES_BASE_URL = "https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/feature/fastlane"
+        GITHUB_TOKEN = credentials('github-api-token')
+        GITHUB_ACCESS_TOKEN = credentials('github-api-token')
+    }
     parameters {
         choice(
             choices: ['wire-ios-canvas', 'wire-ios-cryptobox', 'wire-ios-data-model', 'wire-ios-images', 'wire-ios-link-preview', 'wire-ios-mocktransport', 'wire-ios-protos', 'wire-ios-request-strategy', 'wire-ios-scripting-helpers', 'wire-ios-share-engine', 'wire-ios-sync-engine', 'wire-ios-system', 'wire-ios-testing', 'wire-ios-transport', 'wire-ios-utilities', 'wire-ios-ziphy'], 
@@ -18,20 +23,56 @@ pipeline {
         )
     }
     stages {
-        stage('Build') {
+        stage('Prepare') {
             steps {
-                echo 'Building ${params.BOT_FRAMEWORK}...'
+                checkout([
+                    $class: 'GitSCM',
+                    branches: [[name: '*/develop']],
+                    extensions: [[$class: 'LocalBranch']],
+                    userRemoteConfigs: [[url: "git@github.com:wireapp/${BOT_FRAMEWORK}.git"], [credentialsId:'wire-bot-ssh-key']]
+                ])
+                
+                sh "curl -O ${DEPENDENCIES_BASE_URL}/Gemfile"
+                sh "curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock"
             }
         }
-        stage('Test') {
+        stage('Build') {
+            when {
+                expression { params.RUN_TESTS == true }
+            }
             steps {
-                echo 'Testing: ${params.RUN_TESTS}'
+                sh '''
+                    eval "$(rbenv init -)"
+                    bundle install --path ~/.gem
+                    bundle exec fastlane build
+                '''
+            }
+        }
+        
+        stage('Test') {
+            when {
+                expression { params.RUN_TESTS == true }
+            }
+            steps {
+                sh '''
+                    eval "$(rbenv init -)"
+                    bundle exec fastlane test
+                '''
             }
         }
         stage('Release') {
             steps {
-                echo 'Deploying ${params.BOT_TYPE}'
+                sh """
+                    eval "\$(rbenv init -)"
+                    bundle install --path ~/.gem
+                    bundle exec fastlane release type:${BOT_TYPE}
+                """
             }
+        }
+    }
+    post {
+        always {
+            cleanWs()
         }
     }
 }
