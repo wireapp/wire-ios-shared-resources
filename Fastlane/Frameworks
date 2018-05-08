@@ -87,6 +87,7 @@ platform :ios do
       )
       set_github_release(
           repository_name: config.full_repo,
+          api_token: ENV["GITHUB_TOKEN"],
           name: "#{new_version}",
           tag_name: new_version.to_s,
           description: message,
