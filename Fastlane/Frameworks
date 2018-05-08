@@ -94,7 +94,7 @@ platform :ios do
       )
       set_github_release(
 		  repository_name: config.full_repo,
-		  name: "Release #{new_version}",
+		  name: "#{new_version}",
 		  tag_name: new_version.to_s,
 		  description: message,
 		  commitish: "develop",
