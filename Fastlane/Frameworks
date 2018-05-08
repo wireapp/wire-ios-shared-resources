@@ -55,12 +55,6 @@ platform :ios do
       unless should_create_release(new_version)
           UI.user_error! "Version #{new_version} already exists!"
       end
-      if options[:skip_tests]
-          UI.important 'Skipping tests'
-      else 
-          build
-        test
-      end
       UI.important "Bumping project version to #{new_version}"
       new_version.write()
       message = release_details(previous_version, new_version, config)
@@ -187,12 +181,12 @@ class Version
     end
 
     def bumped(bump)
-      if bump == "major"
-          Version.new(@major + 1, 0, 0)
-      elsif bump == "minor"
-        Version.new(@major, @minor + 1, 0)
-      else 
-          Version.new(@major, @minor, @patch + 1)
+        if bump == "major"
+            Version.new(@major + 1, 0, 0)
+        elsif bump == "minor"
+            Version.new(@major, @minor + 1, 0)
+        else 
+            Version.new(@major, @minor, @patch + 1)
         end
     end
 
@@ -217,6 +211,7 @@ class Config
         @framework = values["framework"]
         @repository = values["repository"]
         @organization = values["organization"]
+        @release_name_format = values["release-name-format"]
     end
 
     def self.read_current
@@ -229,5 +224,9 @@ class Config
             values[items[0]] = items[1].strip()
         end
         Config.new(values)
+    end
+
+    def release_name
+        CustomName.new(@release_name_format).result
     end
 end
