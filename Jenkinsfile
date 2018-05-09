@@ -31,8 +31,8 @@ pipeline {
                     extensions: [[$class: 'LocalBranch', localBranch: '**']],
                     userRemoteConfigs: [[url: "git@github.com:wireapp/${BOT_FRAMEWORK}.git"], [credentialsId:'wire-bot-ssh-key']]
                 ])
-                env.GIT_COMMIT = scmVars.GIT_COMMIT
-                env.GIT_BRANCH = scmVars.GIT_BRANCH
+                // env.GIT_COMMIT = scmVars.GIT_COMMIT
+                // env.GIT_BRANCH = scmVars.GIT_BRANCH
                 sh """
                 echo 'Current branch: ${env.GIT_BRANCH}'
                 echo 'Current branch: ${env.BRANCH_NAME}'
