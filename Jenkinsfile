@@ -25,7 +25,7 @@ pipeline {
     stages {
         stage('Prepare') {
             steps {
-                def scmVars = checkout([
+                checkout([
                     $class: 'GitSCM',
                     branches: [[name: '/develop']],
                     extensions: [[$class: 'LocalBranch', localBranch: '**']],
