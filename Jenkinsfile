@@ -42,8 +42,7 @@ pipeline {
                 expression { params.RUN_TESTS == true }
             }
             steps {
-                sh '''
-                    eval "$(rbenv init -)"
+                sh ''' #!/bin/bash -l
                     bundle install --path ~/.gem
                     bundle exec fastlane build
                 '''
@@ -55,8 +54,7 @@ pipeline {
                 expression { params.RUN_TESTS == true }
             }
             steps {
-                sh '''
-                    eval "$(rbenv init -)"
+                sh ''' #!/bin/bash -l
                     bundle exec fastlane test
                 '''
             }
@@ -65,8 +63,7 @@ pipeline {
             steps {
                 // This env var gets set from pipeline config branch, so scripts get messed up. We know we are in develop now!
                 withEnv(['GIT_BRANCH=develop']) {
-                    sh """
-                        eval "\$(rbenv init -)"
+                    sh """#!/bin/bash -l
                         bundle install --path ~/.gem
                         bundle exec fastlane release type:${BOT_TYPE}
                     """
