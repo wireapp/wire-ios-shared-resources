@@ -27,7 +27,7 @@ pipeline {
             steps {
                 checkout([
                     $class: 'GitSCM',
-                    branches: [[name: '/develop']],
+                    branches: [[name: '*/develop']],
                     extensions: [[$class: 'LocalBranch', localBranch: '**']],
                     userRemoteConfigs: [[url: "git@github.com:wireapp/${BOT_FRAMEWORK}.git"], [credentialsId:'wire-bot-ssh-key']]
                 ])
