@@ -2,118 +2,117 @@ default_platform(:ios)
 
 platform :ios do
 
-      desc "Build for testing"
-      lane :build do
-          carthage(
-              command: "bootstrap",
-              platform: "iOS",
-              cache_builds: true,
-              new_resolver: true
-          )
-          scan(
-        build_for_testing: true,
-        xcargs: "analyze",
-        clean: true,
-        devices: ["iPhone 7"],
-        code_coverage: true,
-        output_directory: "build",
-        output_types: "junit",
-              buildlog_path: "build",
-              derived_data_path: "DerivedData",
-        formatter: "xcpretty-json-formatter"
-          )
-
-      end
-
-    desc "Test without building"
-      lane :test do
+    desc "Build framework for testing"
+    lane :build do
+        carthage(
+            command: "bootstrap",
+            platform: "iOS",
+            cache_builds: true,
+            new_resolver: true 
         scan(
-          test_without_building: true,
-          devices: ["iPhone 7"],
-          code_coverage: true,
-          output_directory: "test",
-          output_types: "junit",
-          buildlog_path: "test",
-          derived_data_path: "DerivedData"
+            build_for_testing: true,
+            xcargs: "analyze",
+            clean: true,
+            devices: ["iPhone 7"],
+            code_coverage: true,
+            output_directory: "build",
+            output_types: "junit",
+            buildlog_path: "build",
+            derived_data_path: "DerivedData",
+            formatter: "xcpretty-json-formatter"
       )
+    end
 
-      trainer(output_directory: "build")
-      end
+    desc "Test framework without building"
+    lane :test do
+        scan(
+            test_without_building: true,
+            devices: ["iPhone 7"],
+            code_coverage: true,
+            output_directory: "test",
+            output_types: "junit",
+            buildlog_path: "test",
+            derived_data_path: "DerivedData"
+        )
 
+        trainer(output_directory: "build")
+    end
+
+    desc "Release new framework version. Expects parameter 'type' with 'major', 'minor' or 'patch'"
     lane :release do |options|
-      bump = options[:type]
-      unless ["major", "minor", "patch"].include? bump
-        UI.user_error! "Invalid release type: '#{bump}', should be 'major', 'minor' or 'patch'"
-      end
-      config = Config.read_current()
-       previous_version = Version.read_current()
-      ensure_git_branch(
-        branch: 'develop'
-      )
-      new_version = previous_version.bumped(bump)
-      unless should_create_release(new_version)
-          UI.user_error! "Version #{new_version} already exists!"
-      end
-      UI.important "Bumping project version to #{new_version}"
-      new_version.write()
-      message = release_details(previous_version, new_version, config)
-      git_commit(path: "*.xcconfig", message: message)
-      carthage_config = CarthageConfig.new(config.framework)
+        bump = options[:type]
+        unless ["major", "minor", "patch"].include? bump
+            UI.user_error! "Invalid release type: '#{bump}', should be 'major', 'minor' or 'patch'"
+        end
+        config = Config.read_current()
+        previous_version = Version.read_current()
+        ensure_git_branch(
+            branch: 'develop'
+        )
+        new_version = previous_version.bumped(bump)
+        unless should_create_release(new_version)
+            UI.user_error! "Version #{new_version} already exists!"
+        end
+        UI.important "Bumping project version to #{new_version}"
+        new_version.write()
+        message = release_details(previous_version, new_version, config)
+        git_commit(path: "*.xcconfig", message: message)
+        carthage_config = CarthageConfig.new(config.framework)
     
-      sh "rm -f ../#{carthage_config.archive_name} || true"
-      sh "rm -rf ../#{carthage_config.build_result} || true"
-      carthage(
+        sh "rm -f ../#{carthage_config.archive_name} || true"
+        sh "rm -rf ../#{carthage_config.build_result} || true"
+        carthage(
             command: "build",
             no_skip_current: true,
             platform: "iOS"
         )
-      # Swift frameworks need to be removed or Apple will reject the app
-      sh "rm -rf ../#{carthage_config.build_result}/Frameworks"
-      carthage(
+        # Swift frameworks need to be removed or Apple will reject the app
+        sh "rm -rf ../#{carthage_config.build_result}/Frameworks"
+        carthage(
             command: "archive",
             frameworks: [carthage_config.framework],
             output: carthage_config.archive_name,
         )
 
-      push_to_git_remote(
-        local_branch: "develop",
-        tags: false
-      )
-      add_git_tag(
-          tag: new_version.to_s
-      )
-      push_git_tags(
-          tag: new_version.to_s
-      )
-      set_github_release(
-          repository_name: config.full_repo,
-          api_token: ENV["GITHUB_TOKEN"],
-          name: "#{new_version}",
-          tag_name: new_version.to_s,
-          description: message,
-          commitish: "develop",
-          upload_assets: [carthage_config.archive_name]
+        push_to_git_remote(
+            local_branch: "develop",
+            tags: false
+        )
+        add_git_tag(
+            tag: new_version.to_s
+        )
+        push_git_tags(
+            tag: new_version.to_s
+        )
+        set_github_release(
+            repository_name: config.full_repo,
+            api_token: ENV["GITHUB_TOKEN"],
+            name: "#{new_version}",
+            tag_name: new_version.to_s,
+            description: message,
+            commitish: "develop",
+            upload_assets: [carthage_config.archive_name]
        )
     end
 
     # ------- Helpers -------
 
     def should_create_release(version)
-      if git_tag_exists(tag: version.to_s, remote: true) 
-          UI.important "Tag #{version} already exists"
-          return false
-      end
-      return true
+        if git_tag_exists(tag: version.to_s, remote: true) 
+            UI.important "Tag #{version} already exists"
+            return false
+        end
+        return true
     end
 
     def release_details(old_version, new_version, config)
-      changelog = changelog_from_git_commits(
-        between: [old_version.to_s, "HEAD"],
-        pretty: "%h | %s",
-        merge_commit_filtering: "exclude_merges"
-      )
-      diff_link = "https://github.com/#{config.organization}/#{config.repository}/compare/#{old_version}...#{new_version}"
-      "Release #{new_version}\n\nDiff with previous:\n#{diff_link}\n\nCommit  | Details\n--------|------\n#{changelog}"
+        changelog = changelog_from_git_commits(
+            between: [old_version.to_s, "HEAD"],
+            pretty: "%h | %s",
+            merge_commit_filtering: "exclude_merges"
+        )
+        diff_link = "https://github.com/#{config.organization}/#{config.repository}/compare/#{old_version}...#{new_version}"
+        "Release #{new_version}\n\nDiff with previous:\n#{diff_link}\n\nCommit  | Details\n--------|------\n#{changelog}"
     end
 
 end 
@@ -151,10 +150,10 @@ class Version
 
     def self.from_string(version_string)
         result = /^(\d+)\.(\d+)\.(\d+)$/.match(version_string)
-          if result.nil? || result.captures.count != 3
+        if result.nil? || result.captures.count != 3
             UI.user_error! "Invalid version string"
-          end
-          Version.new(result[1].to_i, result[2].to_i, result[3].to_i)
+        end
+        Version.new(result[1].to_i, result[2].to_i, result[3].to_i)
     end
 
     def self.read_current
@@ -168,7 +167,6 @@ class Version
             UI.user_error! "Invalid CURRENT_PROJECT_VERSION in #{VERSION_FILE_PATH}"
         end
 
-
         Version.from_string(matches[:version])
     end 
 
@@ -176,8 +174,8 @@ class Version
         contents = <<~EOS
             MAJOR_VERSION = #{@major}
             CURRENT_PROJECT_VERSION = #{self}
-          EOS
-          File.write(VERSION_FILE_PATH, contents)
+        EOS
+        File.write(VERSION_FILE_PATH, contents)
     end
 
     def bumped(bump)
