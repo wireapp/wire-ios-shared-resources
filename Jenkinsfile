@@ -1,6 +1,6 @@
 pipeline {
     agent { 
-        label 'frameworks'
+        label 'zmessagingci2'
     }
     environment { 
         DEPENDENCIES_BASE_URL = "https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/feature/fastlane"
