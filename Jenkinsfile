@@ -31,14 +31,6 @@ pipeline {
                     extensions: [[$class: 'LocalBranch', localBranch: '**']],
                     userRemoteConfigs: [[url: "git@github.com:wireapp/${BOT_FRAMEWORK}.git"], [credentialsId:'wire-bot-ssh-key']]
                 ])
-                // env.GIT_COMMIT = scmVars.GIT_COMMIT
-                // env.GIT_BRANCH = scmVars.GIT_BRANCH
-                sh """
-                echo 'Current branch: ${env.GIT_BRANCH}'
-                echo 'Current branch: ${env.BRANCH_NAME}'
-                echo 'Current branch: ${env.CI_COMMIT_REF_NAME}'
-                """
-
                 sh "curl -O ${DEPENDENCIES_BASE_URL}/Gemfile"
                 sh "curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock"
             }
@@ -69,19 +61,22 @@ pipeline {
         }
         stage('Release') {
             steps {
-                sh """
-                    eval "\$(rbenv init -)"
-                    bundle install --path ~/.gem
-                    bundle exec fastlane release type:${BOT_TYPE}
-                """
+                // This env var gets set from pipeline config branch, so scripts get messed up. We know we are in develop now!
+                withEnv(['GIT_BRANCH=develop']) {
+                    sh """
+                        eval "\$(rbenv init -)"
+                        bundle install --path ~/.gem
+                        bundle exec fastlane release type:${BOT_TYPE}
+                    """
+                }
             }
         }
     }
-    // post {
-    //     always {
-    //         cleanWs()
-    //     }
-    // }
+    post {
+        always {
+            cleanWs()
+        }
+    }
 }
 
 
