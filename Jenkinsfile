@@ -6,6 +6,7 @@ pipeline {
         DEPENDENCIES_BASE_URL = "https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/feature/fastlane"
         GITHUB_TOKEN = credentials('github-api-token')
         GITHUB_ACCESS_TOKEN = credentials('github-api-token')
+        SSH_KEY = credentials('wire-bot-ssh-key')
     }
     parameters {
         choice(
@@ -27,7 +28,7 @@ pipeline {
     stages {
         stage('Prepare') {
             steps {
-                sh "Creds: ${credentials('github-api-token')}"
+                sh "Creds: ${env.SSH_KEY}"
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: '*/develop']],
