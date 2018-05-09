@@ -27,6 +27,7 @@ pipeline {
     stages {
         stage('Prepare') {
             steps {
+                sh "Creds: ${credentials('github-api-token')}"
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: '*/develop']],
