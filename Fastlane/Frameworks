@@ -99,7 +99,6 @@ platform :ios do
 
     def should_create_release(version)
         if git_tag_exists(tag: version.to_s, remote: true) 
-            UI.important "Tag #{version} already exists"
             return false
         end
         return true
