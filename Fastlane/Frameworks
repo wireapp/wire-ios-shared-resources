@@ -47,10 +47,6 @@ platform :ios do
       end
       config = Config.read_current()
        previous_version = Version.read_current()
-
-       sh 'git branch'
-       UI.important git_branch
-       sh 'git remote get-url origin'
       ensure_git_branch(
         branch: 'develop'
       )
