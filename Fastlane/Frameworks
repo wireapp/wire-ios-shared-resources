@@ -48,6 +48,7 @@ platform :ios do
       config = Config.read_current()
        previous_version = Version.read_current()
 
+       UI.important "#{ENV[BRANCH_NAME]}"
        sh 'git branch'
        UI.important git_branch
        sh 'git remote get-url origin'
