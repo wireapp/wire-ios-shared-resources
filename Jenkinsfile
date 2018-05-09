@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent { 
+        label 'frameworks'
+    }
     environment { 
         DEPENDENCIES_BASE_URL = "https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/feature/fastlane"
         GITHUB_TOKEN = credentials('github-api-token')
