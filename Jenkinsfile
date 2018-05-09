@@ -74,6 +74,9 @@ pipeline {
     }
     post {
         always {
+            archiveArtifacts 'build/*.log'
+            archiveArtifacts 'test/*.log'
+            junit 'test/report.junit'
             cleanWs()
         }
     }
