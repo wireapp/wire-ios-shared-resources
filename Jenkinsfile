@@ -72,10 +72,8 @@ pipeline {
         }
     }
     post {
-        success {
-            junit 'test/report.junit'
-        }
         always {
+            junit 'test/report.junit'
             archiveArtifacts 'build/*.log'
             archiveArtifacts 'test/*.log'
             cleanWs()
