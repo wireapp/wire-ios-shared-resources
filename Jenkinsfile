@@ -6,7 +6,6 @@ pipeline {
         DEPENDENCIES_BASE_URL = "https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/feature/fastlane"
         GITHUB_TOKEN = credentials('github-api-token')
         GITHUB_ACCESS_TOKEN = credentials('github-api-token')
-        SSH_KEY = credentials('wire-bot-ssh-key')
     }
     parameters {
         choice(
@@ -28,12 +27,11 @@ pipeline {
     stages {
         stage('Prepare') {
             steps {
-                sh "Creds: ${env.SSH_KEY}"
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: '*/develop']],
                     extensions: [[$class: 'LocalBranch', localBranch: '**']],
-                    userRemoteConfigs: [[url: "git@github.com:wireapp/${BOT_FRAMEWORK}.git"], [credentialsId:'wire-bot-ssh-key']]
+                    userRemoteConfigs: [[url: "git@github.com:wireapp/${BOT_FRAMEWORK}.git", credentialsId:'wire-bot-ssh-key']]
                 ])
                 sh "curl -O ${DEPENDENCIES_BASE_URL}/Gemfile"
                 sh "curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock"
