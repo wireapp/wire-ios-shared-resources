@@ -31,7 +31,12 @@ pipeline {
                     extensions: [[$class: 'LocalBranch']],
                     userRemoteConfigs: [[url: "git@github.com:wireapp/${BOT_FRAMEWORK}.git"], [credentialsId:'wire-bot-ssh-key']]
                 ])
-                sh "echo 'Current branch: ${env.BRANCH_NAME}'"
+                sh """
+                echo 'Current branch: ${env.GIT_BRANCH}'
+                echo 'Current branch: ${env.BRANCH_NAME}'
+                echo 'Current branch: ${env.CI_COMMIT_REF_NAME}'
+                """
+
                 sh "curl -O ${DEPENDENCIES_BASE_URL}/Gemfile"
                 sh "curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock"
             }
