@@ -46,7 +46,7 @@ platform :ios do
         sh "chmod +x codecov"
         codecov = "./codecov -J '^#{config.framework}$' -D ../DerivedData -X xcodellvm"
 
-        # This should be present on Jenkins, but not needed when running on CircleCI
+        # When not running on CircleCI we need to supply more parameters to Codecov.io script
         if ENV["CIRCLECI"].nil?
             if ENV["CODECOV_TOKEN"].nil?
                 UI.user_error! "codecov.io token missing for current repository. Set it in CODECOV_TOKEN environment variable"
