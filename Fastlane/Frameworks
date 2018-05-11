@@ -1,0 +1,230 @@
+default_platform(:ios)
+
+platform :ios do
+
+    desc "Build framework for testing"
+    lane :build do
+        carthage(
+            command: "bootstrap",
+            platform: "iOS",
+            cache_builds: true,
+            new_resolver: true 
+        )
+        scan(
+            build_for_testing: true,
+            xcargs: "analyze",
+            clean: true,
+            devices: ["iPhone 7"],
+            code_coverage: true,
+            output_directory: "build",
+            output_types: "junit",
+            buildlog_path: "build",
+            derived_data_path: "DerivedData",
+            formatter: "xcpretty-json-formatter"
+        )
+    end
+
+    desc "Test framework without building"
+    lane :test do
+        scan(
+            test_without_building: true,
+            devices: ["iPhone 7"],
+            code_coverage: true,
+            output_directory: "test",
+            output_types: "junit",
+            buildlog_path: "test",
+            derived_data_path: "DerivedData"
+        )
+
+        trainer(output_directory: "build")
+    end
+
+    desc "Release new framework version. Expects parameter 'type' with 'major', 'minor' or 'patch'"
+    lane :release do |options|
+        bump = options[:type]
+        unless ["major", "minor", "patch"].include? bump
+            UI.user_error! "Invalid release type: '#{bump}', should be 'major', 'minor' or 'patch'"
+        end
+        config = Config.read_current()
+        previous_version = Version.read_current()
+        ensure_git_branch(
+            branch: 'develop'
+        )
+        new_version = previous_version.bumped(bump)
+        unless should_create_release(new_version)
+            UI.user_error! "Version #{new_version} already exists!"
+        end
+        UI.important "Bumping project version to #{new_version}"
+        new_version.write()
+        message = release_details(previous_version, new_version, config)
+        git_commit(path: "*.xcconfig", message: message)
+        carthage_config = CarthageConfig.new(config.framework)
+    
+        sh "rm -f ../#{carthage_config.archive_name} || true"
+        sh "rm -rf ../#{carthage_config.build_result} || true"
+        carthage(
+            command: "build",
+            no_skip_current: true,
+            platform: "iOS"
+        )
+        # Swift frameworks need to be removed or Apple will reject the app
+        sh "rm -rf ../#{carthage_config.build_result}/Frameworks"
+        carthage(
+            command: "archive",
+            frameworks: [carthage_config.framework],
+            output: carthage_config.archive_name,
+        )
+
+        push_to_git_remote(
+            local_branch: "develop",
+            tags: false
+        )
+        add_git_tag(
+            tag: new_version.to_s
+        )
+        push_git_tags(
+            tag: new_version.to_s
+        )
+        set_github_release(
+            repository_name: config.full_repo,
+            api_token: ENV["GITHUB_TOKEN"],
+            name: "#{new_version}",
+            tag_name: new_version.to_s,
+            description: message,
+            commitish: "develop",
+            upload_assets: [carthage_config.archive_name]
+        )
+    end
+
+    # ------- Helpers -------
+
+    def should_create_release(version)
+        if git_tag_exists(tag: version.to_s, remote: true) 
+            return false
+        end
+        return true
+    end
+
+    def release_details(old_version, new_version, config)
+        changelog = changelog_from_git_commits(
+            between: [old_version.to_s, "HEAD"],
+            pretty: "%h | %s",
+            merge_commit_filtering: "exclude_merges"
+        )
+        diff_link = "https://github.com/#{config.organization}/#{config.repository}/compare/#{old_version}...#{new_version}"
+        "Release #{new_version}\n\nDiff with previous:\n#{diff_link}\n\nCommit  | Details\n--------|------\n#{changelog}"
+    end
+
+end 
+
+class CarthageConfig
+
+    attr_reader :framework
+
+    def archive_name
+        "#{@framework}.framework.zip"
+    end
+
+    def build_result
+        "Carthage/Build/iOS/#{@framework}.framework"
+    end
+
+    def initialize(framework)
+        if framework.nil? 
+              UI.user_error! "Invalid framework in config"
+        end
+        @framework = framework
+    end
+
+end
+
+class Version
+
+    VERSION_FILE_PATH = "../Resources/Configurations/version.xcconfig"
+
+    def initialize(major, minor, patch)
+        @major = major
+        @minor = minor
+        @patch = patch
+    end 
+
+    def self.from_string(version_string)
+        result = /^(\d+)\.(\d+)\.(\d+)$/.match(version_string)
+        if result.nil? || result.captures.count != 3
+            UI.user_error! "Invalid version string"
+        end
+        Version.new(result[1].to_i, result[2].to_i, result[3].to_i)
+    end
+
+    def self.read_current
+        data = File.read(VERSION_FILE_PATH)
+        if data.nil?
+            UI.user_error! "Cannot read version from #{VERSION_FILE_PATH}"
+        end
+
+        matches = /^CURRENT_PROJECT_VERSION = (?<version>[\d\.]+)$/.match(data)
+        if matches.nil?
+            UI.user_error! "Invalid CURRENT_PROJECT_VERSION in #{VERSION_FILE_PATH}"
+        end
+
+        Version.from_string(matches[:version])
+    end 
+
+    def write
+        contents = <<~EOS
+            MAJOR_VERSION = #{@major}
+            CURRENT_PROJECT_VERSION = #{self}
+        EOS
+        File.write(VERSION_FILE_PATH, contents)
+    end
+
+    def bumped(bump)
+        if bump == "major"
+            Version.new(@major + 1, 0, 0)
+        elsif bump == "minor"
+            Version.new(@major, @minor + 1, 0)
+        else 
+            Version.new(@major, @minor, @patch + 1)
+        end
+    end
+
+    def to_s
+        "#{@major}.#{@minor}.#{@patch}"
+    end
+end
+
+class Config
+
+    attr_reader :framework
+    attr_reader :repository
+    attr_reader :organization
+
+    CONFIG_FILE_PATH = "../Scripts/config.txt"
+
+    def full_repo
+        "#{organization}/#{repository}"
+    end
+
+    def initialize(values)
+        @framework = values["framework"]
+        @repository = values["repository"]
+        @organization = values["organization"]
+        @release_name_format = values["release-name-format"]
+    end
+
+    def self.read_current
+        values = {}
+        File.readlines(CONFIG_FILE_PATH).each do |line|
+            items = line.split("=")
+            unless items.count == 2 
+                UI.user_error! "Malformed config in #{CONFIG_FILE_PATH}"
+            end
+            values[items[0]] = items[1].strip()
+        end
+        Config.new(values)
+    end
+
+    def release_name
+        CustomName.new(@release_name_format).result
+    end
+end
