@@ -7,6 +7,7 @@ pipeline {
         GITHUB_TOKEN = credentials('github-api-token')
         GITHUB_ACCESS_TOKEN = credentials('github-api-token')
         PATH = "/Users/ci/.rbenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+        CODECOV_TOKEN = credentials("codecov-${params.BOT_FRAMEWORK}")
     }
     parameters {
         choice(
