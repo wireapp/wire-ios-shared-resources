@@ -52,11 +52,11 @@ platform :ios do
             if ENV["CODECOV_TOKEN"].nil?
                 UI.user_error! "codecov.io token missing for current repository. Set it in CODECOV_TOKEN environment variable"
             end
-            current_branch = sh "git rev-parse --abbrev-ref HEAD"
+            current_branch = sh "git rev-parse --abbrev-ref HEAD".strip()
             if current_branch.nil? || current_branch.empty?
                 UI.user_error! "Cannot figure out current branch!"
             end
-            current_commit = sh "git rev-parse --verify HEAD"
+            current_commit = sh "git rev-parse --verify HEAD".strip()
             if current_commit.nil? || current_commit.empty?
                 UI.user_error! "Cannot figure out current commit!"
             end
