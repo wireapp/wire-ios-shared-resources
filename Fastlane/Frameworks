@@ -55,7 +55,7 @@ platform :ios do
             if ENV["CODECOV_TOKEN"].nil?
                 UI.user_error! "codecov.io token missing for current repository. Set it in CODECOV_TOKEN environment variable"
             end
-            codecov << " -t #{ENV["CODECOV_TOKEN"]} -B #{git_branch}"
+            codecov << " -t #{ENV["CODECOV_TOKEN"]} -B #{current_branch}"
         end
         sh codecov
 
