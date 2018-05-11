@@ -59,6 +59,16 @@ pipeline {
                 '''
             }
         }
+        stage('Post test') {
+            when {
+                expression { params.RUN_TESTS == true }
+            }
+            steps {
+                sh ''' #!/bin/bash -l
+                    bundle exec fastlane post_test
+                '''
+            }
+        }
         stage('Release') {
             steps {
                 // This env var gets set from pipeline config branch, so scripts get messed up. We know we are in develop now!
