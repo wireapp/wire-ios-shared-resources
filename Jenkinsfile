@@ -58,15 +58,6 @@ pipeline {
             steps {
                 sh ''' #!/bin/bash -l
                     bundle exec fastlane test
-                '''
-            }
-        }
-        stage('Post test') {
-            when {
-                expression { params.RUN_TESTS == true }
-            }
-            steps {
-                sh ''' #!/bin/bash -l
                     bundle exec fastlane post_test
                 '''
             }
