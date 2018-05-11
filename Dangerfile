@@ -57,4 +57,4 @@ end
 
 xcode_summary.ignored_files = 'Pods/**'
 
-xcode_summary.report 'build/xcodebuild.json'
+xcode_summary.report 'build/reports/errors.json'

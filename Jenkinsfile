@@ -6,6 +6,8 @@ pipeline {
         DEPENDENCIES_BASE_URL = "https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/feature/fastlane"
         GITHUB_TOKEN = credentials('github-api-token')
         GITHUB_ACCESS_TOKEN = credentials('github-api-token')
+        PATH = "/Users/ci/.rbenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+        CODECOV_TOKEN = credentials("codecov-${params.BOT_FRAMEWORK}")
     }
     parameters {
         choice(
@@ -56,6 +58,7 @@ pipeline {
             steps {
                 sh ''' #!/bin/bash -l
                     bundle exec fastlane test
+                    bundle exec fastlane post_test
                 '''
             }
         }
