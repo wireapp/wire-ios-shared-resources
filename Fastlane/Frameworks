@@ -31,9 +31,10 @@ platform :ios do
             devices: ["iPhone 7"],
             code_coverage: true,
             buildlog_path: "test",
-            derived_data_path: "DerivedData"
+            derived_data_path: "DerivedData",
+            output_types: "",
+            fail_build: false
         )
-
         trainer(output_directory: "test")
     end
 
