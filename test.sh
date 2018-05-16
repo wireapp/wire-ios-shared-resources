@@ -16,6 +16,6 @@ fi
 arguments+=( -enableCodeCoverage YES )
 arguments+=( test-without-building )
 
-mkdir -p build/junit
+mkdir -p build/reports/junit
 
 xcodebuild "${arguments[@]}" | tee build/xcode_test.log | bundle exec xcpretty -r junit --output build/junit/tests.xml
