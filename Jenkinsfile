@@ -76,11 +76,17 @@ pipeline {
     }
     post {
         always {
-            junit 'test/report.junit'
-            archiveArtifacts 'build/*.log'
-            archiveArtifacts 'test/*.log'
+            archiveResults(params.RUN_TESTS)
             cleanWs()
         }
+    }
+}
+
+def archiveResults(boolean runningTests) {
+    archiveArtifacts 'build/*.log'
+    if (runningTests) {
+        junit 'test/report.junit'
+        archiveArtifacts 'test/*.log'
     }
 }
 
