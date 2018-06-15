@@ -85,7 +85,7 @@ def archiveResults(boolean runningTests) {
     archiveArtifacts artifacts: 'build/*.log', allowEmptyArchive: true
     archiveArtifacts artifacts: 'test/*.log', allowEmptyArchive: true
     if (runningTests) {
-        junit 'test/report.junit'
+        junit 'test/*.xml'
     }
 }
 
