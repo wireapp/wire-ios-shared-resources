@@ -32,7 +32,7 @@ pipeline {
                 checkout([
                     $class: 'GitSCM',
                     branches: [[name: '*/develop']],
-                    extensions: [[$class: 'LocalBranch', localBranch: '**']],
+                    extensions: [[$class: 'LocalBranch', localBranch: '**'], [$class: 'CleanBeforeCheckout']],
                     userRemoteConfigs: [[url: "git@github.com:wireapp/${BOT_FRAMEWORK}.git", credentialsId:'wire-bot-ssh-key']]
                 ])
                 sh "curl -O ${DEPENDENCIES_BASE_URL}/Gemfile"
@@ -77,7 +77,6 @@ pipeline {
     post {
         always {
             archiveResults(params.RUN_TESTS)
-            cleanWs()
         }
     }
 }
