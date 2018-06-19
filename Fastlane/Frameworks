@@ -2,6 +2,28 @@ default_platform(:ios)
 
 platform :ios do
 
+    desc "Merge PR. Expects parameter 'number' that contains the PR number to merge"
+    lane :merge_pr do |options|
+        pr_number = options[:number]
+        config = Config.read_current()
+        GithubApiAction.run(
+            server_url: "https://api.github.com",
+            api_token: ENV["GITHUB_TOKEN"],
+            http_method: "GET",
+            path: "/repos/#{config.organization}/#{config.repository}/pulls/#{pr_number}/commits",
+            error_handlers: {
+                404 => proc do |result|
+                    UI.message("Something went wrong - I couldn't find it...")
+                end,
+                '*' => proc do |result|
+                UI.message("Handle all error codes other than 404")
+                end
+            }
+        ) do |result|
+            UI.message("JSON returned: #{result[:json]}")
+        end
+    end
+
     desc "Build framework for testing"
     lane :build do
         carthage(
