@@ -1,0 +1,56 @@
+pipeline {
+    agent { 
+        label 'frameworks'
+    }
+    environment { 
+        DEPENDENCIES_BASE_URL = "https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/feature/merge-pr"
+        GITHUB_TOKEN = credentials('github-api-token')
+        GITHUB_ACCESS_TOKEN = credentials('github-api-token')
+        PATH = "/Users/ci/.rbenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+    }
+    
+    stages {
+        stage('Merge PR') {
+            steps {
+                cleanWs()
+                echo "Pull ID=$ghprbPullId, comment:$ghprbCommentBody, repo:$ghprbGhRepository"
+                sh """ #!/bin/bash -l
+                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
+                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
+                    mkdir fastlane
+                    curl -o fastlane/Fastfile ${DEPENDENCIES_BASE_URL}/Fastlane/MergePR
+                    bundle install --path ~/.gem
+                    echo "Pull ID=${ghprbPullId}, comment:${ghprbCommentBody}, repo:${ghprbGhRepository}"
+                    echo "bundle exec fastlane fastlane merge_pr number:${ghprbPullId} repo:${ghprbGhRepository}"
+
+                    bundle exec fastlane fastlane merge_pr number:${ghprbPullId} repo:${ghprbGhRepository}
+                """
+            }
+        }
+        stage('Trigger build') {
+            steps {
+                echo "Pull ID=$ghprbPullId, comment:$ghprbCommentBody, repo:$ghprbGhRepository"
+                build job: 'new-framework-release', parameters: [
+                    [$class: 'StringParameterValue', name: 'BOT_FRAMEWORK', value: framework_name("$ghprbGhRepository")],
+                    [$class: 'StringParameterValue', name: 'BOT_TYPE', value: release_type("$ghprbCommentBody")],
+                    [$class: 'BooleanParameterValue', name: 'RUN_TESTS', value: true]
+                ]
+            }
+        }
+    }
+}
+
+@NonCPS
+def release_type(comment) {
+    def match = comment =~ /\@zenkins release (patch|minor|major)/
+
+    if (match.find()) {
+        return match[0][1]
+    }
+    return null
+}
+
+@NonCPS
+def framework_name(repo) {
+    return repo.tokenize('/')[1]
+}
