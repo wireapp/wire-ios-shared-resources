@@ -1,0 +1,23 @@
+default_platform(:ios)
+
+platform :ios do
+
+    desc "Merge PR. Expects parameter 'number' that contains the PR number to merge"
+    lane :merge_pr do |options|
+        UI.user_error! "Please specify PR number to merge e.g number:10" unless options.include?(:number)
+        UI.user_error! "Please specify full repository name e.g. repo:wireapp/wire-ios-canvas" unless options.include?(:repo)
+        pr_number = options[:number]
+        repo = options[:repo]
+        path = "/repos/#{repo}/pulls/#{pr_number}/merge"
+        UI.message("PUT #{path}")
+        result = github_api(
+            server_url: "https://api.github.com",
+            api_token: ENV["GITHUB_ACCESS_TOKEN"],
+            http_method: "PUT",
+            path: "/repos/#{repo}/pulls/#{pr_number}/merge",
+            body: { merge_method: "squash"}
+        )
+        UI.message("JSON returned: #{result[:json]}")
+    end
+
+end
