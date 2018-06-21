@@ -1,22 +1,6 @@
 default_platform(:ios)
 
 platform :ios do
-
-    desc "Merge PR. Expects parameter 'number' that contains the PR number to merge"
-    lane :merge_pr do |options|
-        UI.user_error! "Please specify PR number to merge!" unless options.include?(:number)
-        pr_number = options[:number]
-        config = Config.read_current()
-        result = github_api(
-            server_url: "https://api.github.com",
-            api_token: ENV["GITHUB_ACCESS_TOKEN"],
-            http_method: "PUT",
-            path: "/repos/#{config.organization}/#{config.repository}/pulls/#{pr_number}/merge",
-            body: { merge_method: "squash"}
-        )
-        UI.message("JSON returned: #{result[:json]}")
-    end
-
     desc "Build framework for testing"
     lane :build do
         carthage(
