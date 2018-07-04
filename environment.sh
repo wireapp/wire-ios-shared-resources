@@ -7,6 +7,8 @@ curl -O "${DEPENDENCIES_BASE_URL}/build.sh"
 curl -O "${DEPENDENCIES_BASE_URL}/test.sh"
 curl -O "${DEPENDENCIES_BASE_URL}/post_test.sh"
 curl -O "${DEPENDENCIES_BASE_URL}/.ruby-version"
+curl -O "${DEPENDENCIES_BASE_URL}/Gemfile"
+curl -O "${DEPENDENCIES_BASE_URL}/Gemfile.lock"
 
 if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios" ]; 
 then
@@ -14,8 +16,6 @@ then
 	echo "export SCHEME='Wire-iOS'" >> $BASH_ENV
 else
 	echo "export IS_UI_PROJECT=0" >> $BASH_ENV
-	curl -O "${DEPENDENCIES_BASE_URL}/Gemfile"
-	curl -O "${DEPENDENCIES_BASE_URL}/Gemfile.lock"
 	echo "export SCHEME=\"$(xcodebuild -list | awk '/^[[:space:]]*Schemes:/{getline; print $0;}' | sed 's/^ *//;s/ *$//')\"" >> $BASH_ENV
 fi
 
