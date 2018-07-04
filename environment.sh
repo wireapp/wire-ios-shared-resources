@@ -8,12 +8,8 @@ curl -O "${DEPENDENCIES_BASE_URL}/test.sh"
 curl -O "${DEPENDENCIES_BASE_URL}/post_test.sh"
 curl -O "${DEPENDENCIES_BASE_URL}/.ruby-version"
 
-echo "Downloading Gemfile" 
 curl -O "${DEPENDENCIES_BASE_URL}/Gemfile"
 curl -O "${DEPENDENCIES_BASE_URL}/Gemfile.lock"
-ls .
-cat Gemfile
-cat Gemfile.lock
 
 if [ "$CIRCLE_PROJECT_REPONAME" == "wire-ios" ]; 
 then
