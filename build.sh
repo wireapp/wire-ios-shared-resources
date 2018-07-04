@@ -9,7 +9,7 @@ arguments+=( -enableCodeCoverage YES )
 
 if [ "$IS_UI_PROJECT" -eq "1" ]; 
 then
-	arguments+=( -workspace "${WORKSPACE}" ) # We need to append workspace argument for UI project
+	arguments+=( -project "${PROJECT}" ) # We need to append workspace argument for UI project
 else
 	arguments+=( analyze ) # Analyze only frameworks - takes a long time on UI project
 fi

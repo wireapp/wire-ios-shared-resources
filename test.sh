@@ -10,7 +10,7 @@ arguments+=( -derivedDataPath DerivedData )
 
 if [ "$IS_UI_PROJECT" -eq "1" ]; 
 then
-	arguments+=( -workspace "${WORKSPACE}" ) # We need to append workspace argument for UI project
+	arguments+=( -project "${PROJECT}" ) # We need to append workspace argument for UI project
 fi
 
 arguments+=( -enableCodeCoverage YES )
