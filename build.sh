@@ -7,10 +7,8 @@ arguments+=( -destination "${DESTINATION}" )
 arguments+=( -derivedDataPath DerivedData )
 arguments+=( -enableCodeCoverage YES )
 
-if [ "$IS_UI_PROJECT" -eq "1" ]; 
+if [ "$IS_UI_PROJECT" -ne "1" ]; 
 then
-	arguments+=( -project "${PROJECT}" ) # We need to append workspace argument for UI project
-else
 	arguments+=( analyze ) # Analyze only frameworks - takes a long time on UI project
 fi
 
