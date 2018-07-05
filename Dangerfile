@@ -55,4 +55,4 @@ if File.exists? cartfile_name
   end
 end
 
-xcode_summary.report 'build/reports/xcodebuild.json'
+xcode_summary.report 'build/reports/errors.json'
