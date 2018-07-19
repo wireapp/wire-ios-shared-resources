@@ -35,7 +35,7 @@ pipeline {
         stage('Trigger build') {
             steps {
                 echo "Pull ID=$ghprbPullId, comment:$ghprbCommentBody, repo:$ghprbGhRepository"
-                build job: 'new-framework-release', parameters: [
+                build job: 'new-framework-release', wait: false, parameters: [
                     [$class: 'StringParameterValue', name: 'BOT_FRAMEWORK', value: framework_name("$ghprbGhRepository")],
                     [$class: 'StringParameterValue', name: 'BOT_TYPE', value: release_type("$ghprbCommentBody")],
                     [$class: 'BooleanParameterValue', name: 'RUN_TESTS', value: true]
