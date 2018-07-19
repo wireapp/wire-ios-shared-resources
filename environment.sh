@@ -1,6 +1,6 @@
 #! /bin/bash
 
-echo "export DESTINATION='platform=iOS Simulator,name=iPhone 7,OS=11.3'" >> $BASH_ENV
+echo "export DESTINATION='platform=iOS Simulator,name=iPhone 7,OS=latest'" >> $BASH_ENV
 
 curl -O "${DEPENDENCIES_BASE_URL}/dependencies.sh"
 curl -O "${DEPENDENCIES_BASE_URL}/build.sh"
