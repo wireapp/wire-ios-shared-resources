@@ -8,8 +8,14 @@ platform :ios do
         UI.user_error! "Please specify full repository name e.g. repo:wireapp/wire-ios-canvas" unless options.include?(:repo)
         pr_number = options[:number]
         repo = options[:repo]
-        path = "/repos/#{repo}/pulls/#{pr_number}/merge"
-        UI.message("PUT #{path}")
+        pr_data = github_api(
+            server_url: "https://api.github.com",
+            api_token: ENV["GITHUB_ACCESS_TOKEN"],
+            http_method: "GET",
+            path: "/repos/#{repo}/pulls/#{pr_number}"
+        )
+        branch = pr_data[:json]["head"]["ref"]
+        UI.message("PR branch: #{branch}")
         result = github_api(
             server_url: "https://api.github.com",
             api_token: ENV["GITHUB_ACCESS_TOKEN"],
@@ -18,6 +24,12 @@ platform :ios do
             body: { merge_method: "squash"}
         )
         UI.message("JSON returned: #{result[:json]}")
+        github_api(
+            server_url: "https://api.github.com",
+            api_token: ENV["GITHUB_ACCESS_TOKEN"],
+            http_method: "DELETE",
+            path: "/repos/#{repo}/git/refs/heads/#{branch}",
+        )
     end
 
 end
