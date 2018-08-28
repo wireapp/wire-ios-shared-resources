@@ -76,6 +76,7 @@ pipeline {
             steps {
                 // Launches fastlane test and post_test scripts
                 sh ''' #!/bin/bash -l
+                    bundle install --path ~/.gem
                     bundle exec fastlane test
                     bundle exec fastlane post_test
                 '''
