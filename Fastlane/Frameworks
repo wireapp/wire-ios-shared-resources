@@ -61,7 +61,7 @@ platform :ios do
         end
         sh codecov
 
-        dependencies_url = ENV.fetch("DEPENDENCIES_BASE_URL") { "https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master" }
+        dependencies_url = ENV.fetch("DEPENDENCIES_BASE_URL") { "https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/feature/calling-tracking" }
         sh "curl -O #{dependencies_url}/Dangerfile"
         danger(
             dangerfile: "Fastlane/Dangerfile",
