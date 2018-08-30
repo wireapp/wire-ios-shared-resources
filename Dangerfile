@@ -12,6 +12,23 @@ def filterFiles(files)
   return files.select { |f| f.end_with? ".h", ".m", ".swift", ".mm" }
 end
 
+def print_calling_coverage(coverage)
+  targets = coverage["targets"]
+  first_target = targets[0]
+  target_files = first_target["files"]
+
+  calling_files = target_files.select { |file| !!(file["path"] =~ /calling/i) }
+  unless calling_files.empty? 
+      lines_covered = calling_files.reduce([0, 0]) { |sum, file| [sum[0] + file["executableLines"], sum[1] + file["coveredLines"]] }
+      test_coverage = if lines_covered[0] != 0 then lines_covered[1].to_f / lines_covered[0] else 0.0 end
+      total = lines_covered[0]
+      covered = lines_covered[1]
+      coverage_percents = '%.2f' % (test_coverage * 100)
+      message "Calling test coverage: #{coverage_percents}% [#{covered} of #{total} lines in #{calling_files.length} files]"
+  end
+
+end
+
 added_paths = filterFiles(git.added_files)
 touched_paths = filterFiles(git.added_files | git.modified_files)
 
@@ -56,3 +73,13 @@ if File.exists? cartfile_name
 end
 
 xcode_summary.report 'build/reports/errors.json'
+
+# Calling code coverage
+Open3.popen2("xcrun xccov view DerivedData/Logs/Test/*.xccovreport --json") {|i,o,t|
+  output = o.gets
+  if t.value.success? 
+    json = JSON.parse(output)
+    print_calling_coverage(json)
+  end
+}
+
