@@ -13,7 +13,7 @@ def filterFiles(files)
 end
 
 def print_calling_coverage(coverage)
-  targets = coverage["targets"].select { |target| !target["name"].downcase.include("test") }
+  targets = coverage["targets"].select { |target| !target["name"].downcase.include?("test") }
   first_target = targets[0]
   target_files = first_target["files"]
 
