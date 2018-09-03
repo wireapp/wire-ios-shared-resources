@@ -13,20 +13,33 @@ def filterFiles(files)
 end
 
 def print_calling_coverage(coverage)
-  targets = coverage["targets"]
+  targets = coverage["targets"].select { |target| !target["name"].downcase.include("test") }
   first_target = targets[0]
   target_files = first_target["files"]
 
   calling_files = target_files.select { |file| !!(file["path"] =~ /calling/i) }
-  unless calling_files.empty? 
-      lines_covered = calling_files.reduce([0, 0]) { |sum, file| [sum[0] + file["executableLines"], sum[1] + file["coveredLines"]] }
-      test_coverage = if lines_covered[0] != 0 then lines_covered[1].to_f / lines_covered[0] else 0.0 end
-      total = lines_covered[0]
-      covered = lines_covered[1]
-      coverage_percents = '%.2f' % (test_coverage * 100)
-      message "Calling test coverage: #{coverage_percents}% [#{covered} of #{total} lines in #{calling_files.length} files]"
-  end
+  unless calling_files.empty?
+    lines_covered = calling_files.reduce([0, 0]) { |sum, file| [sum[0] + file["executableLines"], sum[1] + file["coveredLines"]] }
+    test_coverage = if lines_covered[0] != 0 then lines_covered[1].to_f / lines_covered[0] else 0.0 end
+    total = lines_covered[0]
+    covered = lines_covered[1]
+    coverage_percents = '%.2f' % (test_coverage * 100)
+    lines = []
+    lines << "Calling test coverage: #{coverage_percents}% [#{covered} of #{total} lines in #{calling_files.length} files]"
+    lines << "<details>"
+    lines << "<summary>Files</summary><blockquote>"
+    lines << ""
 
+    current_dir = Dir.pwd + "/"
+    lines += calling_files.map do |file| 
+      path = file["path"].gsub(current_dir, "") 
+      coverage = if file["executableLines"] != 0 then file["coveredLines"].to_f / file["executableLines"] else 0.0 end
+      coverage_percents = '%.2f' % (test_coverage * 100)
+      "#{coverage_percents}% #{path}"
+    end
+    lines << "</blockquote></details>"
+    message lines.join("\n")
+  end
 end
 
 added_paths = filterFiles(git.added_files)
