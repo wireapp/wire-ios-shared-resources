@@ -34,7 +34,7 @@ def print_calling_coverage(coverage)
     lines += calling_files.map do |file| 
       path = file["path"].gsub(current_dir, "") 
       coverage = if file["executableLines"] != 0 then file["coveredLines"].to_f / file["executableLines"] else 0.0 end
-      coverage_percents = '%.2f' % (test_coverage * 100)
+      coverage_percents = '%.2f' % (coverage * 100)
       "#{coverage_percents}% #{path}"
     end
     lines << "</blockquote></details>"
