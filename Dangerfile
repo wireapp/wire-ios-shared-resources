@@ -14,8 +14,7 @@ end
 
 def print_calling_coverage(coverage)
   targets = coverage["targets"].select { |target| !target["name"].downcase.include?("test") }
-  first_target = targets[0]
-  target_files = first_target["files"]
+  target_files = targets.flat_map { |target| target["files"] }
 
   calling_files = target_files.select { |file| !!(file["path"] =~ /calling/i) }
   unless calling_files.empty?
