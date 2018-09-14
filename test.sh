@@ -3,6 +3,7 @@
 set -eu -o pipefail
 
 bundle install --path ~/.gem
+env SNAPSHOT_FORCE_DELETE=1 bundle exec fastlane snapshot reset_simulators
 
 arguments=( -scheme "${SCHEME}"  )
 arguments+=( -destination "${DESTINATION}" )

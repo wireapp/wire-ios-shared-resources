@@ -3,7 +3,6 @@
 set -euf -o pipefail
 
 bundle install --path ~/.gem
-env SNAPSHOT_FORCE_DELETE=1 bundle exec fastlane snapshot reset_simulators
 
 if [ "$IS_UI_PROJECT" -eq "1" ]; 
 then
