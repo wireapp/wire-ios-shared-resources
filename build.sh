@@ -1,6 +1,7 @@
 #! /bin/bash
 
 set -euf -o pipefail
+env SNAPSHOT_FORCE_DELETE=1 bundle exec fastlane snapshot reset_simulators
 
 arguments=( -scheme "${SCHEME}"  )
 arguments+=( -destination "${DESTINATION}" )
