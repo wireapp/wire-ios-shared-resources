@@ -1,20 +1,18 @@
 steps:
 
 - script: |
-    git clone --single-branch -b feature/azure https://github.com/wireapp/wire-ios-shared-resources.git  
+    git clone --single-branch -b feature/azure https://github.com/wireapp/wire-ios-shared-resources.git
+    mkdir -p fastlane
+    cp wire-ios-shared-resources/Fastlane/Frameworks fastlane/Fastfile
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
-  displayName: "Fetch build scripts"
+  displayName: "Prepare build scripts"
 
 - script: |
     sudo xcode-select -switch /Applications/Xcode_10.app
-    fastlane prepare 
+    fastlane build
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
-  displayName: "Setup environment"
-
-- script: |
-    fastlane build
   displayName: "Build"
 
 - task: PublishBuildArtifacts@1
