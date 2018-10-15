@@ -1,7 +1,7 @@
 steps:
 
 - script: |
-    clone --single-branch -b feature/azure https://github.com/wireapp/wire-ios-shared-resources.git  
+    git clone --single-branch -b feature/azure https://github.com/wireapp/wire-ios-shared-resources.git  
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
   displayName: "Fetch build scripts"
