@@ -11,15 +11,12 @@ platform :ios do
         )
         scan(
             build_for_testing: true,
-            xcargs: "analyze",
-            clean: true,
             devices: ["iPhone 7"],
             code_coverage: true,
-            output_directory: "build",
-            output_types: "junit",
-            buildlog_path: "build",
             derived_data_path: "DerivedData",
-            formatter: "xcpretty-json-formatter"
+            buildlog_path: "build",
+            output_directory: "build",
+            output_types: "junit"
         )
     end
 
@@ -29,44 +26,34 @@ platform :ios do
             test_without_building: true,
             devices: ["iPhone 7"],
             code_coverage: true,
-            buildlog_path: "test",
             derived_data_path: "DerivedData",
-            output_types: "",
-            fail_build: true
+            buildlog_path: "test",
+            output_directory: "test",
+            output_types: "junit"
         )
-        trainer(output_directory: "test")
     end
 
     desc "Run post-test tasks"
     lane :post_test do
-        config = Config.read_current()
         sh "curl -s https://codecov.io/bash > codecov"
         sh "chmod +x codecov"
-        codecov = "./codecov -J '^#{config.framework}$' -D ../DerivedData -X xcodellvm"
+        codecov = "./codecov -J '^Wire$' -D ../DerivedData"
 
-        # When not running on CircleCI we need to supply more parameters to Codecov.io script
-        if ENV["CIRCLECI"].nil?
+        if ENV["BUILD_REASON"] == "PullRequest"
             if ENV["CODECOV_TOKEN"].nil?
                 UI.user_error! "codecov.io token missing for current repository. Set it in CODECOV_TOKEN environment variable"
             end
-            current_branch = sh "git rev-parse --abbrev-ref HEAD"
-            if current_branch.nil? || current_branch.empty?
-                UI.user_error! "Cannot figure out current branch!"
-            end
-            current_commit = sh "git rev-parse --verify HEAD"
-            if current_commit.nil? || current_commit.empty?
-                UI.user_error! "Cannot figure out current commit!"
-            end
-            codecov << " -t #{ENV["CODECOV_TOKEN"]} -B #{current_branch.chomp} -C #{current_commit.chomp}"
-        end
-        sh codecov
 
-        dependencies_url = ENV.fetch("DEPENDENCIES_BASE_URL") { "https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master" }
-        sh "curl -O #{dependencies_url}/Dangerfile"
-        danger(
-            dangerfile: "Fastlane/Dangerfile",
-            github_api_token: ENV["GITHUB_ACCESS_TOKEN"]
-        )
+            if ENV["BUILD_SOURCEBRANCH"].nil?
+                UI.user_error! "Source branch env variable missing. Set BUILD_SOURCEBRANCH to fix it"
+            end
+
+            pull_request_number = ENV["BUILD_SOURCEBRANCH"].split("/")[2] # For PRs the branch is in format "refs/pull/1/merge"
+
+            codecov << " -t #{ENV["CODECOV_TOKEN"]} -P #{pull_request_number}"
+        end
+
+        sh codecov
     end
 
     desc "Release new framework version. Expects parameter 'type' with 'major', 'minor' or 'patch'"
