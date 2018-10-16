@@ -1,9 +1,7 @@
 parameters:
   branch: "master"
 
-name: $(BuildID)
 steps:
-
 - script: |
     git clone --single-branch -b $BRANCH https://github.com/wireapp/wire-ios-shared-resources.git
     mkdir -p fastlane
