@@ -1,7 +1,10 @@
+parameters:
+  branch: "master"
+
 steps:
 
 - script: |
-    git clone --single-branch -b feature/azure https://github.com/wireapp/wire-ios-shared-resources.git
+    git clone --single-branch -b "${{ parameters.name }}" https://github.com/wireapp/wire-ios-shared-resources.git
     mkdir -p fastlane
     cp wire-ios-shared-resources/Fastlane/Frameworks fastlane/Fastfile
   env:
