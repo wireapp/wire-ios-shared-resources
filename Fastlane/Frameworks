@@ -7,7 +7,6 @@ platform :ios do
         carthage(
             command: "bootstrap",
             platform: "iOS",
-            cache_builds: true,
             new_resolver: true 
         )
     end
