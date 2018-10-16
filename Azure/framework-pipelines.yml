@@ -2,6 +2,10 @@ jobs:
   - job: Test
     pool:
       vmImage: "macOS 10.13"
+    trigger:
+      branches:
+        include:
+          - develop
     steps:
     - template: build-and-test/build-and-test.yml
       parameters:
