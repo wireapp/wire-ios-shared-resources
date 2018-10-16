@@ -74,11 +74,10 @@ pipeline {
                 expression { params.RUN_TESTS == true }
             }
             steps {
-                // Launches fastlane test and post_test scripts
+                // Launches fastlane test
                 sh ''' #!/bin/bash -l
                     bundle install --path ~/.gem
                     bundle exec fastlane test
-                    bundle exec fastlane post_test
                 '''
             }
         }
@@ -87,33 +86,13 @@ pipeline {
                 // This env var points to the branch where this Jenkins file is in, not the framework project we just checked out and scripts get messed up. We know we are in develop now!
                 withEnv(['GIT_BRANCH=develop']) {
                     // Running fastlane script to release the framework
-                    // In addition, running post_test task to upload (same) test coverage after making a commit with version increase
                     sh """#!/bin/bash -l
                         bundle install --path ~/.gem
                         bundle exec fastlane release type:${BOT_TYPE}
-                        bundle exec fastlane post_test
                     """
                 }
             }
         }
-        // This is needed because we want to upload test coverage at the point after release, so that codecov.io would have a valid base to compare the difference
-        stage('Fix test coverage') {
-            when {
-                // Skipped if we don't want to run tests
-                expression { params.RUN_TESTS == true }
-            }
-            steps {
-                // This env var points to the branch where this Jenkins file is in, not the framework project we just checked out and scripts get messed up. We know we are in develop now!
-                withEnv(['GIT_BRANCH=develop']) {
-                    // running post_test task to upload the (same) test coverage after making a commit with version increase
-                    sh """#!/bin/bash -l
-                        bundle install --path ~/.gem
-                        bundle exec fastlane post_test
-                    """
-                }
-            }
-        }
-
     }
     post {
         always {
