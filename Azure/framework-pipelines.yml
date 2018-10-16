@@ -2,6 +2,7 @@ jobs:
   - job: Test
     pool:
       vmImage: "macOS 10.13"
+    name: Build $(BuildID). Finished in $(Seconds)s
     steps:
     - template: build-and-test/build-and-test.yml
       parameters:
