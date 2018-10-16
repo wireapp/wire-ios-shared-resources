@@ -4,13 +4,13 @@ platform :ios do
 
     desc "Fetch dependencies"
     lane :prepare do |options|
-        UI.important options
         sh "cd .. && ./setup.sh"
     end
 
 
     desc "Build framework for testing"
-    lane :build do
+    lane :build do | options |
+        UI.important options
         carthage(
             command: "bootstrap",
             platform: "iOS",
