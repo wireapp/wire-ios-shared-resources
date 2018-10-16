@@ -6,7 +6,7 @@ steps:
 - script: |
     git clone --single-branch -b $BRANCH https://github.com/wireapp/wire-ios-shared-resources.git
     mkdir -p fastlane
-    cp wire-ios-shared-resources/Fastlane/Frameworks fastlane/Fastfile
+    cp wire-ios-shared-resources/Azure/build-and-test/Fastfile fastlane/Fastfile
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
     BRANCH: ${{ parameters.branch }}
