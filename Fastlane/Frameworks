@@ -35,9 +35,10 @@ platform :ios do
 
     desc "Run post-test tasks"
     lane :post_test do
+        config = Config.read_current()
         sh "curl -s https://codecov.io/bash > codecov"
         sh "chmod +x codecov"
-        codecov = "./codecov -J '^Wire$' -D ../DerivedData"
+        codecov = "./codecov -J '^#{config.framework}$' -D ../DerivedData"
 
         if ENV["BUILD_REASON"] == "PullRequest"
             if ENV["CODECOV_TOKEN"].nil?
