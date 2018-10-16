@@ -1,26 +1,25 @@
 default_platform(:ios)
 
 platform :ios do
-
-    desc "Fetch dependencies"
-    lane :prepare do |options|
+    desc "Build framework for testing"
+    lane :build do
         carthage(
             command: "bootstrap",
             platform: "iOS",
+            cache_builds: true,
             new_resolver: true 
         )
-    end
-
-    desc "Build framework for testing"
-    lane :build do | options |
         scan(
             build_for_testing: true,
+            xcargs: "analyze",
+            clean: true,
             devices: ["iPhone 7"],
             code_coverage: true,
-            derived_data_path: "DerivedData",
-            buildlog_path: "build",
             output_directory: "build",
-            output_types: "junit"
+            output_types: "junit",
+            buildlog_path: "build",
+            derived_data_path: "DerivedData",
+            formatter: "xcpretty-json-formatter"
         )
     end
 
@@ -30,35 +29,12 @@ platform :ios do
             test_without_building: true,
             devices: ["iPhone 7"],
             code_coverage: true,
-            derived_data_path: "DerivedData",
             buildlog_path: "test",
-            output_directory: "test",
-            output_types: "junit"
+            derived_data_path: "DerivedData",
+            output_types: "",
+            fail_build: true
         )
-    end
-
-    desc "Run post-test tasks"
-    lane :post_test do
-        config = Config.read_current()
-        sh "curl -s https://codecov.io/bash > codecov"
-        sh "chmod +x codecov"
-        codecov = "./codecov -J '^#{config.framework}$' -D ../DerivedData"
-
-        if ENV["BUILD_REASON"] == "PullRequest"
-            if ENV["CODECOV_TOKEN"].nil?
-                UI.user_error! "codecov.io token missing for current repository. Set it in CODECOV_TOKEN environment variable"
-            end
-
-            if ENV["BUILD_SOURCEBRANCH"].nil?
-                UI.user_error! "Source branch env variable missing. Set BUILD_SOURCEBRANCH to fix it"
-            end
-
-            pull_request_number = ENV["BUILD_SOURCEBRANCH"].split("/")[2] # For PRs the branch is in format "refs/pull/1/merge"
-
-            codecov << " -t #{ENV["CODECOV_TOKEN"]} -P #{pull_request_number}"
-        end
-
-        sh codecov
+        trainer(output_directory: "test")
     end
 
     desc "Release new framework version. Expects parameter 'type' with 'major', 'minor' or 'patch'"
