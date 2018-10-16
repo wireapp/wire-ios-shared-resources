@@ -1,6 +1,7 @@
 parameters:
   branch: "master"
 
+name: $(BuildID)
 steps:
 
 - script: |
