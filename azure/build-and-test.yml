@@ -4,11 +4,12 @@ parameters:
 steps:
 
 - script: |
-    git clone --single-branch -b "${{ parameters.branch }}" https://github.com/wireapp/wire-ios-shared-resources.git
+    git clone --single-branch -b $BRANCH https://github.com/wireapp/wire-ios-shared-resources.git
     mkdir -p fastlane
     cp wire-ios-shared-resources/Fastlane/Frameworks fastlane/Fastfile
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
+    BRANCH: ${{ parameters.branch }}
   displayName: "Prepare build scripts"
 
 - script: |
