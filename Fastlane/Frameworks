@@ -4,19 +4,16 @@ platform :ios do
 
     desc "Fetch dependencies"
     lane :prepare do |options|
-        sh "cd .. && ./setup.sh"
-    end
-
-
-    desc "Build framework for testing"
-    lane :build do | options |
-        UI.important options
         carthage(
             command: "bootstrap",
             platform: "iOS",
             cache_builds: true,
             new_resolver: true 
         )
+    end
+
+    desc "Build framework for testing"
+    lane :build do | options |
         scan(
             build_for_testing: true,
             devices: ["iPhone 7"],

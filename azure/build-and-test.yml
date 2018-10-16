@@ -14,9 +14,13 @@ steps:
 
 - script: |
     sudo xcode-select -switch /Applications/Xcode_10.app
-    fastlane build repo:$BUILD_REPOSITORY_NAME
+    fastlane prepare 
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
+  displayName: "Setup environment"
+
+- script: |
+    fastlane build
   displayName: "Build"
 
 - task: PublishBuildArtifacts@1
@@ -27,7 +31,7 @@ steps:
   displayName: "Store build log"
 
 - script: |
-    fastlane test repo:$BUILD_REPOSITORY_NAME
+    fastlane test
   displayName: "Test"
 
 - task: PublishTestResults@2
@@ -44,7 +48,7 @@ steps:
   displayName: "Store test log"
 
 - script: |
-    fastlane post_test repo:$BUILD_REPOSITORY_NAME
+    fastlane post_test
   env:  
     CODECOV_TOKEN: $(CODECOV_TOKEN)
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
