@@ -1,0 +1,54 @@
+parameters:
+  branch: "master"
+
+steps:
+- script: |
+    git clone --single-branch -b $BRANCH https://github.com/wireapp/wire-ios-shared-resources.git
+    mkdir -p fastlane
+    cp wire-ios-shared-resources/Azure/build-and-test/Fastfile fastlane/Fastfile
+  env:
+    GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
+    BRANCH: ${{ parameters.branch }}
+  displayName: "Prepare build scripts"
+
+- script: |
+    sudo xcode-select -switch /Applications/Xcode_10.app
+    fastlane prepare 
+  env:
+    GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
+  displayName: "Setup environment"
+
+- script: |
+    fastlane build
+  displayName: "Build"
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: "build"
+    artifactName: "Build logs"
+  condition: succeededOrFailed()
+  displayName: "Store build log"
+
+- script: |
+    fastlane test
+  displayName: "Test"
+
+- task: PublishTestResults@2
+  inputs:
+    testResultsFiles: 'test/*.junit'
+  condition: succeededOrFailed()
+  displayName: "Publish test results"
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: "test"
+    artifactName: "Test logs"
+  condition: succeededOrFailed()
+  displayName: "Store test log"
+
+- script: |
+    fastlane post_test
+  env:  
+    CODECOV_TOKEN: $(CODECOV_TOKEN)
+    GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
+  displayName: "Post Test"

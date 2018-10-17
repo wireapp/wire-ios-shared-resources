@@ -1,0 +1,8 @@
+jobs:
+  - job: Test
+    pool:
+      vmImage: "macOS 10.13"
+    steps:
+    - template: build-and-test/build-and-test.yml
+      parameters:
+        branch: feature/azure
