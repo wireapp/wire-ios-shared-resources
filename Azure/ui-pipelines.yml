@@ -3,6 +3,6 @@ jobs:
     pool:
       vmImage: "macOS 10.13"
     steps:
-    - template: build-ipa/build-and-test.yml
+    - template: build-ipa/build-ipa.yml
       parameters:
         branch: feature/ipa-build
