@@ -4,7 +4,7 @@ parameters:
 steps:
 - script: |
     git clone --single-branch -b $BRANCH https://github.com/wireapp/wire-ios-shared-resources.git
-    git clone https://github.com/wireapp/wire-ios-build-assets.git
+    git clone "https://{$GITHUB_ACCESS_TOKEN}@github.com/wireapp/wire-ios-build-assets.git"
     mkdir -p fastlane
     cp wire-ios-shared-resources/Azure/build-ipa/Fastfile fastlane/Fastfile
   env:
@@ -17,6 +17,7 @@ steps:
     fastlane prepare 
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
+    AVS_REPO: "wireapp/avs-ios-binaries-appstore"
   displayName: "Setup environment"
 
 - script: |
