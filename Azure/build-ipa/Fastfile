@@ -1,0 +1,24 @@
+opt_out_usage
+default_platform(:ios)
+
+platform :ios do
+
+    desc "Fetch dependencies"
+    lane :prepare do
+        sh "cd .. && ./setup.sh"
+    end
+
+    desc "Make ipa"
+    lane :release do 
+        build_ios_app(
+            scheme: "Wire-iOS",
+            derived_data_path: "DerivedData",
+            buildlog_path: "build",
+            output_directory: ENV["BUILD_ARTIFACTSTAGINGDIRECTORY"],
+            include_symbols: true,
+            xcconfig: "wire-ios-build-assets/Jenkins-Playground.xcconfig",
+            xcargs: "WIRE_BUILD_NUMBER="+ENV["BUILD_BUILDNUMBER"]
+        )
+    end
+
+end
