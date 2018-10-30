@@ -5,4 +5,4 @@ jobs:
     steps:
     - template: build-and-test/build-and-test.yml
       parameters:
-        branch: feature/azure
+        branch: master
