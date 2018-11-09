@@ -2,49 +2,57 @@ default_platform(:ios)
 
 platform :ios do
 
-    desc "Release new framework version. Expects parameter 'type' with 'major', 'minor' or 'patch'"
-    lane :release do |options|
-        bump = options[:type]
-        unless ["major", "minor", "patch"].include? bump
-            UI.user_error! "Invalid release type: '#{bump}', should be 'major', 'minor' or 'patch'"
+    desc "Build and attach binary to a framework release"
+    lane :build_binary do
+        version = last_git_tag.chomp
+        if version.nil?
+            UI.user_error! "No tag found"
+        end
+        unless git_tag_exists(tag: version, remote: true)  
+            UI.user_error! "Remote tag not found for version #{version}"
+        end
+
+        tag_at_head = sh "git tag -l --points-at HEAD".chomp
+        if tag_at_head.nil? || tag_at_head == version
+            UI.user_error! "Current commit #{last_git_commit[:commit_hash]} is not tagged with #{version}"
         end
         config = Config.read_current()
-        previous_version = Version.read_current()
-        ensure_git_branch(
-            branch: 'develop'
+        carthage_config = CarthageConfig.new(config.framework)
+    
+        sh "rm -f ../#{carthage_config.archive_name} || true"
+        sh "rm -rf ../#{carthage_config.build_result} || true"
+        carthage(
+            command: "build",
+            no_skip_current: true,
+            platform: "iOS"
         )
-        new_version = previous_version.bumped(bump)
-        unless should_create_release(new_version)
-            UI.user_error! "Version #{new_version} already exists!"
-        end
-        UI.important "Bumping project version to #{new_version}"
-        new_version.write()
-        message = release_details(previous_version, new_version, config)
-        git_commit(path: "*.xcconfig", message: message)
-        push_to_git_remote(
-            local_branch: "develop",
-            tags: false
+        # Swift frameworks need to be removed or Apple will reject the app
+        sh "rm -rf ../#{carthage_config.build_result}/Frameworks"
+        carthage(
+            command: "archive",
+            frameworks: [carthage_config.framework],
+            output: carthage_config.archive_name,
         )
-        add_git_tag(
-            tag: new_version.to_s
-        )
-        push_git_tags(
-            tag: new_version.to_s
+
+        previous_version = sh("git describe --abbrev=0 --tags `git rev-list --tags --skip=1 --max-count=1`").chomp
+        message = release_details(previous_version, version, config)
+
+        set_github_release(
+            repository_name: config.full_repo,
+            api_token: ENV["GITHUB_ACCESS_TOKEN"],
+            name: "#{version}",
+            tag_name: version,
+            description: message,
+            commitish: "develop",
+            upload_assets: [carthage_config.archive_name]
         )
     end
 
     # ------- Helpers -------
 
-    def should_create_release(version)
-        if git_tag_exists(tag: version.to_s, remote: true) 
-            return false
-        end
-        return true
-    end
-
     def release_details(old_version, new_version, config)
         changelog = changelog_from_git_commits(
-            between: [old_version.to_s, "HEAD"],
+            between: [old_version, new_version],
             pretty: "%h | %s",
             merge_commit_filtering: "exclude_merges"
         )
