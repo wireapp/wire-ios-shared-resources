@@ -19,7 +19,8 @@ platform :ios do
             output_types: "junit",
             buildlog_path: "build",
             derived_data_path: "DerivedData",
-            formatter: "xcpretty-json-formatter"
+            formatter: "xcpretty-json-formatter",
+            xcargs: "-parallel-testing-enabled=YES -parallel-testing-worker-count=3"
         )
     end
 
