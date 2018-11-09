@@ -5,7 +5,7 @@ jobs:
     steps:
     - template: build-and-test/build-and-test.yml
       parameters:
-        branch: frameworks/build
+        branch: master
   - job: Release
     pool:
       vmImage: "macOS 10.13"
@@ -13,4 +13,4 @@ jobs:
     steps:
     - template: release-framework/release-framework.yml
       parameters:
-        branch: frameworks/build
+        branch: master
