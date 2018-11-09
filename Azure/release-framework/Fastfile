@@ -3,7 +3,7 @@ default_platform(:ios)
 platform :ios do
 
     desc "Build and attach binary to a framework release"
-    lane :build_binary
+    lane :build_binary do
         version = last_git_tag
         if version.nil?
             UI.user_error! "No tag found"
