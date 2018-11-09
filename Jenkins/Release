@@ -5,7 +5,7 @@ pipeline {
     }
     environment { 
         // This is where the misc configuration files (e.g. Gemfile) are fetched from. When testing swap out the branch
-        DEPENDENCIES_BASE_URL = "https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master"
+        DEPENDENCIES_BASE_URL = "https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/frameworks/build"
         // For command line tools to be able to access API we set there env vars to values from Jenkins credentials store
         GITHUB_TOKEN = credentials('github-api-token')
         GITHUB_ACCESS_TOKEN = credentials('github-api-token')
