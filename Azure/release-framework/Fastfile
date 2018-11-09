@@ -39,7 +39,7 @@ platform :ios do
 
         set_github_release(
             repository_name: config.full_repo,
-            api_token: ENV["GITHUB_TOKEN"],
+            api_token: ENV["GITHUB_ACCESS_TOKEN"],
             name: "#{version}",
             tag_name: version,
             description: message,
