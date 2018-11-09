@@ -6,15 +6,10 @@ jobs:
     - template: build-and-test/build-and-test.yml
       parameters:
         branch: frameworks/build
-  - job: Dummy
-    pool:
-      vmImage: "macOS 10.13"
-    steps:
-    - script: "echo success"
   - job: Release
     pool:
       vmImage: "macOS 10.13"
-    dependsOn: Dummy
+    dependsOn: Test
     steps:
     - template: release-framework/release-framework.yml
       parameters:
