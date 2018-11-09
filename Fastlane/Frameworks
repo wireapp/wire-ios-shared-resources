@@ -1,41 +1,6 @@
 default_platform(:ios)
 
 platform :ios do
-    desc "Build framework for testing"
-    lane :build do
-        carthage(
-            command: "bootstrap",
-            platform: "iOS",
-            cache_builds: true,
-            new_resolver: true 
-        )
-        scan(
-            build_for_testing: true,
-            xcargs: "analyze",
-            clean: true,
-            devices: ["iPhone 7"],
-            code_coverage: true,
-            output_directory: "build",
-            output_types: "junit",
-            buildlog_path: "build",
-            derived_data_path: "DerivedData",
-            formatter: "xcpretty-json-formatter"
-        )
-    end
-
-    desc "Test framework without building"
-    lane :test do
-        scan(
-            test_without_building: true,
-            devices: ["iPhone 7"],
-            code_coverage: true,
-            buildlog_path: "test",
-            derived_data_path: "DerivedData",
-            output_types: "",
-            fail_build: true
-        )
-        trainer(output_directory: "test")
-    end
 
     desc "Release new framework version. Expects parameter 'type' with 'major', 'minor' or 'patch'"
     lane :release do |options|
@@ -56,23 +21,6 @@ platform :ios do
         new_version.write()
         message = release_details(previous_version, new_version, config)
         git_commit(path: "*.xcconfig", message: message)
-        carthage_config = CarthageConfig.new(config.framework)
-    
-        sh "rm -f ../#{carthage_config.archive_name} || true"
-        sh "rm -rf ../#{carthage_config.build_result} || true"
-        carthage(
-            command: "build",
-            no_skip_current: true,
-            platform: "iOS"
-        )
-        # Swift frameworks need to be removed or Apple will reject the app
-        sh "rm -rf ../#{carthage_config.build_result}/Frameworks"
-        carthage(
-            command: "archive",
-            frameworks: [carthage_config.framework],
-            output: carthage_config.archive_name,
-        )
-
         push_to_git_remote(
             local_branch: "develop",
             tags: false
@@ -82,15 +30,6 @@ platform :ios do
         )
         push_git_tags(
             tag: new_version.to_s
-        )
-        set_github_release(
-            repository_name: config.full_repo,
-            api_token: ENV["GITHUB_TOKEN"],
-            name: "#{new_version}",
-            tag_name: new_version.to_s,
-            description: message,
-            commitish: "develop",
-            upload_assets: [carthage_config.archive_name]
         )
     end
 

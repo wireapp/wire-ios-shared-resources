@@ -28,7 +28,7 @@ pipeline {
     }
 
     stages {
-        stage('Prepare') {
+        stage('Release') {
             steps {
                 // Checking out the correct repository. This is dynamic because we have one job that can build multiple frameworks
                 checkout([
@@ -40,19 +40,14 @@ pipeline {
                     ],
                     userRemoteConfigs: [[url: "git@github.com:wireapp/${BOT_FRAMEWORK}.git"]] // Dynamically create repo URL from parameters
                 ])
-                // Fetch dependencies used by Ruby tools from a shared place
-                sh "curl -O ${DEPENDENCIES_BASE_URL}/Gemfile"
-                sh "curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock"
-                sh "mkdir -p fastlane"
-                sh "curl -o fastlane/Fastfile ${DEPENDENCIES_BASE_URL}/Fastlane/Frameworks" 
-            }
-        }
-        stage('Release') {
-            steps {
-                // This env var points to the branch where this Jenkins file is in, not the framework project we just checked out and scripts get messed up. We know we are in develop now!
                 withEnv(['GIT_BRANCH=develop']) {
                     // Running fastlane script to release the framework
                     sh """#!/bin/bash -l
+                        curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
+                        curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
+                        mkdir -p fastlane
+                        curl -o fastlane/Fastfile ${DEPENDENCIES_BASE_URL}/Fastlane/Frameworks
+
                         bundle install --path ~/.gem
                         bundle exec fastlane release type:${BOT_TYPE}
                     """
