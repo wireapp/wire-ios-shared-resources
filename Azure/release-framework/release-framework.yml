@@ -12,6 +12,6 @@ steps:
     BRANCH: ${{ parameters.branch }}
   displayName: "Prepare build scripts"
 
-- script: |
-    fastlane build_binary
-  displayName: "Build and attach release binary"
+# - script: |
+#     fastlane build_binary
+#   displayName: "Build and attach release binary"
