@@ -52,7 +52,7 @@ platform :ios do
 
     def release_details(old_version, new_version, config)
         changelog = changelog_from_git_commits(
-            between: [old_version.to_s, "HEAD"],
+            between: [old_version, new_version],
             pretty: "%h | %s",
             merge_commit_filtering: "exclude_merges"
         )
