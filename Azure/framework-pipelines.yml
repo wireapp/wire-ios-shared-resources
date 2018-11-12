@@ -10,6 +10,7 @@ jobs:
     pool:
       vmImage: "macOS 10.13"
     dependsOn: Test
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/develop'))
     steps:
     - template: release-framework/release-framework.yml
       parameters:
