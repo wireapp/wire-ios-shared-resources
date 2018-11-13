@@ -13,10 +13,6 @@ steps:
   displayName: "Prepare build scripts"
 
 - script: |
-    echo "Current tag:"
-    git tag -l --points-at HEAD
-    echo "Latest tag:"
-    git describe --tags `git rev-list --tags --max-count=1`
     fastlane build_binary
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
