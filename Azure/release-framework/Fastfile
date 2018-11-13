@@ -12,12 +12,12 @@ platform :ios do
             UI.user_error! "Remote tag not found for version #{version}"
         end
 
-        tag_at_head = sh "git tag -l --points-at HEAD".chomp
+        tag_at_head = (sh "git tag -l --points-at HEAD").chomp
         if tag_at_head.nil?
             UI.user_error! "No tag for this commit"
         end
         if tag_at_head != version
-            UI.user_error! "Current commit #{last_git_commit[:commit_hash]} is not tagged with #{version}"
+            UI.user_error! "Current commit #{last_git_commit[:commit_hash]} is tagged with '#{tag_at_head}' expected '#{version}'"
         end
         config = Config.read_current()
         carthage_config = CarthageConfig.new(config.framework)
