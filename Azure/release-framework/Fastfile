@@ -13,7 +13,10 @@ platform :ios do
         end
 
         tag_at_head = sh "git tag -l --points-at HEAD".chomp
-        if tag_at_head.nil? || tag_at_head == version
+        if tag_at_head.nil?
+            UI.user_error! "No tag for this commit"
+        end
+        if tag_at_head != version
             UI.user_error! "Current commit #{last_git_commit[:commit_hash]} is not tagged with #{version}"
         end
         config = Config.read_current()
