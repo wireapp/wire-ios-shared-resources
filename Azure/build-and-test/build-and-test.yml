@@ -13,7 +13,7 @@ steps:
 
 - script: |
     sudo xcode-select -switch /Applications/Xcode_10.app
-    fastlane prepare 
+    carthage bootstrap --platform iOS --new-resolver 
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
   displayName: "Setup environment"
