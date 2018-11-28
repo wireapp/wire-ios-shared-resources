@@ -41,7 +41,7 @@ steps:
 
 - task: PublishBuildArtifacts@1
   inputs:
-    pathtoPublish: "test"
+    pathtoPublish: "DerivedData/Logs/Test/**"
     artifactName: "Test logs"
   condition: succeededOrFailed()
   displayName: "Store test log"
