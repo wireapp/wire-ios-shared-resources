@@ -47,6 +47,19 @@ steps:
   displayName: "Store test log"
 
 - script: |
+    cd DerivedData/Logs/Test
+    zip -r ../../../tests.xcresult.zip *.xcresult
+  displayName: "Compress .xcresult"
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: "tests.xcresult.zip"
+    artifactName: "Test logs bundle (.xcresult)"
+  condition: succeededOrFailed()
+  displayName: "Store test logs bundle (.xcresult)"
+
+- script: |
     fastlane post_test
   env:  
     CODECOV_TOKEN: $(CODECOV_TOKEN)
