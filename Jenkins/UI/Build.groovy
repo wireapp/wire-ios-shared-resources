@@ -15,8 +15,8 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('s3_secret_access_key')
 
         // For uploading to AppStore
-        FASTLANE_USER = credentials('appstore_connect_username')
-        FASTLANE_PASSWORD = credentials('appstore_connect_password')
+        APPSTORE_CONNECT_USER = credentials('appstore_connect_username')
+        APPSTORE_CONNECT_PASSWORD = credentials('appstore_connect_password')
 
         // Most fool-proof way to make sure rbenv and ruby works fine
         PATH = "/Users/ci/.rbenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
@@ -129,9 +129,14 @@ pipeline {
                 stage('Upload to AppStore') {
                     when { environment name: 'BUILD_TYPE', value: 'AppStore' }
                     steps {
-                        sh """#!/bin/bash -l
-                            bundle exec fastlane upload_app_store build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
-                        """
+                        withEnv([
+                            "FASTLANE_USER=${APPSTORE_CONNECT_USER}",
+                            "FASTLANE_PASSWORD=${APPSTORE_CONNECT_PASSWORD}"
+                        ]) {
+                            sh """#!/bin/bash -l
+                                bundle exec fastlane upload_app_store build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
+                            """
+                        }
                     }
                 }
                 stage('Upload to Hockey') {
@@ -146,6 +151,7 @@ pipeline {
     }
     post {
         always {
+
             junit testResults: "test/*.junit", allowEmptyResults: true
         }
     }
