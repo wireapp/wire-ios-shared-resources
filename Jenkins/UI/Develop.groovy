@@ -34,7 +34,7 @@ pipeline {
                     parameters: [
                         string(name: 'branch_to_build', value: BRANCH), 
                         string(name: 'BUILD_TYPE', value: 'Development'), 
-                        string(name: 'build_number_override', value: env.BUILD_NUMBER)
+                        string(name: 'build_number_override', value: env.BUILD_NUMBER),
                         string(name: 'last_commit_for_changelog', value: env.GIT_PREVIOUS_SUCCESSFUL_COMMIT)
                     ]
                 )
