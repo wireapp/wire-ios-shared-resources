@@ -72,6 +72,10 @@ pipeline {
                     bundle install --path ~/.gem
                     bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
                 """
+                // Make sure that all subsequent steps see the branch from main project, not from build assets
+                script {
+                    GIT_BRANCH = "${branch_to_build}"
+                }
             }
         }
         stage('Build') {
