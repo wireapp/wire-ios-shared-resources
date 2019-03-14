@@ -14,6 +14,10 @@ pipeline {
         AWS_ACCESS_KEY_ID = credentials('s3_access_key')
         AWS_SECRET_ACCESS_KEY = credentials('s3_secret_access_key')
 
+        // For uploading to AppStore
+        FASTLANE_USER = credentials('appstore_connect_username')
+        FASTLANE_PASSWORD = credentials('appstore_connect_password')
+
         // Most fool-proof way to make sure rbenv and ruby works fine
         PATH = "/Users/ci/.rbenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
 
@@ -126,7 +130,7 @@ pipeline {
                     when { environment name: 'BUILD_TYPE', value: 'AppStore' }
                     steps {
                         sh """#!/bin/bash -l
-                            bundle exec fastlane upload_app_store
+                            bundle exec fastlane upload_app_store build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
                         """
                     }
                 }
