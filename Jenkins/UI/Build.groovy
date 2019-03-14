@@ -31,6 +31,7 @@ pipeline {
             name: "BUILD_TYPE"
         )
         string(defaultValue: "", description: 'Override build number with', name: 'build_number_override')
+        string(defaultValue: "", description: 'Produces changelog from all commits added since this commit', name: 'last_commit_for_changelog')
     }
 
     stages {
@@ -128,7 +129,7 @@ pipeline {
                 stage('Upload to Hockey') {
                     steps {
                         sh """#!/bin/bash -l
-                            bundle exec fastlane upload_hockey build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} last_commit:${env.GIT_PREVIOUS_COMMIT}
+                            bundle exec fastlane upload_hockey build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} last_commit:${last_commit_for_changelog}
                         """
                     }
                 }
