@@ -43,6 +43,12 @@ pipeline {
                         string(name: 'last_commit_for_changelog', value: LAST_COMMIT)
                     ]
                 )
+                build(
+                    job: 'update_crowdin_ios', 
+                    parameters: [
+                        string(name: 'SourcesRoot', value: $WORKSPACE)
+                    ]
+                )
             }
         }
     }
