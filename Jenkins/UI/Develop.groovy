@@ -14,7 +14,6 @@ pipeline {
         stage('Checkout') {
             steps {
                 script {
-                    // Checking out the correct repository. This is dynamic because we have one job that can build multiple frameworks
                     def scmVars = checkout([
                         $class: 'GitSCM',
                         branches: [[name: BRANCH]], // Checks out specified branch
