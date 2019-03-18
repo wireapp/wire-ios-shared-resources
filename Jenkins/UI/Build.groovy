@@ -34,6 +34,7 @@ pipeline {
             description: 'Type of build', 
             name: "BUILD_TYPE"
         )
+        string(defaultValue: "", description: 'Version of AVS to use, only relevant for AVS build', name: 'avs_version')
         string(defaultValue: "", description: 'Override build number with', name: 'build_number_override')
         string(defaultValue: "", description: 'Produces changelog from all commits added since this commit', name: 'last_commit_for_changelog')
     }
@@ -74,7 +75,7 @@ pipeline {
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
 
                     bundle install --path ~/.gem
-                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
+                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version}
                 """
                 // Make sure that all subsequent steps see the branch from main project, not from build assets
                 script {
