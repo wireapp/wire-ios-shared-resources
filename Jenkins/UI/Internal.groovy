@@ -4,7 +4,7 @@ pipeline {
         ansiColor('xterm')
     }
     triggers { 
-        pollSCM('H/4 * * * *') 
+        pollSCM('H 21 * * *') 
     }
     environment {
         BRANCH = "develop"
@@ -37,15 +37,9 @@ pipeline {
                     job: 'client-ios-build-pipeline', 
                     parameters: [
                         string(name: 'branch_to_build', value: BRANCH), 
-                        string(name: 'BUILD_TYPE', value: 'Development'), 
+                        string(name: 'BUILD_TYPE', value: 'Internal'), 
                         string(name: 'build_number_override', value: env.BUILD_NUMBER),
                         string(name: 'last_commit_for_changelog', value: LAST_COMMIT)
-                    ]
-                )
-                build(
-                    job: 'update_crowdin_ios', 
-                    parameters: [
-                        string(name: 'SourcesRoot', value: ${env.WORKSPACE})
                     ]
                 )
             }
