@@ -45,7 +45,7 @@ pipeline {
                 build(
                     job: 'update_crowdin_ios', 
                     parameters: [
-                        string(name: 'SourcesRoot', value: ${env.WORKSPACE})
+                        string(name: 'SourcesRoot', value: env.WORKSPACE)
                     ]
                 )
             }
