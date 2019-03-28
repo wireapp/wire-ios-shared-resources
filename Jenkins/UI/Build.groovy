@@ -54,7 +54,8 @@ pipeline {
                     branches: [[name: '*/${branch_to_build}']], // Checks out specified branch
                     extensions: [
                         [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
-                        [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
+                        [$class: 'CleanBeforeCheckout'], // Resets untracked files, just to make sure we are clean
+                        [$class: 'CloneOption', timeout: 60] // Timeout after 1 hour
                     ],
                     userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios.git"]]
                 ])
