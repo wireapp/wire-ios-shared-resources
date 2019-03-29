@@ -26,6 +26,9 @@ pipeline {
 
         // This will be set to app build number
         BUILD_NUMBER = "${env.BUILD_NUMBER}"
+
+        // Repository from which to fetch custom AVS binary
+	AVS_REPO = wireapp/avs-ios-binaries-appstore
     }
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
