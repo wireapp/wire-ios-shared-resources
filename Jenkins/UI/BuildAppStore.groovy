@@ -26,20 +26,14 @@ pipeline {
 
         // This will be set to app build number
         BUILD_NUMBER = "${env.BUILD_NUMBER}"
+        BUILD_TYPE = "AppStore"
 
         // Repository from which to fetch custom AVS binary
-	AVS_REPO = "wireapp/avs-ios-binaries-appstore"
+        AVS_REPO = "wireapp/avs-ios-binaries-appstore"
     }
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
-        choice(
-            choices: ["Playground", "Development", "Internal", "AVS", "RC"], 
-            description: 'Type of build', 
-            name: "BUILD_TYPE"
-        )
-        string(defaultValue: "", description: 'Version of AVS to use, only relevant for AVS build', name: 'avs_version')
         string(defaultValue: "", description: 'Override build number with', name: 'build_number_override')
-        string(defaultValue: "", description: 'Produces changelog from all commits added since this commit', name: 'last_commit_for_changelog')
     }
 
     stages {
@@ -79,7 +73,7 @@ pipeline {
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
 
                     bundle install --path ~/.gem
-                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version}
+                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
                 """
                 // Make sure that all subsequent steps see the branch from main project, not from build assets
                 script {
@@ -87,35 +81,7 @@ pipeline {
                 }
             }
         }
-        stage('Build') {
-            steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane build
-                """
-            }
-        }
-        stage('Test') {
-            steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane test
-                """
-            }
-        }
-        stage("QA: build for simulator") {
-            steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} configuration:Debug for_simulator:true
-                """
-            }
-        }
-        stage("QA: build for device") {
-            steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} configuration:Debug for_simulator:false
-                """
-            }
-        }
-        stage('Build for release') {
+        stage('Build for AppStore') {
             steps {
                 sh """#!/bin/bash -l
                     bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
@@ -131,20 +97,26 @@ pipeline {
                         """
                     }
                 }
+                stage('Upload to AppStore') {
+                    steps {
+                        withEnv([
+                            "FASTLANE_USER=${APPSTORE_CONNECT_USER}",
+                            "FASTLANE_PASSWORD=${APPSTORE_CONNECT_PASSWORD}"
+                        ]) {
+                            sh """#!/bin/bash -l
+                                bundle exec fastlane upload_app_store build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
+                            """
+                        }
+                    }
+                }
                 stage('Upload to Hockey') {
                     steps {
                         sh """#!/bin/bash -l
-                            bundle exec fastlane upload_hockey build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} last_commit:${last_commit_for_changelog} avs_version:${avs_version}
+                            bundle exec fastlane upload_hockey_appstore build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
                         """
                     }
                 }
             }
-        }
-    }
-    post {
-        always {
-
-            junit testResults: "test/*.junit", allowEmptyResults: true
         }
     }
 }
