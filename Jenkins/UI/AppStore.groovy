@@ -27,7 +27,7 @@ pipeline {
                     ])
 
                     LAST_COMMIT = scmVars.GIT_PREVIOUS_COMMIT ?: ""
-                    BRANCH = scmVars.GIT_BRANCH
+                    BRANCH = scmVars.GIT_LOCAL_BRANCH
                 }
             }
         }
