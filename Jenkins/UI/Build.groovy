@@ -33,7 +33,7 @@ pipeline {
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
         choice(
-            choices: ["Playground", "Development", "Internal", "AppStore", "AVS", "RC"], 
+            choices: ["Playground", "Development", "Internal", "AVS", "RC"], 
             description: 'Type of build', 
             name: "BUILD_TYPE"
         )
@@ -129,19 +129,6 @@ pipeline {
                         sh """#!/bin/bash -l
                             bundle exec fastlane upload_s3 build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
                         """
-                    }
-                }
-                stage('Upload to AppStore') {
-                    when { environment name: 'BUILD_TYPE', value: 'AppStore' }
-                    steps {
-                        withEnv([
-                            "FASTLANE_USER=${APPSTORE_CONNECT_USER}",
-                            "FASTLANE_PASSWORD=${APPSTORE_CONNECT_PASSWORD}"
-                        ]) {
-                            sh """#!/bin/bash -l
-                                bundle exec fastlane upload_app_store build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
-                            """
-                        }
                     }
                 }
                 stage('Upload to Hockey') {
