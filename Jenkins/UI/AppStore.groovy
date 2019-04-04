@@ -43,7 +43,7 @@ pipeline {
                     ]
                 )
                 build(
-                    job: 'client-ios-appstore-build-pipeline', 
+                    job: 'client-ios-build-appstore-pipeline', 
                     parameters: [
                         string(name: 'branch_to_build', value: BRANCH), 
                         string(name: 'build_number_override', value: env.BUILD_NUMBER),
