@@ -1,5 +1,5 @@
 parameters:
-  branch: "master"
+  branch: "feature/Swift5"
 
 steps:
 - script: |
@@ -12,7 +12,7 @@ steps:
   displayName: "Prepare build scripts"
 
 - script: |
-    sudo xcode-select -switch /Applications/Xcode.app
+    sudo xcode-select -switch /Applications/Xcode_10.2.app
     carthage bootstrap --platform iOS --new-resolver 
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
