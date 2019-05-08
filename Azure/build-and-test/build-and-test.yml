@@ -1,5 +1,5 @@
 parameters:
-  branch: "feature/Swift5"
+  branch: "master"
 
 steps:
 - script: |
