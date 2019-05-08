@@ -5,7 +5,7 @@ jobs:
     steps:
     - template: build-and-test/build-and-test.yml
       parameters:
-        branch: feature/Swift5
+        branch: master
   - job: Release
     pool:
       vmImage: "macOS 10.14"
