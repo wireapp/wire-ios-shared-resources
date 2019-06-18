@@ -65,3 +65,4 @@ steps:
     CODECOV_TOKEN: $(CODECOV_TOKEN)
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
   displayName: "Post Test"
+  continueOnError: true
