@@ -63,17 +63,6 @@ pipeline {
                     ],
                     userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios.git"]]
                 ])
-                dir("wire-ios-build-assets") {
-                    checkout([
-                        $class: 'GitSCM',
-                        branches: [[name: '*/master']], // Checks out specified branch
-                        extensions: [
-                            [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
-                            [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
-                        ],
-                        userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-build-assets.git"]]
-                    ])
-                }
                 dir("wire-ios-ey-configuration") {
                     checkout([
                         $class: 'GitSCM',
@@ -106,13 +95,13 @@ pipeline {
                 """
             }
         }
-        stage('Test') {
-            steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane test
-                """
-            }
-        }
+        // stage('Test') {
+        //     steps {
+        //         sh """#!/bin/bash -l
+        //             bundle exec fastlane test
+        //         """
+        //     }
+        // }
         stage("QA: build for simulator") {
             steps {
                 sh """#!/bin/bash -l
