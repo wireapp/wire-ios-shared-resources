@@ -74,6 +74,17 @@ pipeline {
                         userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-build-assets.git"]]
                     ])
                 }
+                dir("wire-ios-ey-configuration") {
+                    checkout([
+                        $class: 'GitSCM',
+                        branches: [[name: '*/feature/DEV-Hockey-Jenkin']], // Checks out specified branch
+                        extensions: [
+                            [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
+                            [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
+                        ],
+                        userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-ey-configuration.git"]]
+                    ])
+                }
 
                 sh """#!/bin/bash -l
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
