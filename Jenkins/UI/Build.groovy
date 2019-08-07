@@ -32,6 +32,7 @@ pipeline {
     }
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
+        string(defaultValue: "", description: 'configuration path', name: 'configuration_path')
         choice(
             choices: ["Playground", "Development", "Internal", "AVS", "RC"], 
             description: 'Type of build', 
@@ -79,7 +80,7 @@ pipeline {
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
 
                     bundle install --path ~/.gem
-                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version}
+                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} configuration_path:${configuration_path}
                 """
                 // Make sure that all subsequent steps see the branch from main project, not from build assets
                 script {
