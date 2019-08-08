@@ -28,7 +28,7 @@ pipeline {
         BUILD_NUMBER = "${env.BUILD_NUMBER}"
 
         // Repository from which to fetch custom AVS binary
-	AVS_REPO = "wireapp/avs-ios-binaries-appstore"
+	    AVS_REPO = "wireapp/avs-ios-binaries-appstore"
     }
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
@@ -82,7 +82,7 @@ pipeline {
                     bundle install --path ~/.gem
                     bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} configuration_path:${configuration_path}
 
-                    
+
                     bundle exec bash ./wire-ios-ey-configuration/postprocess.sh
                 """
                 // Make sure that all subsequent steps see the branch from main project, not from build assets
@@ -138,7 +138,7 @@ pipeline {
                 stage('Upload to Hockey') {
                     steps {
                         sh """#!/bin/bash -l
-                            bundle exec fastlane upload_hockey build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} last_commit:${last_commit_for_changelog} avs_version:${avs_version}
+                            bundle exec fastlane upload_hockey build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} last_commit:${last_commit_for_changelog} avs_version:${avs_version} hockey_app_id:"65ce50ebe4b14c98bbfb3481861ca39e"
                         """
                     }
                 }
