@@ -24,8 +24,8 @@ pipeline {
         // Turn off annoying update checks
         FASTLANE_SKIP_UPDATE_CHECK = "YES"
 
-        // This will be set to app build number, add 2000000 as the prefix marking the 2019 Aug udpate
-        BUILD_NUMBER = "${env.BUILD_NUMBER}"+2000000
+        // This will be set to app build number
+        BUILD_NUMBER = "${env.BUILD_NUMBER}"
 
         // Repository from which to fetch custom AVS binary
 	    AVS_REPO = "wireapp/avs-ios-binaries-appstore"
