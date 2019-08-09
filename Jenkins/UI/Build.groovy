@@ -105,13 +105,16 @@ pipeline {
         //         """
         //     }
         // }
-        stage("QA: build for simulator") {
-            steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} configuration:Debug for_simulator:true
-                """
-            }
-        }
+        // 
+        // TODO: build to other path 
+        //
+        // stage("QA: build for simulator") {
+        //     steps {
+        //         sh """#!/bin/bash -l
+        //             bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} configuration:Debug for_simulator:true
+        //         """
+        //     }
+        // }
         stage("QA: build for device") {
             steps {
                 sh """#!/bin/bash -l
