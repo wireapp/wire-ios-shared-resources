@@ -146,6 +146,14 @@ pipeline {
 
             junit testResults: "test/*.junit", allowEmptyResults: true
         }
+        success {
+            sh """
+            rm -fr mobile-dashboard && git clone git@github.com:wireapp/mobile-dashboard.git
+            python mobile-dashboard/scripts/upload_junit.py \
+	            "test/report.junit" \
+	            "ios" || echo "FAILED TO UPLOAD TESTS"
+            """
+        }
     }
 }
 
