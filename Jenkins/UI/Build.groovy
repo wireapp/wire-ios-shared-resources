@@ -160,8 +160,8 @@ pipeline {
             curl -s https://raw.githubusercontent.com/wireapp/mobile-dashboard/master/scripts/upload_junit.py | python - \
                 "test/report.junit" \
                 "ios" \
-                --job_name ${parentBuid["name"]} \
-                --build_number ${parentBuid["number"]}
+                --job_name ${parentBuild["name"]} \
+                --build_number ${parentBuild["number"]}
                 || echo "FAILED TO UPLOAD TESTS"
             """
         }
