@@ -147,11 +147,16 @@ pipeline {
             junit testResults: "test/*.junit", allowEmptyResults: true
         }
         success {
+            def upstream = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
+            def upstreamJob = upstream?.upstreamProject ?: env.JOB_NAME
+            def upstreamNumber = upstream?.upstreamBuild ?: env.BUILD_NUMBER
             sh """
-            rm -fr mobile-dashboard && git clone git@github.com:wireapp/mobile-dashboard.git
-            python mobile-dashboard/scripts/upload_junit.py \
+            curl -s https://raw.githubusercontent.com/wireapp/mobile-dashboard/master/scripts/upload_junit.py | python - \
 	            "test/report.junit" \
-	            "ios" || echo "FAILED TO UPLOAD TESTS"
+	            "ios" \
+                --job_name ${upstreamJob} \
+                --build_number ${upstreamNumber}
+                || echo "FAILED TO UPLOAD TESTS"
             """
         }
     }
