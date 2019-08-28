@@ -1,3 +1,12 @@
+@NonCPS
+def getParentBuild() {
+    def upstream = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
+    def upstreamJob = upstream?.upstreamProject ?: env.JOB_NAME
+    def upstreamNumber = upstream?.upstreamBuild ?: env.BUILD_NUMBER
+    return ["name":upstreamJob, "number":upstreamNumber]
+}
+def parentBuild = getParentBuild()
+
 pipeline {
     agent any
     options {
@@ -147,18 +156,14 @@ pipeline {
             junit testResults: "test/*.junit", allowEmptyResults: true
         }
         success {
-            def upstream = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
-            def upstreamJob = upstream?.upstreamProject ?: env.JOB_NAME
-            def upstreamNumber = upstream?.upstreamBuild ?: env.BUILD_NUMBER
             sh """
             curl -s https://raw.githubusercontent.com/wireapp/mobile-dashboard/master/scripts/upload_junit.py | python - \
-	            "test/report.junit" \
-	            "ios" \
-                --job_name ${upstreamJob} \
-                --build_number ${upstreamNumber}
+                "test/report.junit" \
+                "ios" \
+                --job_name ${parentBuid["name"]} \
+                --build_number ${parentBuid["number"]}
                 || echo "FAILED TO UPLOAD TESTS"
             """
         }
     }
 }
-
