@@ -161,7 +161,7 @@ pipeline {
                 "test/report.junit" \
                 "ios" \
                 --job_name ${parentBuild["name"]} \
-                --build_number ${parentBuild["number"]}
+                --build_number ${parentBuild["number"]} \
                 || echo "FAILED TO UPLOAD TESTS"
             """
         }
