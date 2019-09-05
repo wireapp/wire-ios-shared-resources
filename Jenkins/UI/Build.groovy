@@ -157,7 +157,7 @@ pipeline {
         }
         success {
             sh """
-            curl -s https://gist.githubusercontent.com/marcoconti83/781c13a1c3faa55e20595015d929e2ca/raw/b57dff3731cfcad01c6d02f93d3ddad353bd6d5b/upload_junit.py | python - \
+            curl -s https://gist.githubusercontent.com/marcoconti83/781c13a1c3faa55e20595015d929e2ca/raw/upload_junit.py | python - \
                 "test/report.junit" \
                 "ios" \
                 --job_name ${parentBuild["name"]} \
