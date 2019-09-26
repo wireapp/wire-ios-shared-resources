@@ -158,10 +158,10 @@ pipeline {
         success {
             sh """
             curl -s https://gist.githubusercontent.com/marcoconti83/781c13a1c3faa55e20595015d929e2ca/raw/upload_junit.py | python - \
-                "test/report.junit" \
-                "ios" \
                 --job_name ${parentBuild["name"]} \
                 --build_number ${parentBuild["number"]} \
+                "ios" \
+                "test/report.junit" \
                 || echo "FAILED TO UPLOAD TESTS"
             """
         }
