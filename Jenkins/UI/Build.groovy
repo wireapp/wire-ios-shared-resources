@@ -140,10 +140,10 @@ pipeline {
                         """
                     }
                 }
-                stage('Upload to Hockey') {
+                stage('Upload to AppCenter') {
                     steps {
                         sh """#!/bin/bash -l
-                            bundle exec fastlane upload_hockey build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} last_commit:${last_commit_for_changelog} avs_version:${avs_version}
+                            bundle exec fastlane upload_app_center build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} last_commit:${last_commit_for_changelog} avs_version:${avs_version}
                         """
                     }
                 }
