@@ -109,10 +109,10 @@ pipeline {
                         }
                     }
                 }
-                stage('Upload to Hockey') {
+                stage('Upload to AppCenter') {
                     steps {
                         sh """#!/bin/bash -l
-                            bundle exec fastlane upload_hockey_appstore build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
+                            bundle exec fastlane upload_app_center_appstore build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
                         """
                     }
                 }
