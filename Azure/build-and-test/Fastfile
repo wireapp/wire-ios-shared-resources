@@ -15,7 +15,7 @@ platform :ios do
     lane :build do | options |
         scan(
             build_for_testing: true,
-            devices: ["iPhone 7"],
+            devices: ["iPhone 7 (13.0)"],
             code_coverage: true,
             derived_data_path: "DerivedData",
             buildlog_path: "build",
@@ -28,7 +28,7 @@ platform :ios do
     lane :test do
         scan(
             test_without_building: true,
-            devices: ["iPhone 7"],
+            devices: ["iPhone 7 (13.0)"],
             code_coverage: true,
             derived_data_path: "DerivedData",
             buildlog_path: "test",
@@ -42,7 +42,7 @@ platform :ios do
             UI.important "Some tests failed, retrying to see if they will pass"
             scan(
                 test_without_building: true,
-                devices: ["iPhone 7"],
+                devices: ["iPhone 7 (13.0)"],
                 code_coverage: false,
                 derived_data_path: "DerivedData",
                 only_testing: to_retry,
