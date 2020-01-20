@@ -88,6 +88,7 @@ pipeline {
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
 
                     bundle install --path ~/.gem
+                    env DEVELOPER_DIR=/Applications/Xcode_11.3.1.app/Contents/Developer
                     bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version}
                 """
                 // Make sure that all subsequent steps see the branch from main project, not from build assets
