@@ -87,6 +87,9 @@ pipeline {
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
 
+                    echo "set DEVELOPER_DIR to default XCode"
+                    export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+
                     bundle install --path ~/.gem
                     bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version}
                 """
