@@ -4,7 +4,7 @@ pipeline {
         ansiColor('xterm')
     }
     parameters {
-        string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
+        string(defaultValue: "chore/xcode11.3", description: 'Branch to use', name: 'branch_to_build')
         string(defaultValue: "/Applications/Xcode_11.3.1.app/Contents/Developer", description: 'XCode to use', name: 'developer_dir')
     }
 
