@@ -37,7 +37,9 @@ pipeline {
         BUILD_NUMBER = "${env.BUILD_NUMBER}"
 
         // Repository from which to fetch custom AVS binary
-	AVS_REPO = "wireapp/avs-ios-binaries-appstore"
+	    AVS_REPO = "wireapp/avs-ios-binaries-appstore"
+
+        DEVELOPER_DIR = "${developer_dir}"
     }
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
@@ -88,7 +90,7 @@ pipeline {
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
 
                     echo "set DEVELOPER_DIR to default XCode"
-                    export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+                    export DEVELOPER_DIR=${DEVELOPER_DIR}
 
                     bundle install --path ~/.gem
                     bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version}
