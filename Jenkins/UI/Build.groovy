@@ -86,12 +86,17 @@ pipeline {
                 }
 
                 script {
-                    if ("${BUILD_TYPE}" == 'Playground' && "${DEVELOPER_DIR}" != '') { 
-                        sh """#!/bin/bash -l
-                            echo "set DEVELOPER_DIR to ${DEVELOPER_DIR}"
-                            export DEVELOPER_DIR=${DEVELOPER_DIR}
-                        """
-                    }
+                    sh """#!/bin/bash -l
+
+                        export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+                    """
+
+                    // if ("${BUILD_TYPE}" == 'Playground' && "${DEVELOPER_DIR}" != '') { 
+                    //     sh """#!/bin/bash -l
+                    //         echo "set DEVELOPER_DIR to ${DEVELOPER_DIR}"
+                    //         export DEVELOPER_DIR=${DEVELOPER_DIR}
+                    //     """
+                    // }
                 }
 
                 sh """#!/bin/bash -l
