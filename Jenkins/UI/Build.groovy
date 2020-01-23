@@ -85,7 +85,7 @@ pipeline {
                     ])
                 }
 
-                if(DEVELOPER_DIR){ 
+                if ("${developer_dir}" != '') { 
                     sh """#!/bin/bash -l
                         echo "set DEVELOPER_DIR to default XCode"
                         export DEVELOPER_DIR=${DEVELOPER_DIR}
