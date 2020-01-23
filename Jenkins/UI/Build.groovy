@@ -86,14 +86,14 @@ pipeline {
                 }
 
                 script {
-                    if ("${developer_dir}" != '') { 
+                    if ("${BUILD_TYPE}" == 'Playground' && "${DEVELOPER_DIR}" != '') { 
                         sh """#!/bin/bash -l
-                            echo "set DEVELOPER_DIR to ${developer_dir}"
+                            echo "set DEVELOPER_DIR to ${DEVELOPER_DIR}"
                             export DEVELOPER_DIR=${DEVELOPER_DIR}
                         """
                     }
                 }
-                
+
                 sh """#!/bin/bash -l
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
