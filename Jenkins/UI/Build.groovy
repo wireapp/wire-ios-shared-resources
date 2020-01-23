@@ -85,13 +85,15 @@ pipeline {
                     ])
                 }
 
-                if ("${developer_dir}" != '') { 
-                    sh """#!/bin/bash -l
-                        echo "set DEVELOPER_DIR to default XCode"
-                        export DEVELOPER_DIR=${DEVELOPER_DIR}
-                    """
+                script {
+                    if ("${developer_dir}" != '') { 
+                        sh """#!/bin/bash -l
+                            echo "set DEVELOPER_DIR to default XCode"
+                            export DEVELOPER_DIR=${DEVELOPER_DIR}
+                        """
+                    }
                 }
-
+                
                 sh """#!/bin/bash -l
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
