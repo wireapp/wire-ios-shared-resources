@@ -8,10 +8,6 @@ pipeline {
     }
     environment {
         BRANCH = ""
-        
-        // For command line tools to be able to access API we set there env vars to values from Jenkins credentials store
-        GITHUB_TOKEN = credentials('github-api-token')
-        GITHUB_ACCESS_TOKEN = credentials('github-api-token')
     }
     stages {
         stage('Checkout') {
