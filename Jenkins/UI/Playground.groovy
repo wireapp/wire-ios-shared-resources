@@ -3,6 +3,11 @@ pipeline {
     options {
         ansiColor('xterm')
     }
+
+    environment { 
+        DEVELOPER_DIR = "/Applications/Xcode_11.4.app/Contents/Developer/"
+    }
+
     parameters {
         string(defaultValue: "chore/xcode11.3", description: 'Branch to use', name: 'branch_to_build')
         string(defaultValue: "/Applications/Xcode.app/Contents/Developer", description: 'XCode to use', name: 'developer_dir')
