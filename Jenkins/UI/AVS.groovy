@@ -14,6 +14,7 @@ pipeline {
                 build(
                     job: 'client-ios-build-pipeline', 
                     parameters: [
+                        string(name: 'developer_dir', value: '/Applications/Xcode.app/Contents/Developer'),
                         string(name: 'branch_to_build', value: branch_to_build), 
                         string(name: 'BUILD_TYPE', value: 'AVS'), 
                         string(name: 'avs_version', value: avs_version),

@@ -37,7 +37,9 @@ pipeline {
         BUILD_NUMBER = "${env.BUILD_NUMBER}"
 
         // Repository from which to fetch custom AVS binary
-	AVS_REPO = "wireapp/avs-ios-binaries-appstore"
+	    AVS_REPO = "wireapp/avs-ios-binaries-appstore"
+
+        DEVELOPER_DIR = "${developer_dir}"
     }
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
@@ -81,6 +83,20 @@ pipeline {
                         ],
                         userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-build-assets.git"]]
                     ])
+                }
+
+                script {
+                    sh """#!/bin/bash -l
+
+                        export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+                    """
+
+                    // if ("${BUILD_TYPE}" == 'Playground' && "${DEVELOPER_DIR}" != '') { 
+                    //     sh """#!/bin/bash -l
+                    //         echo "set DEVELOPER_DIR to ${DEVELOPER_DIR}"
+                    //         export DEVELOPER_DIR=${DEVELOPER_DIR}
+                    //     """
+                    // }
                 }
 
                 sh """#!/bin/bash -l
