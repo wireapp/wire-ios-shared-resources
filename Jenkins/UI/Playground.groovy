@@ -5,11 +5,11 @@ pipeline {
     }
     
     environment { 
-        DEVELOPER_DIR = "/Applications/Xcode_11.3.1.app/Contents/Developer/"
+        DEVELOPER_DIR = "/Applications/Xcode_11.4.app/Contents/Developer/"
     }
     
     parameters {
-        string(defaultValue: "chore/xcode11.3", description: 'Branch to use', name: 'branch_to_build')
+        string(defaultValue: "chore/xcode11.4", description: 'Branch to use', name: 'branch_to_build')
         string(defaultValue: "/Applications/Xcode.app/Contents/Developer", description: 'XCode to use', name: 'developer_dir')
     }
 
