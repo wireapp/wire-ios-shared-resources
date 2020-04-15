@@ -9,7 +9,6 @@ pipeline {
     }
     
     parameters {
-        string(defaultValue: "chore/xcode11.4", description: 'Branch to use', name: 'branch_to_build')
         string(defaultValue: "/Applications/Xcode.app/Contents/Developer", description: 'XCode to use', name: 'developer_dir')
     }
 
