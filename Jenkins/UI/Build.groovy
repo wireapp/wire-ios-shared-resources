@@ -39,7 +39,7 @@ pipeline {
         // Repository from which to fetch custom AVS binary
 	    AVS_REPO = "wireapp/avs-ios-binaries-appstore"
 
-        DEVELOPER_DIR = "${developer_dir}"
+        XCODE_VERSION = "${xcode_version}"
     }
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
@@ -85,26 +85,12 @@ pipeline {
                     ])
                 }
 
-                script {
-                    sh """#!/bin/bash -l
-
-                        export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
-                    """
-
-                    // if ("${BUILD_TYPE}" == 'Playground' && "${DEVELOPER_DIR}" != '') { 
-                    //     sh """#!/bin/bash -l
-                    //         echo "set DEVELOPER_DIR to ${DEVELOPER_DIR}"
-                    //         export DEVELOPER_DIR=${DEVELOPER_DIR}
-                    //     """
-                    // }
-                }
-
                 sh """#!/bin/bash -l
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
 
                     bundle install --path ~/.gem
-                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version}
+                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version}
                 """
                 // Make sure that all subsequent steps see the branch from main project, not from build assets
                 script {
