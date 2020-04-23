@@ -4,8 +4,8 @@ pipeline {
         ansiColor('xterm')
     }
     parameters {
-        string(defaultValue: "chore/xcode11.3", description: 'Branch to use', name: 'branch_to_build')
-        string(defaultValue: "/Applications/Xcode.app/Contents/Developer", description: 'XCode to use', name: 'developer_dir')
+        string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
+        string(defaultValue: "10.2.1", description: 'XCode version to use (10.2.1/10.4/10.4.1)', name: 'xcode_version')
     }
 
     stages {
@@ -14,7 +14,7 @@ pipeline {
                 build(
                     job: 'client-ios-build-pipeline', 
                     parameters: [
-                        string(name: 'developer_dir', value: developer_dir), 
+                        string(name: 'xcode_version', value: xcode_version), 
                         string(name: 'branch_to_build', value: branch_to_build), 
                         string(name: 'BUILD_TYPE', value: 'Playground'), 
                         string(name: 'build_number_override', value: env.BUILD_NUMBER)
