@@ -4,10 +4,6 @@ pipeline {
         ansiColor('xterm')
     }
     
-    environment { 
-        DEVELOPER_DIR = "/Applications/Xcode_11.4.app/Contents/Developer/"
-    }
-    
     parameters {
         string(defaultValue: "/Applications/Xcode.app/Contents/Developer", description: 'XCode to use', name: 'developer_dir')
     }
