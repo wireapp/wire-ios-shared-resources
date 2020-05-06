@@ -10,6 +10,9 @@ pipeline {
         BRANCH = "develop"
         LAST_COMMIT = ""
     }
+    parameters {
+        string(defaultValue: "11.4.1", description: 'XCode version to use (10.2.1/11.4/11.4.1)', name: 'xcode_version')
+    }
     stages {
         stage('Checkout') {
             steps {
@@ -36,7 +39,7 @@ pipeline {
                 build(
                     job: 'client-ios-build-pipeline', 
                     parameters: [
-                        string(name: 'developer_dir', value: '/Applications/Xcode.app/Contents/Developer'), 
+                        string(name: 'xcode_version', value: xcode_version), 
                         string(name: 'branch_to_build', value: BRANCH), 
                         string(name: 'BUILD_TYPE', value: 'Internal'), 
                         string(name: 'build_number_override', value: env.BUILD_NUMBER),
