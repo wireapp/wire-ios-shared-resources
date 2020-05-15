@@ -30,6 +30,8 @@ pipeline {
 
         // Repository from which to fetch custom AVS binary
         AVS_REPO = "wireapp/avs-ios-binaries-appstore"
+
+        XCODE_VERSION = "${xcode_version}"
     }
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
@@ -73,7 +75,7 @@ pipeline {
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
 
                     bundle install --path ~/.gem
-                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
+                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} xcode_version:${xcode_version}
                 """
                 // Make sure that all subsequent steps see the branch from main project, not from build assets
                 script {
@@ -84,7 +86,7 @@ pipeline {
         stage('Build for AppStore') {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
+                    bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} xcode_version:${xcode_version}
                 """
             }
         }
