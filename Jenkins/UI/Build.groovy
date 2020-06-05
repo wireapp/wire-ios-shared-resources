@@ -101,7 +101,12 @@ pipeline {
         stage('Build') {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane build xcode_version:${xcode_version} build_number:${BUILD_NUMBER}
+                    bundle exec fastlane build \
+                     build_number:${BUILD_NUMBER} \
+                     build_type:${BUILD_TYPE} \
+                     configuration:Debug \
+                     for_simulator:true \
+                     xcode_version:${xcode_version}
                 """
             }
         }
