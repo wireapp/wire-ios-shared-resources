@@ -91,19 +91,19 @@ pipeline {
                      [$class: 'ArbitraryFileCache', 
                       excludes: '', 
                       includes: '**/*', 
-                      path: '${HOME}']
+                      path: '.']
                     ]) 
                 {
+                    sh """#!/bin/bash -l
+                        curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
+                        curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
+
+                        bundle install --path ~/.gem
+                        bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version}
+                    """
                 }
 
 
-                sh """#!/bin/bash -l
-                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
-                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
-
-                    bundle install --path ~/.gem
-                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version}
-                """
                 // Make sure that all subsequent steps see the branch from main project, not from build assets
                 script {
                     GIT_BRANCH = "${branch_to_build}"
