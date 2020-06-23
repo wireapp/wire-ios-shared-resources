@@ -86,15 +86,24 @@ pipeline {
                     ])
                 }
 
+                node('label'){
+                    //now you are on slave labeled with 'label'
+                    def workspace = pwd()
+                    //${workspace} will now contain an absolute path to job workspace on slave 
+                    echo "Current workspace is ${workspace}"
+                }
+
                 cache(maxCacheSize: 1024, 
                     caches: [
                      [$class: 'ArbitraryFileCache', 
                       excludes: '', 
                       includes: '**/*', 
-                      path: '.']
+                      path: '${WORKSPACE}']
                     ]) 
                 {
                     sh """#!/bin/bash -l
+                        echo "Current workspace is ${WORKSPACE}"
+
                         curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
                         curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
 
