@@ -86,7 +86,7 @@ pipeline {
                     ])
                 }
 
-                node('label'){
+                script {
                     //now you are on slave labeled with 'label'
                     def workspace = pwd()
                     //${workspace} will now contain an absolute path to job workspace on slave 
