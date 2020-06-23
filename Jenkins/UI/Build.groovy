@@ -53,6 +53,7 @@ pipeline {
         string(defaultValue: "", description: 'Produces changelog from all commits added since this commit', name: 'last_commit_for_changelog')
     }
 
+
     stages {
         stage('Checkout') {
             steps {
@@ -84,6 +85,17 @@ pipeline {
                         userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-build-assets.git"]]
                     ])
                 }
+
+                cache(maxCacheSize: 1024, 
+                    caches: [
+                     [$class: 'CarthageCache', 
+                      excludes: '', 
+                      includes: '**/*', 
+                      path: '${HOME}']
+                    ]) 
+                {
+                }
+
 
                 sh """#!/bin/bash -l
                     curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
