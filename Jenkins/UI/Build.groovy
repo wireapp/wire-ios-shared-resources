@@ -88,7 +88,7 @@ pipeline {
 
                 cache(maxCacheSize: 1024, 
                     caches: [
-                     [$class: 'CarthageCache', 
+                     [$class: 'ArbitraryFileCache', 
                       excludes: '', 
                       includes: '**/*', 
                       path: '${HOME}']
