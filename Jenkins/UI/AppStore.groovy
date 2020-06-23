@@ -10,7 +10,7 @@ pipeline {
         BRANCH = ""
     }
     parameters {
-        string(defaultValue: "11.4.1", description: 'XCode version to use (10.2.1/11.4/11.4.1)', name: 'xcode_version')
+        string(defaultValue: "11.4.1", description: 'XCode version to use (11.4/12.0)', name: 'xcode_version')
     }
     stages {
         stage('Checkout') {
