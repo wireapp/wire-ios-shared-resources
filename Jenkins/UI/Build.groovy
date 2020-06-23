@@ -110,18 +110,24 @@ pipeline {
                 """
             }
         }
-        stage('Test') {
-            steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane test xcode_version:${xcode_version}
-                """
-            }
-        }
-        stage("QA: build for simulator") {
-            steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} configuration:Debug for_simulator:true xcode_version:${xcode_version}
-                """
+        stage('Test & QA: build for simulator') {
+            parallel {
+                stage('Test') {
+                    steps {
+                        sh """#!/bin/bash -l
+                            bundle exec fastlane test xcode_version:${xcode_version}
+                        """
+                    }
+                }
+                stage("QA: build for simulator") {
+                    steps {
+                        sh """#!/bin/bash -l
+                            ### sleep 2 minute, test takes ~3min and may block the test when zipping the files
+                            sleep 2m
+                            bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} configuration:Debug for_simulator:true xcode_version:${xcode_version}
+                        """
+                    }
+                }
             }
         }
         stage("QA: build for device") {
