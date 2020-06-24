@@ -63,6 +63,7 @@ pipeline {
                         BUILD_NUMBER = "${build_number_override}"
                     }
                 }
+
                 // Checking out the correct repository. This is dynamic because we have one job that can build multiple frameworks
                 checkout([
                     $class: 'GitSCM',
@@ -74,37 +75,36 @@ pipeline {
                     ],
                     userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios.git"]]
                 ])
-                dir("wire-ios-build-assets") {
-                    checkout([
-                        $class: 'GitSCM',
-                        branches: [[name: '*/master']], // Checks out specified branch
-                        extensions: [
-                            [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
-                            [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
-                        ],
-                        userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-build-assets.git"]]
-                    ])
+
+                parallel {
+                	stage('checkout wire-ios-build-assets') {
+		                dir("wire-ios-build-assets") {
+		                    checkout([
+		                        $class: 'GitSCM',
+		                        branches: [[name: '*/master']], // Checks out specified branch
+		                        extensions: [
+		                            [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
+		                            [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
+		                        ],
+		                        userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-build-assets.git"]]
+		                    ])
+		                }
+                	}
+
+                	stage('Gems') {
+		                sh """#!/bin/bash -l
+		                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
+		                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
+
+		                    bundle install --path ~/.gem
+		                """
+                	}
                 }
 
+
                 sh """#!/bin/bash -l
-                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
-                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
-
-                    bundle install --path ~/.gem
+                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version}
                 """
-
-                // cache(maxCacheSize: 2048, 
-                //     caches: [                     
-                //      [$class: 'ArbitraryFileCache', 
-                //       excludes: 'Checkouts/wire-ios-*/**', 
-                //       includes: '**/*', 
-                //       path: '${WORKSPACE}/Carthage']
-                //     ]) 
-                // {
-                    sh """#!/bin/bash -l
-                        bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version}
-                    """
-                // }
 
 
                 // Make sure that all subsequent steps see the branch from main project, not from build assets
@@ -115,24 +115,14 @@ pipeline {
         }
         stage('Build') {
             steps {
-            	// cache(maxCacheSize: 2048, 
-             //        caches: [                     
-             //         [$class: 'ArbitraryFileCache', 
-             //          excludes: '', 
-             //          includes: '**/*', 
-             //          path: '${WORKSPACE}/DerivedData']
-             //        ]) 
-             //    {
-	                sh """#!/bin/bash -l
-	                    bundle exec fastlane build \
-	                     build_number:${BUILD_NUMBER} \
-	                     build_type:${BUILD_TYPE} \
-	                     configuration:Debug \
-	                     for_simulator:true \
-	                     xcode_version:${xcode_version}
-	                """
-                // }
-
+                sh """#!/bin/bash -l
+                    bundle exec fastlane build \
+                     build_number:${BUILD_NUMBER} \
+                     build_type:${BUILD_TYPE} \
+                     configuration:Debug \
+                     for_simulator:true \
+                     xcode_version:${xcode_version}
+                """
             }
         }
         stage('Test & QA: build for simulator') {
