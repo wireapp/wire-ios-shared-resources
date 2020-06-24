@@ -86,6 +86,15 @@ pipeline {
                     ])
                 }
 
+                {
+                    sh """#!/bin/bash -l
+                        curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
+                        curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
+
+                        bundle install --path ~/.gem
+                    """
+                }
+
                 cache(maxCacheSize: 2048, 
                     caches: [
                      [$class: 'ArbitraryFileCache', 
@@ -99,12 +108,6 @@ pipeline {
                     ]) 
                 {
                     sh """#!/bin/bash -l
-                        echo "Will cache ${WORKSPACE}/Carthage folder, limit 2048MB"
-
-                        curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
-                        curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
-
-                        bundle install --path ~/.gem
                         bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version}
                     """
                 }
