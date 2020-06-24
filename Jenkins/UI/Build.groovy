@@ -102,7 +102,12 @@ pipeline {
                      [$class: 'ArbitraryFileCache', 
                       excludes: '', 
                       includes: '**/*', 
-                      path: '${WORKSPACE}/Carthage/Checkouts']
+                      path: '${WORKSPACE}/Carthage/Checkouts'],
+                     [$class: 'ArbitraryFileCache', 
+                      excludes: '', 
+                      includes: '.*.version', 
+                      path: '${WORKSPACE}/Carthage']
+                    ]
                     ]) 
                 {
                     sh """#!/bin/bash -l
