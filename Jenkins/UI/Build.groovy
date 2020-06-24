@@ -86,16 +86,16 @@ pipeline {
                     ])
                 }
 
-                cache(maxCacheSize: 256, 
+                cache(maxCacheSize: 2048, 
                     caches: [
                      [$class: 'ArbitraryFileCache', 
                       excludes: '', 
                       includes: '**/*', 
-                      path: '${WORKSPACE}/Carthage']
+                      path: '${WORKSPACE}/Carthage/Build/iOS']
                     ]) 
                 {
                     sh """#!/bin/bash -l
-                        echo "Cached ${WORKSPACE}/Carthage"
+                        echo "Will cache ${WORKSPACE}/Carthage folder, limit 2048MB"
 
                         curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
                         curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
