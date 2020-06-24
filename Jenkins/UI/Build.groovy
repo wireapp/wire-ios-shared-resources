@@ -107,7 +107,6 @@ pipeline {
                       excludes: '', 
                       includes: '.*.version', 
                       path: '${WORKSPACE}/Carthage']
-                    ]
                     ]) 
                 {
                     sh """#!/bin/bash -l
