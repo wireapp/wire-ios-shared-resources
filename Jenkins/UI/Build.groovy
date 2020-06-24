@@ -76,34 +76,39 @@ pipeline {
                     userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios.git"]]
                 ])
 
-        stage('build-assets & Gems') {
-                parallel {
-                	stage('checkout wire-ios-build-assets') {
-		                dir("wire-ios-build-assets") {
-		                    checkout([
-		                        $class: 'GitSCM',
-		                        branches: [[name: '*/master']], // Checks out specified branch
-		                        extensions: [
-		                            [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
-		                            [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
-		                        ],
-		                        userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-build-assets.git"]]
-		                    ])
-		                }
-                	}
-
-                	stage('Gems') {
-		                sh """#!/bin/bash -l
-		                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
-		                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
-
-		                    bundle install --path ~/.gem
-		                """
-                	}
-                }
             }
+        }
+
+        stage('build-assets & Gems') {
+	        parallel {
+	        	stage('checkout wire-ios-build-assets') {
+	                dir("wire-ios-build-assets") {
+	                    checkout([
+	                        $class: 'GitSCM',
+	                        branches: [[name: '*/master']], // Checks out specified branch
+	                        extensions: [
+	                            [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
+	                            [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
+	                        ],
+	                        userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-build-assets.git"]]
+	                    ])
+	                }
+	        	}
+
+	        	stage('Gems') {
+	                sh """#!/bin/bash -l
+	                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
+	                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
+
+	                    bundle install --path ~/.gem
+	                """
+	        	}
+	        }
+	    }
 
 
+        stage('fastlane prepare') {
+            steps {
                 sh """#!/bin/bash -l
                     bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version}
                 """
@@ -115,6 +120,7 @@ pipeline {
                 }
             }
         }
+
         stage('Build') {
             steps {
                 sh """#!/bin/bash -l
