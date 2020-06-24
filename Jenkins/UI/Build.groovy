@@ -53,6 +53,7 @@ pipeline {
         string(defaultValue: "", description: 'Produces changelog from all commits added since this commit', name: 'last_commit_for_changelog')
     }
 
+
     stages {
         stage('Checkout') {
             steps {
@@ -85,13 +86,26 @@ pipeline {
                     ])
                 }
 
-                sh """#!/bin/bash -l
-                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
-                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
+                cache(maxCacheSize: 2048, 
+                    caches: [
+                     [$class: 'ArbitraryFileCache', 
+                      excludes: '', 
+                      includes: '**/*', 
+                      path: '${WORKSPACE}/Carthage/Build/iOS']
+                    ]) 
+                {
+                    sh """#!/bin/bash -l
+                        echo "Will cache ${WORKSPACE}/Carthage folder, limit 2048MB"
 
-                    bundle install --path ~/.gem
-                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version}
-                """
+                        curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
+                        curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
+
+                        bundle install --path ~/.gem
+                        bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version}
+                    """
+                }
+
+
                 // Make sure that all subsequent steps see the branch from main project, not from build assets
                 script {
                     GIT_BRANCH = "${branch_to_build}"
@@ -122,6 +136,8 @@ pipeline {
                 stage("QA: build for simulator") {
                     steps {
                         sh """#!/bin/bash -l
+                            ### sleep 1 minute, test takes ~3min and may block the test when zipping the files
+                            sleep 1m
                             bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} configuration:Debug for_simulator:true xcode_version:${xcode_version}
                         """
                     }
