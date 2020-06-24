@@ -76,6 +76,7 @@ pipeline {
                     userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios.git"]]
                 ])
 
+        stage('build-assets & Gems') {
                 parallel {
                 	stage('checkout wire-ios-build-assets') {
 		                dir("wire-ios-build-assets") {
@@ -100,6 +101,7 @@ pipeline {
 		                """
                 	}
                 }
+            }
 
 
                 sh """#!/bin/bash -l
