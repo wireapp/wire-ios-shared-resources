@@ -93,18 +93,18 @@ pipeline {
                     bundle install --path ~/.gem
                 """
 
-                cache(maxCacheSize: 2048, 
-                    caches: [                     
-                     [$class: 'ArbitraryFileCache', 
-                      excludes: 'Checkouts/wire-ios-*/**', 
-                      includes: '**/*', 
-                      path: '${WORKSPACE}/Carthage']
-                    ]) 
-                {
+                // cache(maxCacheSize: 2048, 
+                //     caches: [                     
+                //      [$class: 'ArbitraryFileCache', 
+                //       excludes: 'Checkouts/wire-ios-*/**', 
+                //       includes: '**/*', 
+                //       path: '${WORKSPACE}/Carthage']
+                //     ]) 
+                // {
                     sh """#!/bin/bash -l
                         bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version}
                     """
-                }
+                // }
 
 
                 // Make sure that all subsequent steps see the branch from main project, not from build assets
@@ -115,14 +115,14 @@ pipeline {
         }
         stage('Build') {
             steps {
-            	cache(maxCacheSize: 2048, 
-                    caches: [                     
-                     [$class: 'ArbitraryFileCache', 
-                      excludes: '', 
-                      includes: '**/*', 
-                      path: '${WORKSPACE}/DerivedData']
-                    ]) 
-                {
+            	// cache(maxCacheSize: 2048, 
+             //        caches: [                     
+             //         [$class: 'ArbitraryFileCache', 
+             //          excludes: '', 
+             //          includes: '**/*', 
+             //          path: '${WORKSPACE}/DerivedData']
+             //        ]) 
+             //    {
 	                sh """#!/bin/bash -l
 	                    bundle exec fastlane build \
 	                     build_number:${BUILD_NUMBER} \
@@ -131,7 +131,7 @@ pipeline {
 	                     for_simulator:true \
 	                     xcode_version:${xcode_version}
 	                """
-                }
+                // }
 
             }
         }
