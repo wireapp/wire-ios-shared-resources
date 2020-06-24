@@ -82,26 +82,30 @@ pipeline {
         stage('build-assets & Gems') {
 	        parallel {
 	        	stage('checkout wire-ios-build-assets') {
-	                dir("wire-ios-build-assets") {
-	                    checkout([
-	                        $class: 'GitSCM',
-	                        branches: [[name: '*/master']], // Checks out specified branch
-	                        extensions: [
-	                            [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
-	                            [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
-	                        ],
-	                        userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-build-assets.git"]]
-	                    ])
-	                }
+		            steps {
+		                dir("wire-ios-build-assets") {
+		                    checkout([
+		                        $class: 'GitSCM',
+		                        branches: [[name: '*/master']], // Checks out specified branch
+		                        extensions: [
+		                            [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
+		                            [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
+		                        ],
+		                        userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-build-assets.git"]]
+		                    ])
+		                }
+		            }
 	        	}
 
 	        	stage('Gems') {
-	                sh """#!/bin/bash -l
-	                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
-	                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
+		            steps {
+		                sh """#!/bin/bash -l
+		                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
+		                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
 
-	                    bundle install --path ~/.gem
-	                """
+		                    bundle install --path ~/.gem
+		                """
+	            	}
 	        	}
 	        }
 	    }
