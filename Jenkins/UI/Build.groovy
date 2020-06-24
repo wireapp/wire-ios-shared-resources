@@ -115,14 +115,24 @@ pipeline {
         }
         stage('Build') {
             steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane build \
-                     build_number:${BUILD_NUMBER} \
-                     build_type:${BUILD_TYPE} \
-                     configuration:Debug \
-                     for_simulator:true \
-                     xcode_version:${xcode_version}
-                """
+            	cache(maxCacheSize: 2048, 
+                    caches: [                     
+                     [$class: 'ArbitraryFileCache', 
+                      excludes: '', 
+                      includes: '**/*', 
+                      path: '${WORKSPACE}/DerivedData']
+                    ]) 
+                {
+	                sh """#!/bin/bash -l
+	                    bundle exec fastlane build \
+	                     build_number:${BUILD_NUMBER} \
+	                     build_type:${BUILD_TYPE} \
+	                     configuration:Debug \
+	                     for_simulator:true \
+	                     xcode_version:${xcode_version}
+	                """
+                }
+
             }
         }
         stage('Test & QA: build for simulator') {
