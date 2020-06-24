@@ -101,11 +101,11 @@ pipeline {
                       path: '${WORKSPACE}/Carthage/Build/iOS'],
                      [$class: 'ArbitraryFileCache', 
                       excludes: '', 
-                      includes: '**/*', 
+                      includes: '', 
                       path: '${WORKSPACE}/Carthage/Checkouts'],
                      [$class: 'ArbitraryFileCache', 
                       excludes: '', 
-                      includes: '.*.version', 
+                      includes: '**/*', 
                       path: '${WORKSPACE}/Carthage']
                     ]) 
                 {
