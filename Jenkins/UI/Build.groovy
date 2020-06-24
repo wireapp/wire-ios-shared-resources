@@ -96,7 +96,7 @@ pipeline {
                 cache(maxCacheSize: 2048, 
                     caches: [                     
                      [$class: 'ArbitraryFileCache', 
-                      excludes: 'Checkouts/wire-ios-sync-engine/Carthage/**, Checkouts/wire-ios-data-model/Carthage/**', 
+                      excludes: '*/Carthage/**', 
                       includes: '**/*', 
                       path: '${WORKSPACE}/Carthage']
                     ]) 
