@@ -86,14 +86,12 @@ pipeline {
                     ])
                 }
 
-                {
-                    sh """#!/bin/bash -l
-                        curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
-                        curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
+                sh """#!/bin/bash -l
+                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
+                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
 
-                        bundle install --path ~/.gem
-                    """
-                }
+                    bundle install --path ~/.gem
+                """
 
                 cache(maxCacheSize: 2048, 
                     caches: [
