@@ -86,23 +86,16 @@ pipeline {
                     ])
                 }
 
-                script {
-                    //now you are on slave labeled with 'label'
-                    def workspace = pwd()
-                    //${workspace} will now contain an absolute path to job workspace on slave 
-                    echo "Current workspace (pwd) is ${workspace}"
-                }
-
-                // cache(maxCacheSize: 1024, 
-                //     caches: [
-                //      [$class: 'ArbitraryFileCache', 
-                //       excludes: '', 
-                //       includes: '**/*', 
-                //       path: '${WORKSPACE}/Carthage']
-                //     ]) 
-                // {
+                cache(maxCacheSize: 256, 
+                    caches: [
+                     [$class: 'ArbitraryFileCache', 
+                      excludes: '', 
+                      includes: '**/*', 
+                      path: '${WORKSPACE}/Carthage']
+                    ]) 
+                {
                     sh """#!/bin/bash -l
-                        echo "Current workspace (fastlane) is ${WORKSPACE}"
+                        echo "Cached ${WORKSPACE}/Carthage"
 
                         curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
                         curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
@@ -110,7 +103,7 @@ pipeline {
                         bundle install --path ~/.gem
                         bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version}
                     """
-                // }
+                }
 
 
                 // Make sure that all subsequent steps see the branch from main project, not from build assets
