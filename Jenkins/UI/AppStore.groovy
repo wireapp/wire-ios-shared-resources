@@ -36,16 +36,16 @@ pipeline {
         }
         stage ("Trigger build") {
             steps {
-                build(
-                    job: 'client-ios-build-pipeline', 
-                    parameters: [
-                        string(name: 'xcode_version', value: xcode_version), 
-                        string(name: 'branch_to_build', value: BRANCH), 
-                        string(name: 'BUILD_TYPE', value: 'RC'), 
-                        string(name: 'build_number_override', value: env.BUILD_NUMBER),
-                        string(name: 'last_commit_for_changelog', value: LAST_COMMIT)
-                    ]
-                )
+                // build(
+                //     job: 'client-ios-build-pipeline', 
+                //     parameters: [
+                //         string(name: 'xcode_version', value: xcode_version), 
+                //         string(name: 'branch_to_build', value: BRANCH), 
+                //         string(name: 'BUILD_TYPE', value: 'RC'), 
+                //         string(name: 'build_number_override', value: env.BUILD_NUMBER),
+                //         string(name: 'last_commit_for_changelog', value: LAST_COMMIT)
+                //     ]
+                // )
                 build(
                     job: 'client-ios-build-appstore-pipeline', 
                     parameters: [
