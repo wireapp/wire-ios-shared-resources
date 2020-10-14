@@ -5,7 +5,7 @@ pipeline {
     }
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
-        string(defaultValue: "11.4.1", description: 'XCode version to use (11.4.1/12.0)', name: 'xcode_version')
+        string(defaultValue: "12.2", description: 'XCode version to use (11.4.1/12.2)', name: 'xcode_version')
     }
 
     stages {
