@@ -15,13 +15,15 @@ platform :ios do
             path: "/repos/#{repo}/pulls/#{pr_number}"
         )
         branch = pr_data[:json]["head"]["ref"]
+        sha = pr_data[:json]["head"]["sha"]
         UI.message("PR branch: #{branch}")
+        UI.message("PR SHA: #{sha}")
         result = github_api(
             server_url: "https://api.github.com",
             api_token: ENV["GITHUB_ACCESS_TOKEN"],
             http_method: "PUT",
             path: "/repos/#{repo}/pulls/#{pr_number}/merge",
-            body: { merge_method: "squash"}
+            body: { merge_method: "squash", sha: "#{sha}"}
         )
         UI.message("JSON returned: #{result[:json]}")
         github_api(
