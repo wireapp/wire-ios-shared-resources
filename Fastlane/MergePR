@@ -18,6 +18,8 @@ platform :ios do
         sha = pr_data[:json]["head"]["sha"]
         UI.message("PR branch: #{branch}")
         UI.message("PR SHA: #{sha}")
+        token = ENV["GITHUB_ACCESS_TOKEN"]
+        UI.message("token: #{token}")
         result = github_api(
             server_url: "https://api.github.com",
             api_token: ENV["GITHUB_ACCESS_TOKEN"],
