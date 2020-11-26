@@ -1,5 +1,5 @@
 parameters:
-  branch: "master"
+  branch: "chore/xcode12.2"
 
 steps:
 - script: |
@@ -12,7 +12,7 @@ steps:
   displayName: "Prepare build scripts"
 
 - script: |
-    sudo xcode-select -switch /Applications/Xcode_11.4.1.app
+    sudo xcode-select -switch /Applications/Xcode_12.2.app
     carthage bootstrap --platform iOS --new-resolver 
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
