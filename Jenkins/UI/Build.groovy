@@ -40,6 +40,7 @@ pipeline {
 	    AVS_REPO = "wireapp/avs-ios-binaries-appstore"
 
         XCODE_VERSION = "${xcode_version}"
+        CACHE_CARTHAGE = "${cache_carthage}"
     }
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
@@ -114,7 +115,7 @@ pipeline {
         stage('fastlane prepare') {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version}
+                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version} fastlane prepare:${fastlane prepare}
                 """
 
 
