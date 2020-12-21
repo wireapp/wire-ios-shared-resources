@@ -115,7 +115,7 @@ pipeline {
         stage('fastlane prepare') {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version} fastlane prepare:${fastlane prepare}
+                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version} cache_carthage:${cache_carthage}
                 """
 
 
