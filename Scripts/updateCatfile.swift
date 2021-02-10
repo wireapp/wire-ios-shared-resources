@@ -16,7 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-//Example: $swift main.swift zenkins:PAT /~/Documents/wire/wire-ios/Cartfile
+/// Update Cartfile frameworks to latest version and write update content back to it.
+/// Example: $swift updateCatfile.swift zenkins:PAT /~/Documents/wire/wire-ios/Cartfile
 
 import Foundation
 
@@ -57,13 +58,14 @@ func urlRequest(secret: String,
 
 let secret = CommandLine.arguments[1]
 let path = CommandLine.arguments[2]
+let cartfileUrl = URL(fileURLWithPath: path)
 
 print("ℹ️ updating: \(path)")
 
 var lines: [String] = []
 
 do {
-    let contents = try String(contentsOf: URL(fileURLWithPath: path), encoding: String.Encoding.utf8)
+    let contents = try String(contentsOf: cartfileUrl, encoding: String.Encoding.utf8)
     
     lines = contents.components(separatedBy: "\n")
     
@@ -76,6 +78,8 @@ var updatedResult: [String: [String]] = [:]
 var repoOrder:[String] = []
 
 let group = DispatchGroup()
+
+//MARK: request latest versions
 
 lines.forEach() {
     var components:[String] = $0.components(separatedBy: " ")
@@ -109,9 +113,9 @@ lines.forEach() {
                     print(String(decoding: data, as: UTF8.self))
                 }
             }
-
+            
             group.leave()
-
+            
         }
     }
     
@@ -119,34 +123,31 @@ lines.forEach() {
 
 group.wait()
 
+//MARK: update version
 
 var updateString: String = ""
 
 ///TODO: create a data struct [[String: [String]]] to fix sorting
 repoOrder.forEach() {
     if let result: [String] = updatedResult[$0] {
-    // for repo without "~>", the version need to be quoted
-    if result.count == 3 {
-        let joinedString = "\(result[0]) \(result[1]) \"\(result[2])\""
-        updateString += joinedString + "\n"
-    } else {
-        updateString += (updatedResult[$0]?.joined(separator: " "))! + "\n"
-    }
+        // for repo without "~>", the version need to be quoted
+        if result.count == 3 {
+            let joinedString = "\(result[0]) \(result[1]) \"\(result[2])\""
+            updateString += joinedString + "\n"
+        } else {
+            updateString += (updatedResult[$0]?.joined(separator: " "))! + "\n"
+        }
     }
 }
 print("ℹ️ updated Cartfile content: \n\(updateString)")
 
-let file = "Cartfile"
+//MARK: write to file
 
-if let dir = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first {
-    
-    let fileURL = dir.appendingPathComponent(file)
-    print("✅ file written to: \(fileURL)")
-    
-    do {
-        try updateString.write(to: fileURL, atomically: false, encoding: .utf8)
-    }
-    catch {
-        print("❌ write error: \(error.localizedDescription)")
-    }
+print("✅ file written to: \(cartfileUrl)")
+
+do {
+    try updateString.write(to: cartfileUrl, atomically: false, encoding: .utf8)
+}
+catch {
+    print("❌ write error: \(error.localizedDescription)")
 }
