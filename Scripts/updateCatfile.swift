@@ -36,17 +36,26 @@ func parseJson(data: Data) -> String? {
     return nil
 }
 
-func urlRequest(secret: String,
+
+/// preform url GET request with optional Authorization
+/// - Parameters:
+///   - secret: if secret is nil, perform the request without Authorization
+///   - url: the URL to request
+///   - completion: completion closure with data as return
+/// - Returns:
+func urlRequest(secret: String?,
                 url: URL,
                 completion: @escaping (Data?) -> ()) {
     
     var request = URLRequest(url:url)
     request.httpMethod = "GET"
-    request.setValue(secret, forHTTPHeaderField: "Authorization")
+    if let secret = secret {
+        request.setValue(secret, forHTTPHeaderField: "Authorization")
+    }
     
     let task = URLSession.shared.dataTask(with: request) {(data, response, error) in
         if let error = error {
-            print("❌ Request error: \(error)")
+            print("❌ Request error: \(error).\n")
         }
         
         completion(data)
@@ -56,11 +65,21 @@ func urlRequest(secret: String,
 
 //MARK: - main
 
-let secret = CommandLine.arguments[1]
-let path = CommandLine.arguments[2]
+var secret: String?
+var path: String!
+
+if CommandLine.arguments.count >= 3 {
+    secret = CommandLine.arguments[1]
+    path = CommandLine.arguments[2]
+} else {
+    print("❌ exit: please provide secret and Catfile path.\nExample: $swift updateCatfile.swift zenkins:PAT ~/Documents/wire/wire-ios/Cartfile")
+
+    exit(1)
+}
+
 let cartfileUrl = URL(fileURLWithPath: path)
 
-print("ℹ️ updating: \(path)")
+print("ℹ️ updating: \(path!)")
 
 var lines: [String] = []
 
@@ -95,7 +114,7 @@ lines.forEach() {
         let url = URL(string: "https://api.github.com/repos/\(repo)/releases/latest")!
         urlRequest(secret: secret, url: url) { data in
             if let data = data,
-               let version = parseJson(data: data) {
+                let version = parseJson(data: data) {
                 var oldversion = components.popLast()
                 oldversion = oldversion?.replacingOccurrences(of: "\"", with: "")
                 
