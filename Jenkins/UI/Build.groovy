@@ -40,6 +40,7 @@ pipeline {
 	    AVS_REPO = "wireapp/avs-ios-binaries-appstore"
 
         XCODE_VERSION = "${xcode_version}"
+        CACHE_CARTHAGE = "${cache_carthage}"
     }
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
@@ -116,7 +117,7 @@ pipeline {
         stage('fastlane prepare') {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version}
+                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version} cache_carthage:${cache_carthage}
                 """
 
 
@@ -139,26 +140,23 @@ pipeline {
                 """
             }
         }
-        // stage('Test & QA: build for simulator') {
-        //     parallel {
-                stage('Test') {
-                    steps {
-                        sh """#!/bin/bash -l
-                            bundle exec fastlane test xcode_version:${xcode_version}
-                        """
-                    }
-                }
-                stage("QA: build for simulator") {
-                    steps {
-                        sh """#!/bin/bash -l
-                            ### sleep 2 minute, test takes ~3min and may block the test when zipping the files
-                            ### sleep 2m
-                            bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} configuration:Debug for_simulator:true xcode_version:${xcode_version}
-                        """
-                    }
-                }
-            // }
-        // }
+
+        stage('Test') {
+            steps {
+                sh """#!/bin/bash -l
+                    bundle exec fastlane test xcode_version:${xcode_version}
+                """
+            }
+        }
+        
+        stage("QA: build for simulator") {
+            steps {
+                sh """#!/bin/bash -l
+                    bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} configuration:Debug for_simulator:true xcode_version:${xcode_version}
+                """
+            }
+        }
+
         stage("QA: build for device") {
             steps {
                 sh """#!/bin/bash -l
