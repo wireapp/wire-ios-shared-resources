@@ -12,8 +12,9 @@ steps:
   displayName: "Prepare build scripts"
 
 - script: |
-    sudo xcode-select -switch /Applications/Xcode_11.4.1.app
-    carthage bootstrap --platform iOS --new-resolver 
+    sudo xcode-select -switch /Applications/Xcode_12.4.app
+    echo "⚠️  Using patched Carthage script for Xcode12"
+    bash ./wire-ios-shared-resources/Azure/build-and-test/carthageXcode12.sh bootstrap --platform iOS --new-resolver
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
   displayName: "Setup environment"
