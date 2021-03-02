@@ -14,4 +14,4 @@ jobs:
     steps:
     - template: release-framework/release-framework.yml
       parameters:
-        branch: chore/xcode12
+        branch: master
