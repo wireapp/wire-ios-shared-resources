@@ -1,5 +1,5 @@
 parameters:
-  branch: "chore/xcode12"
+  branch: "master"
 
 steps:
 - script: |
