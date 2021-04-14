@@ -31,7 +31,8 @@ pipeline {
 
         CACHE_CARTHAGE = "${cache_carthage}"
     }
-    parameters {
+    parameters {        
+        string(defaultValue: "Wire-iOS-languages", description: 'testplan', name: 'testplan')
         string(defaultValue: "12.4", description: 'XCode version to use (11.4.1/12.4)', name: 'xcode_version')
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
         string(defaultValue: "", description: 'Version of AVS to use, only relevant for AVS build', name: 'avs_version')
@@ -127,7 +128,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane test xcode_version:${xcode_version}
+                    bundle exec fastlane test xcode_version:${xcode_version} testplan:${testplan}
                 """
             }
         }
