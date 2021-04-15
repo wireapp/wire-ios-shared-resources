@@ -136,8 +136,8 @@ pipeline {
         stage('Check XC result JSON for "Test crashed"') {
             steps {
                 sh """#!/bin/bash -l
-                    xcrun xcresulttool get --path ./allLanguageTests.xcresult  --format json > allLanguageTests.json
-                    grep -q '"_value" : "Test crashed' allLanguageTests.json
+                    xcrun xcresulttool get --path ./allLanguageTests.xcresult --format json > allLanguageTests.json
+                    grep -q '"_value" : "Test crashed' allLanguageTests.json; [ $? -eq 0 ]
                 """
             }
         }
