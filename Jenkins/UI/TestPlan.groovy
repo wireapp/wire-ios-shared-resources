@@ -133,14 +133,20 @@ pipeline {
             }
         }
 
-        stage('Check XC result JSON for "Test crashed"') {
+        stage('Convert XC result to JSON') {
             steps {
                 sh """#!/bin/bash -l
                     xcrun xcresulttool get --path ./allLanguageTests.xcresult --format json > allLanguageTests.json
-                    grep -q '"_value" : "Test crashed' allLanguageTests.json; [ $? -eq 0 ] && exit 1 || exit 0
                 """
             }
         }
         
+        stage('Check for "Test crashed"') {
+            steps {
+                sh """#!/bin/bash -l
+                    grep -q '"_value" : "Test crashed' allLanguageTests.json; [ $? -eq 0 ] && return 1 || return 0
+                """
+            }
+        }
     }
 }
