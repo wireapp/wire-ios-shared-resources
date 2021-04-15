@@ -128,7 +128,14 @@ pipeline {
         stage('Test') {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane test xcode_version:${xcode_version} testplan:${testplan}
+                    xcodebuild \
+                      -project Wire-iOS.xcodeproj \
+                      -scheme Wire-iOS \
+                      -sdk iphonesimulator \
+                      -destination 'platform=iOS Simulator,name=iPhone 8,OS=14.4' \
+                      -resultBundlePath ./Example.xcresult \
+                      test \
+                      -testPlan ${testplan}
                 """
             }
         }
