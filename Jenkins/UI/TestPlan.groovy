@@ -141,10 +141,18 @@ pipeline {
             }
         }
         
-        stage('Check for "Test crashed"') {
+        stage('Search for crashes') {
             steps {
+                //case:  "_value" : "Test crashed with signal segv"
                 sh """#!/bin/bash -l
                     grep -q '"_value" : "Test crashed' allLanguageTests.json && echo true || echo false
+
+                """
+
+                //case:  "_value" : "Crash: Wire (12345): Namespace SIGNAL, Code 0xb"
+                sh """#!/bin/bash -l
+                    grep -q '"_value" : "Crash: Wire (' allLanguageTests.json && echo true || echo false
+
                 """
             }
         }
