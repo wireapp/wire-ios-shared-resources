@@ -112,14 +112,6 @@ pipeline {
             }
         }
 
-        stage('run setup.sh') {
-            steps {
-                sh """#!/bin/bash -l
-                    bundle exec setup.sh
-                """
-            }
-        }
-
         stage('Test') {
             steps {
                 sh """#!/bin/bash -l
