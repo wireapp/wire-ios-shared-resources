@@ -145,13 +145,13 @@ pipeline {
             steps {
                 //case:  "_value" : "Test crashed with signal segv"
                 sh """#!/bin/bash -l
-                    grep -q '"_value" : "Test crashed' allLanguageTests.json && echo true || echo false
+                    grep -q '"_value" : "Test crashed' allLanguageTests.json && exit 1 || echo "no crash text is found"
 
                 """
 
                 //case:  "_value" : "Crash: Wire (12345): Namespace SIGNAL, Code 0xb"
                 sh """#!/bin/bash -l
-                    grep -q '"_value" : "Crash: Wire (' allLanguageTests.json && echo true || echo false
+                    grep -q '"_value" : "Crash: Wire (' allLanguageTests.json && exit 1 || echo "no crash text is found"
 
                 """
             }
