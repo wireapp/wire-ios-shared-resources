@@ -112,15 +112,10 @@ pipeline {
             }
         }
 
-        stage('Build') {
+        stage('run setup.sh') {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane build \
-                     build_number:${BUILD_NUMBER} \
-                     build_type:${BUILD_TYPE} \
-                     configuration:Debug \
-                     for_simulator:true \
-                     xcode_version:${xcode_version}
+                    bundle exec setup.sh
                 """
             }
         }
