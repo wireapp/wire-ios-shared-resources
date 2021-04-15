@@ -144,7 +144,7 @@ pipeline {
         stage('Check for "Test crashed"') {
             steps {
                 sh """#!/bin/bash -l
-                    grep -q '"_value" : "Test crashed' allLanguageTests.json; [ $? -eq 0 ] && return 1 || return 0
+                    grep -q '"_value" : "Test crashed' allLanguageTests.json && echo true || echo false
                 """
             }
         }
