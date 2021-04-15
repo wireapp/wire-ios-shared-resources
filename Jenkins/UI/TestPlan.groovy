@@ -101,7 +101,12 @@ pipeline {
         stage('fastlane prepare') {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version} cache_carthage:${cache_carthage}
+                    bundle exec fastlane prepare \
+                    build_number:${BUILD_NUMBER} \
+                    build_type:${BUILD_TYPE} \
+                    avs_version:${avs_version} \
+                    xcode_version:${xcode_version} \
+                    cache_carthage:${cache_carthage}
                 """
 
 
@@ -120,9 +125,10 @@ pipeline {
                       -scheme Wire-iOS \
                       -sdk iphonesimulator \
                       -destination 'platform=iOS Simulator,name=iPhone 8,OS=14.4' \
-                      -resultBundlePath ./Example.xcresult \
+                      -resultBundlePath ./allLanguageTests.xcresult \
                       test \
-                      -testPlan ${testplan}
+                      -testPlan ${testplan} \
+                      || true
                 """
             }
         }
