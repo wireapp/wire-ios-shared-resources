@@ -171,7 +171,7 @@ pipeline {
                 """
             }
         }
-        stage("Upload results") {
+        stage("Upload results & code converage") {
             parallel {
                 stage("Upload to S3") {
                     steps {
@@ -180,11 +180,21 @@ pipeline {
                         """
                     }
                 }
+
                 stage('Upload to AppCenter') {
                     steps {
                         sh """#!/bin/bash -l
                             bundle exec fastlane upload_app_center build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} last_commit:${last_commit_for_changelog} avs_version:${avs_version}
                         """
+                    }
+                }
+
+                stage('Slather & Cobertura') {
+                    steps {
+                        sh """#!/bin/bash -l
+                            slather
+                        """
+                        cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/test-reports/cobertura.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
                     }
                 }
             }
