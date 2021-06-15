@@ -55,7 +55,7 @@ do {
 
 //MARK: request latest versions
 
-var updateString: String = ""
+var output: [String] = []
 
 lines.forEach() {
     var components:[String] = $0.components(separatedBy: " ")
@@ -73,11 +73,12 @@ lines.forEach() {
 
     print("ℹ️ components: \n\(components)")
     
-    updateString += components.joined(separator:" ") + "\n"
+    output.append(components.joined(separator:" "))
 }
 
 //MARK: update version
-
+var updateString: String = ""
+updateString = output.joined(separator:"\n")
 
 print("ℹ️ updated Cartfile content: \n\(updateString)")
 
