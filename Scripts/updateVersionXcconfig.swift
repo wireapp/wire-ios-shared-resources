@@ -23,16 +23,14 @@ import Foundation
 
 //MARK: - main
 
-var secret: String?
 var path: String!
 var version: String!
 
-if CommandLine.arguments.count >= 4 {
-    secret = CommandLine.arguments[1]
-    path = CommandLine.arguments[2]
-    version = CommandLine.arguments[3]
+if CommandLine.arguments.count >= 3 {
+    path = CommandLine.arguments[1]
+    version = CommandLine.arguments[2]
 } else {
-    print("❌ exit: please provide secret and Version.xcconfig path.\nExample: $swift updateVersionXcconfig.swift zenkins:PAT ./Resources/Configurations/version.xcconfig 1.2.3")
+    print("❌ exit: please provide secret and Version.xcconfig path.\nExample: $swift updateVersionXcconfig.swift ./Resources/Configurations/version.xcconfig 1.2.3")
 
     exit(1)
 }
