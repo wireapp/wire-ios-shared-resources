@@ -85,9 +85,18 @@ pipeline {
         }
         stage('Build for AppStore') {
             steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} xcode_version:${xcode_version}
-                """
+                script {
+                    try {
+                        sh """#!/bin/bash -l
+                            bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} xcode_version:${xcode_version}
+                        """
+                    } catch (Exception e) {
+                        echo 'Exception occurred: ' + e.toString()  + 'retry build without symbols'
+                        sh """#!/bin/bash -l
+                            bundle exec fastlane build_for_release_without_symbols build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} xcode_version:${xcode_version}
+                        """
+                    }
+                }
             }
         }
         stage("Upload results") {
