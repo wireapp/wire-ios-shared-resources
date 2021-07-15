@@ -7,6 +7,7 @@ steps:
     mkdir -p fastlane
     cp wire-ios-shared-resources/Azure/release-framework/Fastfile fastlane/Fastfile
     sudo xcode-select -switch /Applications/Xcode_12.4.app
+    carthage bootstrap --use-xcframeworks
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
     BRANCH: ${{ parameters.branch }}
