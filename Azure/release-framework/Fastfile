@@ -24,6 +24,13 @@ platform :ios do
     
         sh "rm -f ../#{carthage_config.archive_name} || true"
         sh "rm -rf ../#{carthage_config.build_result} || true"
+        
+
+        # debug Carthage folder is exist? 
+        sh "ls .."
+
+        # debug Carthage folder is exist? 
+        sh "ls ../Carthage"
 
         sh "xcodebuild archive \
             -project ../#{carthage_config.framework}.xcodeproj \
