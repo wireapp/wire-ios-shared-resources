@@ -41,7 +41,10 @@ platform :ios do
             -archivePath './#{carthage_config.framework}.framework-iphoneos.xcarchive' \
             SKIP_INSTALL=NO \
             BUILD_LIBRARY_FOR_DISTRIBUTION=YES"
-        sh "xcodebuild -create-xcframework -framework './#{carthage_config.framework}.framework-iphoneos.xcarchive/Products/Library/Frameworks/WireSystem.framework' -framework './#{carthage_config.framework}.framework-iphonesimulator.xcarchive/Products/Library/Frameworks/#{carthage_config.framework}.framework' -output '../#{carthage_config.framework}.xcframework'"
+        sh "xcodebuild -create-xcframework \
+            -framework './#{carthage_config.framework}.framework-iphoneos.xcarchive/Products/Library/Frameworks/#{carthage_config.framework}.framework' \
+            -framework './#{carthage_config.framework}.framework-iphonesimulator.xcarchive/Products/Library/Frameworks/#{carthage_config.framework}.framework' \
+            -output '../#{carthage_config.framework}.xcframework'"
 
         previous_version = sh("git describe --abbrev=0 --tags `git rev-list --tags --skip=1 --max-count=1`").chomp
         message = release_details(previous_version, version, config)
