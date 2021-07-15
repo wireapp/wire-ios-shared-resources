@@ -30,7 +30,7 @@ platform :ios do
         sh "ls .."
 
         # debug Carthage folder is exist? 
-        sh "ls ../Carthage"
+        sh "ls ../Carthage || true"
 
         sh "xcodebuild archive \
             -project ../#{carthage_config.framework}.xcodeproj \
