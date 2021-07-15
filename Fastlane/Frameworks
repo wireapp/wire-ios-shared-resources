@@ -19,7 +19,7 @@ platform :ios do
         end
         UI.important "Bumping project version to #{new_version}"
         new_version.write()
-        message = release_details(previous_version, new_version, config)
+        message = "[skip ci]" + release_details(previous_version, new_version, config)
         git_commit(path: "*.xcconfig", message: message)
         push_to_git_remote(
             local_branch: "develop",
