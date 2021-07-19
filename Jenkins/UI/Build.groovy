@@ -41,7 +41,6 @@ pipeline {
 
         XCODE_VERSION = "${xcode_version}"
         CACHE_CARTHAGE = "${cache_carthage}"
-        BOOL_TEST = "${bool_test}"
     }
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
@@ -131,34 +130,22 @@ pipeline {
 
         stage('Build') {
             steps {
-                script {
-                    if (env.BOOL_TEST == true) {
-                        sh """#!/bin/bash -l
-                            bundle exec fastlane build \
-                             build_number:${BUILD_NUMBER} \
-                             build_type:${BUILD_TYPE} \
-                             configuration:Debug \
-                             for_simulator:true \
-                             xcode_version:${xcode_version}
-                        """
-                    } else {
-                        sh "echo skipped Build tests"
-                    }
-                }
+                sh """#!/bin/bash -l
+                    bundle exec fastlane build \
+                     build_number:${BUILD_NUMBER} \
+                     build_type:${BUILD_TYPE} \
+                     configuration:Debug \
+                     for_simulator:true \
+                     xcode_version:${xcode_version}
+                """
             }
         }
 
         stage('Test') {
             steps {
-                script {
-                    if (env.BOOL_TEST == true) {
-                        sh """#!/bin/bash -l
-                            bundle exec fastlane test xcode_version:${xcode_version}
-                        """
-                    } else {
-                        sh "echo skipped tests"
-                    }
-                }
+                sh """#!/bin/bash -l
+                    bundle exec fastlane test xcode_version:${xcode_version}
+                """
             }
         }
         
