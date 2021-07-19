@@ -41,7 +41,6 @@ pipeline {
 
         XCODE_VERSION = "${xcode_version}"
         CACHE_CARTHAGE = "${cache_carthage}"
-        SKIP_TEST = "${skip_test}"
         SKIP_TEST_BOOL = "${skip_test_bool}"
     }
     parameters {
