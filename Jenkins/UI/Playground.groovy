@@ -8,6 +8,11 @@ pipeline {
         string(defaultValue: "12.4", description: 'XCode version to use (11.4.1/12.4)', name: 'xcode_version')
         string(defaultValue: "No", description: 'Copy Carthage folder from cache? Enter Yes to enable (NOTICE: it builds faster, but may cause build issues)', name: 'cache_carthage')
         string(defaultValue: "No", description: 'skip tests to speed up pipeline', name: 'skip_test')
+        booleanParam(
+            defaultValue: false, 
+            description: 'skip tests to speed up pipeline', 
+            name: 'skip_test_bool'
+        )
     }
 
     stages {
