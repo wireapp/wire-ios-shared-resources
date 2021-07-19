@@ -41,6 +41,7 @@ pipeline {
 
         XCODE_VERSION = "${xcode_version}"
         CACHE_CARTHAGE = "${cache_carthage}"
+        SKIP_TEST = "${skip_test}"
     }
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
@@ -143,9 +144,11 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane test xcode_version:${xcode_version}
-                """
+                if ("${skip_test}" != 'NO') {
+                    sh """#!/bin/bash -l
+                        bundle exec fastlane test xcode_version:${xcode_version}
+                    """
+                }
             }
         }
         
