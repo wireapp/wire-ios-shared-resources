@@ -21,6 +21,7 @@ pipeline {
                 build(
                     job: 'client-ios-build-pipeline', 
                     parameters: [
+                        string(name: 'skip_test_bool', value: skip_test_bool), 
                         string(name: 'skip_test', value: skip_test), 
                         string(name: 'cache_carthage', value: cache_carthage), 
                         string(name: 'xcode_version', value: xcode_version), 
