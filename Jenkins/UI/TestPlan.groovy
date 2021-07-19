@@ -33,7 +33,7 @@ pipeline {
     }
     parameters {        
         string(defaultValue: "Wire-iOS-languages", description: 'testplan', name: 'testplan')
-        string(defaultValue: "12.4", description: 'XCode version to use (11.4.1/12.4)', name: 'xcode_version')
+        string(defaultValue: "12.4", description: 'XCode version to use (12.4)', name: 'xcode_version')
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
         string(defaultValue: "", description: 'Version of AVS to use, only relevant for AVS build', name: 'avs_version')
         string(defaultValue: "999999", description: 'Override build number with', name: 'build_number_override')

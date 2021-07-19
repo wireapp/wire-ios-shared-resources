@@ -6,7 +6,7 @@ pipeline {
     parameters {
         string(defaultValue: "", description: 'Version of AVS to use', name: 'avs_version')
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
-        string(defaultValue: "12.4", description: 'XCode version to use (11.4.1/12.4)', name: 'xcode_version')
+        string(defaultValue: "12.4", description: 'XCode version to use (12.4)', name: 'xcode_version')
     }
 
     stages {
