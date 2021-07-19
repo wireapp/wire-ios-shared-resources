@@ -131,14 +131,19 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane build \
-                     build_number:${BUILD_NUMBER} \
-                     build_type:${BUILD_TYPE} \
-                     configuration:Debug \
-                     for_simulator:true \
-                     xcode_version:${xcode_version}
-                """
+                script {
+                    if (env.BOOL_TEST == true) {
+                        sh """#!/bin/bash -l
+                            bundle exec fastlane build \
+                             build_number:${BUILD_NUMBER} \
+                             build_type:${BUILD_TYPE} \
+                             configuration:Debug \
+                             for_simulator:true \
+                             xcode_version:${xcode_version}
+                        """
+                    } else {
+                        sh "echo skipped Build tests"
+                    }
             }
         }
 
