@@ -144,10 +144,14 @@ pipeline {
 
         stage('Test') {
             steps {
-                if ("${skip_test}" != 'NO') {
-                    sh """#!/bin/bash -l
-                        bundle exec fastlane test xcode_version:${xcode_version}
-                    """
+                script {
+                    if ("${skip_test}" != 'NO') {
+                        sh """#!/bin/bash -l
+                            bundle exec fastlane test xcode_version:${xcode_version}
+                        """
+                    } else {
+                        sh "echo skipped tests"
+                    }
                 }
             }
         }
