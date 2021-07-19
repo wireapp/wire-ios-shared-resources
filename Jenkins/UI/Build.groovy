@@ -144,6 +144,7 @@ pipeline {
                     } else {
                         sh "echo skipped Build tests"
                     }
+                }
             }
         }
 
