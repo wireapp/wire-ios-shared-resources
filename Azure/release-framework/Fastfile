@@ -44,7 +44,8 @@ platform :ios do
 
         sh "ls ./#{carthage_config.framework}.framework-iphoneos.xcarchive/dSYMs"
 
-        sh "pwd=`pwd` || xcodebuild -create-xcframework \
+	sh `pwd`
+        sh "pwd=$(pwd) && echo $pwd && xcodebuild -create-xcframework \
             -framework './#{carthage_config.framework}.framework-iphoneos.xcarchive/Products/Library/Frameworks/#{carthage_config.framework}.framework' \
             -debug-symbols $pwd/#{carthage_config.framework}.framework-iphoneos.xcarchive/dSYMs/#{carthage_config.framework}.framework.dSYM \
             -framework './#{carthage_config.framework}.framework-iphonesimulator.xcarchive/Products/Library/Frameworks/#{carthage_config.framework}.framework' \
