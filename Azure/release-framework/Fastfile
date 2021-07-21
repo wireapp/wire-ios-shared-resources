@@ -44,11 +44,11 @@ platform :ios do
 
         sh "ls ./#{carthage_config.framework}.framework-iphoneos.xcarchive/dSYMs"
 
-	sh `pwd`
         sh "pwd=`pwd` && xcodebuild -create-xcframework \
             -framework './#{carthage_config.framework}.framework-iphoneos.xcarchive/Products/Library/Frameworks/#{carthage_config.framework}.framework' \
             -debug-symbols $pwd/#{carthage_config.framework}.framework-iphoneos.xcarchive/dSYMs/#{carthage_config.framework}.framework.dSYM \
             -framework './#{carthage_config.framework}.framework-iphonesimulator.xcarchive/Products/Library/Frameworks/#{carthage_config.framework}.framework' \
+            -debug-symbols `pwd`/#{carthage_config.framework}.framework-iphonesimulator.xcarchive/dSYMs/#{carthage_config.framework}.framework.dSYM \
             -output '../#{carthage_config.framework}.xcframework'"
 
         previous_version = sh("git describe --abbrev=0 --tags `git rev-list --tags --skip=1 --max-count=1`").chomp
