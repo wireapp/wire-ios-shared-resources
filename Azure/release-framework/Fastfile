@@ -24,6 +24,9 @@ platform :ios do
     
         sh "rm -f ../#{carthage_config.archive_name} || true"
         sh "rm -rf ../#{carthage_config.build_result} || true"
+
+        sh "echo current dir is:"
+        sh "pwd"
         
         sh "xcodebuild archive \
             -project ../#{carthage_config.framework}.xcodeproj \
