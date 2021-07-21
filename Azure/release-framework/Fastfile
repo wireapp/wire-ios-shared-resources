@@ -25,8 +25,8 @@ platform :ios do
         sh "rm -f ../#{carthage_config.archive_name} || true"
         sh "rm -rf ../#{carthage_config.build_result} || true"
 
-        sh "echo current dir is:"
         sh "pwd"
+
         
         sh "xcodebuild archive \
             -project ../#{carthage_config.framework}.xcodeproj \
@@ -44,8 +44,10 @@ platform :ios do
             -archivePath './#{carthage_config.framework}.framework-iphoneos.xcarchive' \
             SKIP_INSTALL=NO \
             BUILD_LIBRARY_FOR_DISTRIBUTION=YES"
+
         sh "xcodebuild -create-xcframework \
             -framework './#{carthage_config.framework}.framework-iphoneos.xcarchive/Products/Library/Frameworks/#{carthage_config.framework}.framework' \
+            -debug-symbols '$(pwd)/#{carthage_config.framework}.framework-iphoneos.xcarchive/dSYMs/#{carthage_config.framework}.framework.dSYM' \
             -framework './#{carthage_config.framework}.framework-iphonesimulator.xcarchive/Products/Library/Frameworks/#{carthage_config.framework}.framework' \
             -output '../#{carthage_config.framework}.xcframework'"
 
