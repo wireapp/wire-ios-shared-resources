@@ -28,11 +28,12 @@ platform :ios do
         sh "xcodebuild archive \
             -project ../#{carthage_config.framework}.xcodeproj \
             -scheme #{carthage_config.framework} \
-            -configuration Release \
+            -configuration Debug \
             -destination 'generic/platform=iOS Simulator' \
             -archivePath './#{carthage_config.framework}.framework-iphonesimulator.xcarchive' \
             SKIP_INSTALL=NO \
             BUILD_LIBRARY_FOR_DISTRIBUTION=YES"
+
         sh "xcodebuild archive \
             -project ../#{carthage_config.framework}.xcodeproj \
             -scheme #{carthage_config.framework} \
