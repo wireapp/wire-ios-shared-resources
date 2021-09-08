@@ -26,7 +26,7 @@ import Foundation
 var path: String!
 var version: String!
 
-if CommandLine.arguments.count >= 3 {
+if CommandLine.arguments.count == 3 {
     path = CommandLine.arguments[1]
     version = CommandLine.arguments[2]
 } else {
@@ -80,7 +80,7 @@ lines.forEach() {
 var updateString: String = ""
 updateString = output.joined(separator:"\n")
 
-print("ℹ️ updated Cartfile content: \n\(updateString)")
+print("ℹ️ updated content: \n\(updateString)")
 
 //MARK: write to file
 
