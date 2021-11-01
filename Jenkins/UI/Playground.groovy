@@ -6,7 +6,7 @@ pipeline {
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
         choice(
-            choices: ["12.4", "13.0"],
+            choices: ["12.4", "13.1"],
             description: 'XCode version',
             name: "xcode_version"
         )
