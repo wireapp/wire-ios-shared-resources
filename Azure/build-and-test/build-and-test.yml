@@ -12,7 +12,7 @@ steps:
   displayName: "Prepare build scripts"
 
 - script: |
-    sudo xcode-select -switch /Applications/Xcode_12.4.app
+    sudo xcode-select -switch /Applications/Xcode_13.1.app
     carthage bootstrap --platform iOS --new-resolver --use-xcframeworks
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   

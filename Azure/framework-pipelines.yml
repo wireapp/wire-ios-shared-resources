@@ -1,14 +1,14 @@
 jobs:
   - job: Test
     pool:
-      vmImage: "macOS-10.15"
+      vmImage: "macOS-11"
     steps:
     - template: build-and-test/build-and-test.yml
       parameters:
         branch: master
   - job: Release
     pool:
-      vmImage: "macOS-10.15"
+      vmImage: "macOS-11"
     dependsOn: Test
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags/'))
     steps:
