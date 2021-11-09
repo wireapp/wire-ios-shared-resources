@@ -11,7 +11,11 @@ pipeline {
         LAST_COMMIT = ""
     }
     parameters {
-        string(defaultValue: "12.4", description: 'XCode version to use (12.4)', name: 'xcode_version')
+        choice(
+            choices: ["13.1", "12.4"],
+            description: 'XCode version',
+            name: "xcode_version"
+        )
     }
     stages {
         stage('Checkout') {
