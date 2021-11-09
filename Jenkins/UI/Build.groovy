@@ -105,8 +105,8 @@ pipeline {
 		                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
 
 		                    bundle install --path ~/.gem
-                                    echo "set DEVELOPER_DIR to XCode 12.4"
-                                    export DEVELOPER_DIR=/Applications/Xcode_12.4.app/Contents/Developer
+                                    echo "set DEVELOPER_DIR to XCode 13.1"
+                                    export DEVELOPER_DIR=/Applications/Xcode_13.1.app/Contents/Developer
 		                """
 	            	}
 	            }
