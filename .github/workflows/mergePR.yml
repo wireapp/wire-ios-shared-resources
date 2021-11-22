@@ -106,7 +106,7 @@ jobs:
             ${{ steps.mergePullRequest.outputs.mergeError }}
 
       - name: Merge Pull Request exit
-        if: ${{ steps.mergePullRequest.outputs.mergeError == 0 }}
+        if: ${{ steps.mergePullRequest.outputs.mergeResult == 0 }}
         run: |
           echo exit for merger fail
           exit 1
