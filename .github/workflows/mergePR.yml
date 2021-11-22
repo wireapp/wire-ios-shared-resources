@@ -87,14 +87,13 @@ jobs:
       - name: Merge Pull Request
         id: mergePullRequest
         run: |
-          { error=$( { { gh pr merge ${{ github.event.issue.html_url }} -s --admin; } 1>&3 ; } 2>&1); } 3>&1
-          status=$?
-          if status; then
+          { error=$( { { gh pr merge ${{ github.event.issue.html_url }} -s --admin; } 1>&3 ; } 2>&1); } 3>&1 || true
+          if [ -z "$error" ]; then
             echo merged!
             echo "::set-output name=mergeResult::1"
           else
             echo "::set-output name=mergeResult::0"
-            echo $mergeOutput
+            echo $error
             echo "::set-output name=mergeOutput::$error"
           fi
       - uses: actions-ecosystem/action-create-comment@v1
