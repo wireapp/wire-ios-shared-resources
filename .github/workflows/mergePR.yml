@@ -10,6 +10,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       ADMINS: ('billypchan' 'marcoconti83' 'typfel' 'johnxnguyen' 'David-Henner' 'KaterinaWire' 'sb88k' 'agisilaos')
     steps:
+    
       - name: get release type
         id: releaseType
         run: |
@@ -86,7 +87,7 @@ jobs:
       - name: Merge Pull Request
         id: mergePullRequest
         run: |
-          mergeOutput=$(gh pr merge ${{ github.event.issue.html_url }} -s --admin) || true
+          { error=$( { { gh pr merge ${{ github.event.issue.html_url }} -s --admin; } 1>&3 ; } 2>&1); } 3>&1
           status=$?
           if status; then
             echo merged!
@@ -94,7 +95,7 @@ jobs:
           else
             echo "::set-output name=mergeResult::0"
             echo $mergeOutput
-            echo "::set-output name=mergeOutput::$mergeOutput"
+            echo "::set-output name=mergeOutput::$error"
           fi
       - uses: actions-ecosystem/action-create-comment@v1
         if: ${{ steps.mergePullRequest.outputs.mergeResult == 0 }}
