@@ -93,7 +93,6 @@ jobs:
             echo "::set-output name=mergeResult::1"
           else
             echo "::set-output name=mergeResult::0"
-            
             echo $mergeOutput
             echo "::set-output name=mergeOutput::$mergeOutput"
           fi
