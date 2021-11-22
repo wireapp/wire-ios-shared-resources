@@ -86,18 +86,22 @@ jobs:
       - name: Merge Pull Request
         id: mergePullRequest
         run: |
-          if gh pr merge ${{ github.event.issue.html_url }} -s --admin; then
+          local mergeOutput
+          mergeOutput = `gh pr merge ${{ github.event.issue.html_url }} -s --admin`
+          local status=$?
+          if status; then
             echo merged!
             echo "::set-output name=mergeResult::1"
           else
             echo "::set-output name=mergeResult::0"
+            echo "::set-output name=mergeOutput::$mergeOutput"
           fi
       - uses: actions-ecosystem/action-create-comment@v1
         if: ${{ steps.mergePullRequest.outputs.mergeResult == 0 }}
         with:
           github_token: ${{ secrets.github_token }}
           body: |
-            Merging Failed. Please check the action log.
+            Merging Failed. Please check the action log.\n${{ steps.mergePullRequest.outputs.mergeResult }}
 
       - name: Merge Pull Request exit
         if: ${{ steps.mergePullRequest.outputs.mergeResult == 0 }}
