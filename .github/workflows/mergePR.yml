@@ -86,9 +86,8 @@ jobs:
       - name: Merge Pull Request
         id: mergePullRequest
         run: |
-          local mergeOutput
           mergeOutput = `gh pr merge ${{ github.event.issue.html_url }} -s --admin`
-          local status=$?
+          status=$?
           if status; then
             echo merged!
             echo "::set-output name=mergeResult::1"
