@@ -103,7 +103,7 @@ jobs:
           github_token: ${{ secrets.github_token }}
           body: |
             Merging Failed. Please check the action log.
-            ${{ steps.mergePullRequest.outputs.mergeOutput }}
+            ${{ steps.mergePullRequest.outputs.mergeError }}
 
       - name: Merge Pull Request exit
         if: ${{ steps.mergePullRequest.outputs.mergeError == 0 }}
