@@ -44,6 +44,9 @@ jobs:
           body: |
             Hello, @${{ github.actor }}! Merging PR for command **${{ github.event.comment.body}}** for PR #**${{ github.event.issue.number }}**. Will create a **${{ steps.releaseType.outputs.TYPE }}** release after merged
 
+      - name: checkout
+        uses: actions/checkout@v2
+
       - name: Bump version and push tag, dry run to get the next tag
         uses: anothrNick/github-tag-action@1.34.0
         id: tag_version
@@ -59,9 +62,6 @@ jobs:
           github_token: ${{ secrets.github_token }}
           body: |
             Next version is ${{ steps.tag_version.outputs.new_tag }}
-
-      - name: checkout
-        uses: actions/checkout@v2
 
       - name: Checkout Pull Request
         env:
