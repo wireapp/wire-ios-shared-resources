@@ -68,8 +68,8 @@ jobs:
           elif [ ${{ github.event.comment.body }} == 'release patch' ]; then
             echo "::set-output name=new_tag::${{ steps.semvers.outputs.patch }}"
           else
-             echo "not matched release mode!"
-             exit 1
+            echo "not matched release mode!"
+            exit 1
           fi
           
       - uses: actions-ecosystem/action-create-comment@v1
