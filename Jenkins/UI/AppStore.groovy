@@ -11,7 +11,8 @@ pipeline {
     }
     parameters {
         choice(
-            choices: ["12.4", "13.1"],
+            choices: ["12.4", 
+                      "13.1"],
             description: 'XCode version',
             name: "xcode_version"
         )
