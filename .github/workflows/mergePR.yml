@@ -56,7 +56,7 @@ jobs:
         with:
           version: ${{ steps.previoustag.outputs.tag }}
           
-      - name: 'print version'
+      - name: 'select  bump level'
         id: tag_version
         run: |
           if [ ${{ github.event.comment.body }} = 'release major' ]; then
