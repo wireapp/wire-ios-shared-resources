@@ -56,16 +56,16 @@ jobs:
         with:
           version: ${{ steps.previoustag.outputs.tag }}
           
-      - name: 'select  bump level'
+      - name: 'choose bump level'
         id: tag_version
         run: |
-          if [ ${{ github.event.comment.body }} = 'release major' ]; then
+          if [ ${{ github.event.comment.body }} == 'release major' ]; then
             echo "::set-output name=new_tag::${{ steps.semvers.outputs.major }}"
 
-          elif [ ${{ github.event.comment.body }} = 'release minor' ]; then
+          elif [ ${{ github.event.comment.body }} == 'release minor' ]; then
             echo "::set-output name=new_tag::${{ steps.semvers.outputs.minor }}"
 
-          elif [ ${{ github.event.comment.body }} = 'release patch' ]; then
+          elif [ ${{ github.event.comment.body }} == 'release patch' ]; then
             echo "::set-output name=new_tag::${{ steps.semvers.outputs.patch }}"
           else
             echo "not matched release mode!"
