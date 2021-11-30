@@ -1,4 +1,4 @@
-name: Create bump PR v0.1.5
+name: Create bump PR v0.1.6
 
 on:
     workflow_call:
@@ -28,8 +28,8 @@ jobs:
             # process Cartfile
             curl --silent https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Scripts/updateCatfile.swift --output updateCarfile.swift
             chmod +x updateCarfile.swift
-            swift updateCarfile.swift ${{ secrets.DISPATCH_SECRET }} ./Cartfile
-            swift updateCarfile.swift ${{ secrets.DISPATCH_SECRET }} ./Cartfile.private
+            swift updateCarfile.swift ${{ secrets.IOS_RELEASE_DISPATCH_SECRET }} ./Cartfile
+            swift updateCarfile.swift ${{ secrets.IOS_RELEASE_DISPATCH_SECRET }} ./Cartfile.private
             rm updateCarfile.swift
             
             # Carthage update
