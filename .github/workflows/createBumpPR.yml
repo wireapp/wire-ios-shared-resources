@@ -1,4 +1,4 @@
-name: Create bump PR v0.1.6
+name: Create bump PR v0.1.7
 
 on:
     workflow_call:
@@ -33,6 +33,9 @@ jobs:
             swift updateCarfile.swift ${{ secrets.envPAT }} ./Cartfile
             swift updateCarfile.swift ${{ secrets.envPAT }} ./Cartfile.private
             rm updateCarfile.swift
+            
+            # check Cartfile is empty, it may occur if API limit is hit.
+            [ -s ./Cartfile ] || exit 1
             
             # Carthage update
             ### Hack: carthage update may never done if framework dependency versions does not match. 
