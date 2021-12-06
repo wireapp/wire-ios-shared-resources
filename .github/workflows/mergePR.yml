@@ -1,13 +1,16 @@
-name: Merge PR v0.1.11
+name: Merge PR v0.1.12
 
 on:
     workflow_call:
+        secrets:
+          commitPAT:
+            required: true
 
 jobs:
   create_comment:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GITHUB_TOKEN: ${{ secrets.commitPAT }}
       ADMINS: ('billypchan' 'marcoconti83' 'typfel' 'johnxnguyen' 'David-Henner' 'KaterinaWire' 'sb88k' 'agisilaos')
     steps:
     
@@ -48,7 +51,7 @@ jobs:
         id: previoustag
         uses: "WyriHaximus/github-action-get-previous-tag@v1"
         env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          GITHUB_TOKEN: "${{ secrets.commitPAT }}"
           
       - name: 'Get next version'
         id: semvers
@@ -74,14 +77,14 @@ jobs:
           
       - uses: actions-ecosystem/action-create-comment@v1
         with:
-          github_token: ${{ secrets.github_token }}
+          github_token: ${{ secrets.commitPAT }}
           body: |
             Hello, @${{ github.actor }}! Merging PR for command **${{ github.event.comment.body}}** for PR #**${{ github.event.issue.number }}**. Will create a **${{ steps.releaseType.outputs.TYPE }}** release after merged.
             Next version is ${{ steps.tag_version.outputs.new_tag }}.
 
       - name: Checkout Pull Request
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.commitPAT }}
         run: |
           hub pr checkout ${{ github.event.issue.number }}
 
@@ -94,9 +97,7 @@ jobs:
           chmod +x updateVersionXcconfig.swift
           swift updateVersionXcconfig.swift ./Resources/Configurations/version.xcconfig ${{ steps.tag_version.outputs.new_tag }}
           rm updateVersionXcconfig.swift
-
-          git config --global user.email "iosx@wire.com"
-          git config --global user.name "zenkins"
+          
           git add .
           git commit -m"chore: Update version.xcconfig for '${{ steps.tag_version.outputs.new_tag }}' [skip ci]" || true
           git push
