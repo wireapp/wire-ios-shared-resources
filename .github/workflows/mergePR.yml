@@ -98,6 +98,9 @@ jobs:
           swift updateVersionXcconfig.swift ./Resources/Configurations/version.xcconfig ${{ steps.tag_version.outputs.new_tag }}
           rm updateVersionXcconfig.swift
           
+          git config --global user.email "iosx@wire.com"
+          git config --global user.name "zenkins"
+          
           git add .
           git commit -m"chore: Update version.xcconfig for '${{ steps.tag_version.outputs.new_tag }}' [skip ci]" || true
           git push
