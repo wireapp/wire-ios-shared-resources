@@ -48,8 +48,13 @@ jobs:
             git push --set-upstream origin $BRANCH
             echo "ℹ️ open bump PR"
 
+      - name: gh auth
+        run: |
+          # auth with user PAT, them the user creates the PR instead of bot
+          echo ${{ secrets.envPAT }} > .githubtoken
+          gh auth login --with-token < .githubtoken
+          rm .githubtoken
+
       - name: create pull request
-        env:
-            GITHUB_TOKEN: ${{ secrets.envPAT }}
         run: |
             gh pr create --title "chore: bump components SQPIT-776" --body "Bump framework(s) version trigger by updated of: ${{ github.event.client_payload.repository }}"
