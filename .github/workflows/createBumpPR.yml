@@ -5,6 +5,7 @@ on:
         secrets:
           envPAT:
             required: true
+            
 jobs:
   create-bump-pr:
     runs-on: macos-latest
@@ -17,9 +18,14 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
 
+      - name: gh auth
+        run: |
+          # auth with user PAT, them the user creates the PR instead of bot
+          echo ${{ secrets.envPAT }} > .githubtoken
+          gh auth login --with-token < .githubtoken
+          rm .githubtoken
+
       - name: create branch
-        env:
-            GITHUB_TOKEN: ${{ secrets.envPAT }}
         run: |
             BRANCH=chore/bump_$(date +%Y-%m-%d-%H%M%S)
             git config --global user.email "iosx@wire.com"
@@ -47,13 +53,6 @@ jobs:
             git commit -m"chore: bump components"
             git push --set-upstream origin $BRANCH
             echo "ℹ️ open bump PR"
-
-      - name: gh auth
-        run: |
-          # auth with user PAT, them the user creates the PR instead of bot
-          echo ${{ secrets.envPAT }} > .githubtoken
-          gh auth login --with-token < .githubtoken
-          rm .githubtoken
 
       - name: create pull request
         run: |
