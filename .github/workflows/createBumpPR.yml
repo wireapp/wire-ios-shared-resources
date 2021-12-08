@@ -5,6 +5,7 @@ on:
         secrets:
           envPAT:
             required: true
+            
 jobs:
   create-bump-pr:
     runs-on: macos-latest
