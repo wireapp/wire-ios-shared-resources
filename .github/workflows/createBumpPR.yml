@@ -33,6 +33,8 @@ jobs:
             git branch $BRANCH
             git checkout $BRANCH
             
+      - name: update Cartfiles
+        run: |
             # process Cartfile
             curl --silent https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Scripts/updateCatfile.swift --output updateCarfile.swift
             chmod +x updateCarfile.swift
@@ -43,12 +45,15 @@ jobs:
             # check Cartfile is empty, it may occur if API limit is hit.
             [ -s ./Cartfile ] || exit 1
             
-            # Carthage update
+      - name: Carthage update
+        run: |
             ### Hack: carthage update may never done if framework dependency versions does not match. 
             ### limit the maximum amount of cpu time to 60 sec to stop the update after timeout
             ulimit -t 60; carthage update --no-build
             # Create bump PR
             
+      - name: git commit and push
+        run: |
             git add .
             git commit -m"chore: bump components"
             git push --set-upstream origin $BRANCH
