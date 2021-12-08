@@ -1,4 +1,4 @@
-name: Create bump PR v0.1.7
+name: Create bump PR v0.1.8
 
 on:
     workflow_call:
@@ -19,7 +19,7 @@ jobs:
 
       - name: create branch
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.envPAT }}
         run: |
             BRANCH=chore/bump_$(date +%Y-%m-%d-%H%M%S)
             git config --global user.email "iosx@wire.com"
@@ -50,6 +50,6 @@ jobs:
 
       - name: create pull request
         env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            GITHUB_TOKEN: ${{ secrets.envPAT }}
         run: |
-            gh pr create --title "chore: bump components SQPIT-776" --body "Bump framework(s) version for: ${{ github.event.client_payload.repository }}"
+            gh pr create --title "chore: bump components SQPIT-776" --body "Bump framework(s) version trigger by updated of: ${{ github.event.client_payload.repository }}"
