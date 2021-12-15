@@ -151,6 +151,7 @@ pipeline {
             }
         }
 
+        options { disableConcurrentBuilds() }
         stage('Test') {
             steps {
                 sh """#!/bin/bash -l
