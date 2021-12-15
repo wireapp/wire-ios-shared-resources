@@ -42,6 +42,7 @@ pipeline {
         XCODE_VERSION = "${xcode_version}"
         CACHE_CARTHAGE = "${cache_carthage}"
     }
+	
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
         choice(
@@ -151,6 +152,7 @@ pipeline {
             }
         }
 
+        options { disableConcurrentBuilds() }
         stage('Test') {
             steps {
                 sh """#!/bin/bash -l
