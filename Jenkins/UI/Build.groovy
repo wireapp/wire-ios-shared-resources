@@ -152,7 +152,7 @@ pipeline {
             }
         }
 
-        options { disableConcurrentBuilds() }
+	properties([disableConcurrentBuilds()])
         stage('Test') {
             steps {
                 sh """#!/bin/bash -l
