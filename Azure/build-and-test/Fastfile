@@ -34,21 +34,8 @@ platform :ios do
             buildlog_path: "test",
             output_directory: "test",
             output_types: "junit",
-            fail_build: false
+            fail_build: true
         )
-        to_retry = failing_testsuites("../test/report.junit")
-
-        unless to_retry.length == 0
-            UI.important "Some tests failed, retrying to see if they will pass"
-            scan(
-                test_without_building: true,
-                devices: ["iPhone 8"],
-                code_coverage: false,
-                derived_data_path: "DerivedData",
-                only_testing: to_retry,
-                fail_build: true
-            )
-        end
     end
 
     desc "Run post-test tasks"
@@ -75,35 +62,6 @@ platform :ios do
         sh codecov
     end
 end 
-
-# Return an array of test classes that have failures from junit file
-def failing_testsuites(junit)
-    testsuites = []
-    testsuite = ""
-
-    File.foreach(junit) do |line|
-        # Should match WireSyncEngine-iOS-Tests in <testsuites name='WireSyncEngine-iOS-Tests.xctest' tests='23' failures='1'>
-        testsuite_match = line.match /^\s*<testsuites name='(?<testsuite>.+)\.xctest/
-        if !testsuite_match.nil? && testsuite_match.captures.count == 1 && !testsuite_match[:testsuite].nil?
-            testsuite = testsuite_match[:testsuite]
-        end
-
-        # Should match 
-        #   AccountStatusTests and 1 in <testsuite name='WireSyncEngine_iOS_Tests.AccountStatusTests' tests='6' failures='1'>
-        #   AND
-        #   ZMDefinesTest and 1 in <testsuite name='ZMDefinesTest' tests='12' failures='1'>
-
-        testcase_match = line.match /^\s*<testsuite name='(.+\.)*(?<testclass>.+)' tests='\d+' failures='(?<failures>\d+)'/
-        if !testcase_match.nil? && testcase_match.captures.count == 2 && Integer(testcase_match[:failures]) > 0
-            testclass = testcase_match[:testclass]
-            result = "#{testsuite}/#{testclass}"
-            testsuites.push(result)  
-        end
-
-    end
-
-    return testsuites
-end
 
 class Config
 
