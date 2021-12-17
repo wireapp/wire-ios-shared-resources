@@ -34,7 +34,8 @@ platform :ios do
             buildlog_path: "test",
             output_directory: "test",
             output_types: "junit",
-            fail_build: true
+            fail_build: true,
+            number_of_retries: 1
         )
     end
 
