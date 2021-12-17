@@ -1,4 +1,4 @@
-name: Merge PR v0.1.12
+name: Merge PR v0.1.13
 
 on:
     workflow_call:
@@ -102,8 +102,12 @@ jobs:
           git config --global user.name "zenkins"
           
           git add .
-          git commit -m"chore: Update version.xcconfig for '${{ steps.tag_version.outputs.new_tag }}' [skip ci]" || true
+          git commit -m"chore: Update version.xcconfig for version: '${{ steps.tag_version.outputs.new_tag }}' [skip ci]" || true
           git push
+
+          # try to fix the issue that the next step "gh pr merge" does not incule the update version commit
+          git fetch
+          git pull
 
       - name: Merge Pull Request
         id: mergePullRequest
