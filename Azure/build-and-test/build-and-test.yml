@@ -1,5 +1,7 @@
 parameters:
-  branch: "master"
+  - name: branch
+    type: string
+    default: "master"
   - name: xcodeAppName
     type: string
     default: "Xcode_13.1"
