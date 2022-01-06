@@ -1,5 +1,13 @@
 parameters:
-  branch: "master"
+  - name: branch
+    type: string
+    default: "master"
+  - name: xcodeAppName
+    type: string
+    default: "Xcode_13.1"
+    values:
+    - "Xcode_13.1"
+    - "Xcode_12.4"
 
 steps:
 - script: |
@@ -12,7 +20,7 @@ steps:
   displayName: "Prepare build scripts"
 
 - script: |
-    sudo xcode-select -switch /Applications/Xcode_13.1.app
+    sudo xcode-select -switch /Applications/${{ parameters.xcodeAppName }}.app
     carthage bootstrap --platform iOS --new-resolver --use-xcframeworks
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
