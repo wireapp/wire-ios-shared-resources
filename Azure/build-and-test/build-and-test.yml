@@ -2,9 +2,9 @@ parameters:
   branch: "master"
 - name: xcodeAppName
   type: string
-  default: Xcode_13.0
+  default: Xcode_13.1
   values:
-  - Xcode_13.0
+  - Xcode_13.1
   - Xcode_12.4
 
 steps:
