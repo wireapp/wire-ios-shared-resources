@@ -15,7 +15,7 @@ jobs:
       parameters:
         branch: master
         xcodeAppName: ${{ parameters.xcodeAppName }}
-- job: Release
+  - job: Release
     pool:
       vmImage: "macOS-11"
     dependsOn: Test
