@@ -1,3 +1,11 @@
+parameters:
+ - name: xcodeAppName
+   type: string
+   default: Xcode_13.1
+   values:
+   - Xcode_13.1
+   - Xcode_12.4
+   
 jobs:
   - job: Test
     pool:
@@ -6,7 +14,8 @@ jobs:
     - template: build-and-test/build-and-test.yml
       parameters:
         branch: master
-  - job: Release
+        xcodeAppName: ${{ parameters.xcodeAppName }}
+- job: Release
     pool:
       vmImage: "macOS-11"
     dependsOn: Test
