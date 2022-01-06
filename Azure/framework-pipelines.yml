@@ -24,3 +24,4 @@ jobs:
     - template: release-framework/release-framework.yml
       parameters:
         branch: master
+        xcodeAppName: ${{ parameters.xcodeAppName }}
