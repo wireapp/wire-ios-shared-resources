@@ -3,6 +3,7 @@ pipeline {
     options {
         ansiColor('xterm')
     }
+    
     environment { 
         // This is where the misc configuration files (e.g. Gemfile) are fetched from. When testing swap out the branch
         DEPENDENCIES_BASE_URL = "https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master"
