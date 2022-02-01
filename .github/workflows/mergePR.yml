@@ -12,13 +12,14 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.commitPAT }}
       ADMINS: ('billypchan' 'marcoconti83' 'typfel' 'johnxnguyen' 'David-Henner' 'KaterinaWire' 'sb88k' 'agisilaos')
+      COMMENT_BODY: ${{ github.event.comment.body }}
     steps:
     
       - name: get release type
         id: releaseType
         run: |
-          TYPE=`echo ${{ github.event.comment.body }} | cut -d " " -f 2`
-          echo $TYPE
+          TYPE=`echo "${COMMENT_BODY}" | head -n1 | cut -d " " -f 2`
+          echo "$TYPE"
           echo "::set-output name=TYPE::$TYPE"
 
       - name: guard for magic spell
@@ -62,13 +63,13 @@ jobs:
       - name: 'choose bump level'
         id: tag_version
         run: |
-          if [ "${{ github.event.comment.body }}" == "release major" ]; then
+          if [ "${COMMENT_BODY}" == "release major" ]; then
             echo "::set-output name=new_tag::${{ steps.semvers.outputs.major }}"
 
-          elif [ "${{ github.event.comment.body }}" == "release minor" ]; then
+          elif [ "${COMMENT_BDOY}" == "release minor" ]; then
             echo "::set-output name=new_tag::${{ steps.semvers.outputs.minor }}"
 
-          elif [ "${{ github.event.comment.body }}" == "release patch" ]; then
+          elif [ "${COMMENT_BODY}" == "release patch" ]; then
             echo "::set-output name=new_tag::${{ steps.semvers.outputs.patch }}"
           else
             echo "not matched release mode!"
