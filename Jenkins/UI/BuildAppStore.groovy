@@ -37,12 +37,17 @@ pipeline {
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
         string(defaultValue: "", description: 'Override build number with', name: 'build_number_override')
+        choice(
+            choices: ["12.4", "13.1"],
+            description: 'XCode version',
+            name: "xcode_version"
+        )
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Let's check if we are overriding the app build number 
+                // Let's check if we are overriding the app build number
                 script {
                     if ("${build_number_override}" != '') {
                         BUILD_NUMBER = "${build_number_override}"
@@ -132,4 +137,3 @@ pipeline {
         }
     }
 }
-
