@@ -66,7 +66,7 @@ jobs:
           if [ "${COMMENT_BODY}" == "release major" ]; then
             echo "::set-output name=new_tag::${{ steps.semvers.outputs.major }}"
 
-          elif [ "${COMMENT_BDOY}" == "release minor" ]; then
+          elif [ "${COMMENT_BODY}" == "release minor" ]; then
             echo "::set-output name=new_tag::${{ steps.semvers.outputs.minor }}"
 
           elif [ "${COMMENT_BODY}" == "release patch" ]; then
