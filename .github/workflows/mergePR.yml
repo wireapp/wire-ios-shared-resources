@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.commitPAT }}
-      ADMINS: ('billypchan' 'marcoconti83' 'typfel' 'johnxnguyen' 'David-Henner' 'KaterinaWire' 'sb88k' 'agisilaos')
+      ADMINS: ('marcoconti83' 'typfel' 'johnxnguyen' 'David-Henner' 'KaterinaWire' 'agisilaos')
       COMMENT_BODY: ${{ github.event.comment.body }}
     steps:
     
