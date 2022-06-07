@@ -4,9 +4,9 @@ parameters:
     default: "master"
   - name: xcodeAppName
     type: string
-    default: "Xcode_13.4"
+    default: "Xcode_13.2.1"
     values:
-    - "Xcode_13.4"
+    - "Xcode_13.2.1"
     - "Xcode_12.4"
 
 steps:
