@@ -105,24 +105,23 @@ pipeline {
 		                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
 		                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
                             bundle install --path ~/.gem
-                            echo "set DEVELOPER_DIR to ${xcode_version}"
                         """
 
                         script {
                             if ("${xcode_version}" == "13.2.1") {
                                 sh """#!/bin/bash -l
-                                    echo "set DEVELOPER_DIR to 13.2.1"
+                                    echo "setting DEVELOPER_DIR to 13.2.1"
                                     export DEVELOPER_DIR=/Applications/Xcode_13.1.app/Contents/Developer
                                 """
                             }
                             else if ("${xcode_version}" == "13.1") {
                                 sh """#!/bin/bash -l
-                                    echo "set DEVELOPER_DIR to 13.1"
+                                    echo "setting DEVELOPER_DIR to 13.1"
                                     export DEVELOPER_DIR=/Applications/Xcode_13.1.app/Contents/Developer
                                 """
                             } else {
                                 sh """#!/bin/bash -l
-                                    echo "set DEVELOPER_DIR to 12.4"
+                                    echo "setting DEVELOPER_DIR to 12.4"
                                     export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
                                 """
                             }
