@@ -7,7 +7,7 @@ parameters:
     default: "Xcode_13.2.1"
     values:
     - "Xcode_13.2.1"
-    - "Xcode_12.4"
+    - "Xcode_13.1"
 
 steps:
 - script: |
