@@ -6,8 +6,8 @@ pipeline {
     parameters {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
         choice(
-            choices: ["13.2.1", "13.1"],
-            description: 'XCode version',
+            choices: ["13.1", "13.2.1"],
+            description: 'Xcode version',
             name: "xcode_version"
         )
         string(defaultValue: "No", description: 'Copy Carthage folder from cache? Enter Yes to enable (NOTICE: it builds faster, but may cause build issues)', name: 'cache_carthage')

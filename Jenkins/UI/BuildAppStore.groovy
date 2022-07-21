@@ -38,8 +38,8 @@ pipeline {
         string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
         string(defaultValue: "", description: 'Override build number with', name: 'build_number_override')
         choice(
-            choices: ["13.2.1", "13.1"],
-            description: 'XCode version',
+            choices: ["13.1", "13.2.1"],
+            description: 'Xcode version',
             name: "xcode_version"
         )
     }
