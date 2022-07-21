@@ -1,10 +1,10 @@
 parameters:
  - name: xcodeAppName
    type: string
-   default: Xcode_13.2.1
+   default: Xcode_13.1
    values:
+   - Xcode_13.1
    - Xcode_13.2.1
-   - Xcode_12.4
    
 jobs:
   - job: Test
