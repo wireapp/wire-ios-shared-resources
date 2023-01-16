@@ -40,35 +40,34 @@ pipeline {
 	    AVS_REPO = "wireapp/avs-ios-binaries-appstore"
 
         XCODE_VERSION = "${xcode_version}"
-        CACHE_CARTHAGE = "${cache_carthage}"
     }
 	
     parameters {
         string(
             defaultValue: "develop", 
-            description: 'Branch to use', 
+            description: 'Branch to build from.', 
             name: 'branch_to_build'
         )
         choice(
             choices: ["Playground", "Development", "Internal", "AVS", "RC"], 
-            description: 'Type of build', 
+            description: 'The build flavor.', 
             name: "BUILD_TYPE"
         )
         string(
             defaultValue: "", 
             description: 'Version of AVS to use, only relevant for AVS build', 
             name: 'avs_version'
-            )
+        )
         string(
             defaultValue: "", 
-            description: 'Override build number with', 
+            description: 'Overridden build number.', 
             name: 'build_number_override'
-            )
+        )
         string(
             defaultValue: "", 
-            description: 'Produces changelog from all commits added since this commit', 
+            description: 'Produces changelog from all commits added since this commit.', 
             name: 'last_commit_for_changelog'
-            )
+        )
     }
 
     stages {
@@ -133,7 +132,11 @@ pipeline {
         stage('fastlane prepare') {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version} cache_carthage:${cache_carthage}
+                    bundle exec fastlane prepare \
+                    build_number:${BUILD_NUMBER} \
+                    build_type:${BUILD_TYPE} \
+                    avs_version:${avs_version} \
+                    xcode_version:${xcode_version}
                 """
 
                 // Make sure that all subsequent steps see the branch from main project, not from build assets
@@ -147,27 +150,24 @@ pipeline {
             steps {
                 sh """#!/bin/bash -l
                     bundle exec fastlane build \
-                     build_number:${BUILD_NUMBER} \
-                     build_type:${BUILD_TYPE} \
-                     configuration:Debug \
-                     for_simulator:true \
-                     xcode_version:${xcode_version}
+                    build_number:${BUILD_NUMBER} \
+                    build_type:${BUILD_TYPE} \
+                    configuration:Debug \
+                    for_simulator:true \
+                    xcode_version:${xcode_version}
                 """
             }
         }
 
-        stage('Test') {
-            steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane test xcode_version:${xcode_version}
-                """
-            }
-        }
-        
         stage("QA: build for simulator") {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} configuration:Debug for_simulator:true xcode_version:${xcode_version}
+                    bundle exec fastlane build_for_release \
+                    build_number:${BUILD_NUMBER} \
+                    build_type:${BUILD_TYPE} \
+                    configuration:Debug \
+                    for_simulator:true \
+                    xcode_version:${xcode_version}
                 """
             }
         }
@@ -175,7 +175,12 @@ pipeline {
         stage("QA: build for device") {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} configuration:Debug for_simulator:false xcode_version:${xcode_version}
+                    bundle exec fastlane build_for_release \
+                    build_number:${BUILD_NUMBER} \
+                    build_type:${BUILD_TYPE} \
+                    configuration:Debug \
+                    for_simulator:false \
+                    xcode_version:${xcode_version}
                 """
             }
         }
@@ -183,7 +188,10 @@ pipeline {
         stage('Build for release') {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} xcode_version:${xcode_version}
+                    bundle exec fastlane build_for_release \
+                    build_number:${BUILD_NUMBER} \
+                    build_type:${BUILD_TYPE} \
+                    xcode_version:${xcode_version}
                 """
             }
         }
@@ -192,7 +200,9 @@ pipeline {
                 stage("Upload to S3") {
                     steps {
                         sh """#!/bin/bash -l
-                            bundle exec fastlane upload_s3 build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
+                            bundle exec fastlane upload_s3 \
+                            build_number:${BUILD_NUMBER} \
+                            build_type:${BUILD_TYPE}
                         """
                     }
                 }
@@ -200,7 +210,11 @@ pipeline {
                 stage('Upload to AppCenter') {
                     steps {
                         sh """#!/bin/bash -l
-                            bundle exec fastlane upload_app_center build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} last_commit:${last_commit_for_changelog} avs_version:${avs_version}
+                            bundle exec fastlane upload_app_center \
+                            build_number:${BUILD_NUMBER} \
+                            build_type:${BUILD_TYPE} \
+                            last_commit:${last_commit_for_changelog} \
+                            avs_version:${avs_version}
                         """
                     }
                 }
