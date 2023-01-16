@@ -41,7 +41,7 @@ pipeline {
         stage ("Trigger build") {
             steps {
                 build(
-                    job: 'client-ios-mono-build-pipeline', 
+                    job: 'wire-ios-mono-build', 
                     parameters: [
                         string(name: 'xcode_version', value: xcode_version), 
                         string(name: 'branch_to_build', value: BRANCH), 
