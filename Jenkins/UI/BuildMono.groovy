@@ -128,7 +128,6 @@ pipeline {
 	        }
 	    }
 
-
         stage('fastlane prepare') {
             steps {
                 sh """#!/bin/bash -l
