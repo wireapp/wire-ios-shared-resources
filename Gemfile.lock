@@ -114,6 +114,7 @@ GEM
       xcpretty (~> 0.3.0)
       xcpretty-travis-formatter (>= 0.0.3)
     fastlane-plugin-appcenter (1.11.0)
+    fastlane-plugin-datadog (0.2.0)
     fastlane-plugin-trainer (0.4.1)
       trainer (>= 0.7.0)
     fastlane-plugin-xcpretty_report (0.1.1)
@@ -259,6 +260,7 @@ DEPENDENCIES
   danger-xcode_summary
   fastlane
   fastlane-plugin-appcenter
+  fastlane-plugin-datadog
   fastlane-plugin-trainer
   fastlane-plugin-xcpretty_report
   slather (~> 2.6)
@@ -266,4 +268,4 @@ DEPENDENCIES
   xcpretty-json-formatter
 
 BUNDLED WITH
-   2.0.1
+   2.2.32
