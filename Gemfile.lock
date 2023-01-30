@@ -117,7 +117,6 @@ GEM
     fastlane-plugin-datadog (0.2.0)
     fastlane-plugin-trainer (0.4.1)
       trainer (>= 0.7.0)
-    fastlane-plugin-xcconfig (2.0.0)
     fastlane-plugin-xcpretty_report (0.1.1)
       xcpretty (>= 0.2.4, < 1.0.0)
       xcpretty-json-formatter (>= 0.1.0, < 1.0.0)
@@ -263,7 +262,6 @@ DEPENDENCIES
   fastlane-plugin-appcenter
   fastlane-plugin-datadog
   fastlane-plugin-trainer
-  fastlane-plugin-xcconfig
   fastlane-plugin-xcpretty_report
   slather (~> 2.6)
   xcode-install
