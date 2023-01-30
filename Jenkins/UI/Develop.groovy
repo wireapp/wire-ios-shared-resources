@@ -7,7 +7,7 @@ pipeline {
         pollSCM('H/4 * * * *') 
     }
     environment {
-        BRANCH = "develop"
+        BRANCH = "feat/FS-1436-port-apps"
         LAST_COMMIT = ""
     }
     parameters {
@@ -41,7 +41,7 @@ pipeline {
         stage ("Trigger build") {
             steps {
                 build(
-                    job: 'client-ios-build-pipeline', 
+                    job: 'newdaccount-ios-build', 
                     parameters: [
                         string(name: 'xcode_version', value: xcode_version), 
                         string(name: 'branch_to_build', value: BRANCH), 
