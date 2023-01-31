@@ -43,7 +43,7 @@ pipeline {
         BUILD_NUMBER = "${env.BUILD_NUMBER}"
 
         // Repository from which to fetch custom AVS binary
-	    AVS_REPO = "wireapp/avs-ios-binaries-appstore"
+	AVS_REPO = "wireapp/avs-ios-binaries-appstore"
 
         // DATADOG API
         DATADOG_API_KEY = credentials('datadog_api_key')
