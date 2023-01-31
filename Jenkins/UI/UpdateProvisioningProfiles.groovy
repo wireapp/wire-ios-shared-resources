@@ -73,7 +73,7 @@ pipeline {
                 anyOf {
                     changeset "**/devices.txt"
                     triggeredBy cause: "UserIdCause"
-                    branch: "master"
+                    branch "master"
                 } 
             }
             steps {
