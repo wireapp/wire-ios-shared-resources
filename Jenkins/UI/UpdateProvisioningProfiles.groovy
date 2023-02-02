@@ -23,7 +23,7 @@ pipeline {
 	
     parameters {
         choice(
-            choices: ["Playground", "Development", "Internal", "AVS", "RC"], 
+            choices: ["Playground", "Development", "Internal", "AVS", "RC", "Bund_RC_1", "Bund_RC_3", "Bund_AppStore_1", "Bund_AppStore_3"], 
             description: 'Type of build', 
             name: "BUILD_TYPE"
         )
