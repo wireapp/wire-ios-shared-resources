@@ -6,6 +6,7 @@ def getParentBuild() {
     return ["name":upstreamJob, "number":upstreamNumber]
 }
 def parentBuild = getParentBuild()
+def NODE = tool name: 'node-v19.5.0', type: 'nodejs'
 
 pipeline {
     agent any
@@ -196,9 +197,11 @@ pipeline {
 
                 stage('Upload dSyms to Datadog') {
                     steps {
-                        sh """#!/bin/bash -l
-                            bundle exec fastlane upload_dsyms_datadog build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
-                        """
+                        withEnv(["PATH+NODE=${NODE}/bin"]) {
+                            sh """#!/bin/bash -l
+                                bundle exec fastlane upload_dsyms_datadog build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
+                            """
+                        }                      
                     }
                 }
 
