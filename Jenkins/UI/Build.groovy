@@ -9,7 +9,7 @@ def parentBuild = getParentBuild()
 
 pipeline {
     agent any
-
+    tools {nodejs "node-v19.5.0"}
     options {
         ansiColor('xterm')
     }
