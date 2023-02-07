@@ -102,7 +102,7 @@ pipeline {
 		                dir("wire-ios-build-assets") {
 		                    checkout([
 		                        $class: 'GitSCM',
-		                        branches: [[name: '*/master']], // Checks out specified branch
+		                        branches: [[name: '*/modzero']], // Checks out specified branch
 		                        extensions: [
 		                            [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
 		                            [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
@@ -220,11 +220,13 @@ pipeline {
             }
         }
     }
+
     post {
         always {
 
             junit testResults: "test/*.junit", allowEmptyResults: true
         }
+
         success {
             sh """
             curl -s https://gist.githubusercontent.com/marcoconti83/781c13a1c3faa55e20595015d929e2ca/raw/upload_junit.py | python - \
