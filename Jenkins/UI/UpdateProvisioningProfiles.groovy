@@ -47,7 +47,7 @@ pipeline {
 		                dir("wire-ios-build-assets") {
 		                    checkout([
 		                        $class: 'GitSCM',
-		                        branches: [[name: '*/feat/update-bund-settings']], // Checks out specified branch
+		                        branches: [[name: '*/master']], // Checks out specified branch
 		                        extensions: [
 		                            [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
 		                            [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
