@@ -197,7 +197,7 @@ pipeline {
 
                 stage('Upload dSyms to Datadog') {
                     steps {
-                	sh """#!/bin/bash -l
+                    	sh """#!/bin/bash -l
                        	    bundle exec fastlane upload_dsyms_datadog build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
                         """                      
                     }

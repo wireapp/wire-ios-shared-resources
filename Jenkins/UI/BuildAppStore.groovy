@@ -116,20 +116,6 @@ pipeline {
                         """
                     }
                 }
-                stage ("Upload to TestFlight") {
-                    when { expression { return params.upload_to_testflight } }
-                    steps {
-                        withEnv([
-                            "FASTLANE_USER=${APPSTORE_CONNECT_USER}",
-                            "FASTLANE_PASSWORD=${APPSTORE_CONNECT_PASSWORD}",
-                            "FASTLANE_TEAM_ID=${APPSTORE_CONNECT_TEAM_ID}"
-                        ]) {
-                            sh """#!/bin/bash -l
-                                bundle exec fastlane upload_testflight build_number:${BUILD_NUMBER} build_type:RC
-                            """
-                        }
-                    }
-                }
                 stage('Upload to AppStore') {
                     when { expression { return !params.upload_to_testflight } }
                     steps {
