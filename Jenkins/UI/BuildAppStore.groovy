@@ -18,7 +18,6 @@ pipeline {
         // For uploading to AppStore
         APPSTORE_CONNECT_USER = credentials('appstore_connect_username')
         APPSTORE_CONNECT_PASSWORD = credentials('appstore_connect_password')
-        APPSTORE_CONNECT_TEAM_ID = credentials('appstore_connect_team_id')
 
         // Most fool-proof way to make sure rbenv and ruby works fine
         PATH = "/Users/ci/.rbenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
@@ -43,7 +42,6 @@ pipeline {
             description: 'Xcode version',
             name: "xcode_version"
         )
-        booleanParam(defaultValue: false, description: 'Upload ipa to TestFlight', name: 'upload_to_testflight')
     }
 
     stages {
@@ -117,7 +115,6 @@ pipeline {
                     }
                 }
                 stage('Upload to AppStore') {
-                    when { expression { return !params.upload_to_testflight } }
                     steps {
                         withEnv([
                             "FASTLANE_USER=${APPSTORE_CONNECT_USER}",
