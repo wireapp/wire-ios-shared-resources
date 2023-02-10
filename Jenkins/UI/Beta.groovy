@@ -121,7 +121,6 @@ pipeline {
                     bundle exec fastlane prepare \
                     build_number:${BUILD_NUMBER} \
                     build_type:${BUILD_TYPE} \
-                    avs_version:${avs_version} \
                     xcode_version:${xcode_version}
                 """
 
