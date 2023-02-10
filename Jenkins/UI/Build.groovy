@@ -9,6 +9,7 @@ def parentBuild = getParentBuild()
 
 pipeline {
     agent any
+    tools {nodejs "node-v19.5.0"}
     options {
         ansiColor('xterm')
     }
@@ -38,6 +39,9 @@ pipeline {
 
         // Repository from which to fetch custom AVS binary
 	    AVS_REPO = "wireapp/avs-ios-binaries-appstore"
+
+        // DATADOG API
+        DATADOG_API_KEY = credentials('datadog_api_key')
 
         XCODE_VERSION = "${xcode_version}"
         CACHE_CARTHAGE = "${cache_carthage}"
@@ -188,6 +192,14 @@ pipeline {
                         sh """#!/bin/bash -l
                             bundle exec fastlane upload_app_center build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} last_commit:${last_commit_for_changelog} avs_version:${avs_version}
                         """
+                    }
+                }
+
+                stage('Upload dSyms to Datadog') {
+                    steps {
+                    	sh """#!/bin/bash -l
+                       	    bundle exec fastlane upload_dsyms_datadog build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
+                        """                      
                     }
                 }
 

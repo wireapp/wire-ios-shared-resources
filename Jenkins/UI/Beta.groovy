@@ -1,12 +1,3 @@
-@NonCPS
-def getParentBuild() {
-    def upstream = currentBuild.rawBuild.getCause(hudson.model.Cause$UpstreamCause)
-    def upstreamJob = upstream?.upstreamProject ?: env.JOB_NAME
-    def upstreamNumber = upstream?.upstreamBuild ?: env.BUILD_NUMBER
-    return ["name":upstreamJob, "number":upstreamNumber]
-}
-def parentBuild = getParentBuild()
-
 pipeline {
     agent any
     tools {nodejs "node-v19.5.0"}
@@ -27,6 +18,7 @@ pipeline {
         // For uploading to AppStore
         APPSTORE_CONNECT_USER = credentials('appstore_connect_username')
         APPSTORE_CONNECT_PASSWORD = credentials('appstore_connect_password')
+        APPSTORE_CONNECT_TEAM_ID = credentials('appstore_connect_team_id')
 
         // Most fool-proof way to make sure rbenv and ruby works fine
         PATH = "/Users/ci/.rbenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
@@ -36,31 +28,22 @@ pipeline {
 
         // This will be set to app build number
         BUILD_NUMBER = "${env.BUILD_NUMBER}"
+        BUILD_TYPE="Beta"
 
         // Repository from which to fetch custom AVS binary
-	    AVS_REPO = "wireapp/avs-ios-binaries-appstore"
+        AVS_REPO = "wireapp/avs-ios-binaries-appstore"
     
         // DATADOG API
         DATADOG_API_KEY = credentials('datadog_api_key')
 
         XCODE_VERSION = "${xcode_version}"
     }
-	
+    
     parameters {
         string(
             defaultValue: "develop", 
             description: 'Branch to build from.', 
             name: 'branch_to_build'
-        )
-        choice(
-            choices: ["Playground", "Development", "Internal", "AVS", "RC"], 
-            description: 'The build flavor.', 
-            name: "BUILD_TYPE"
-        )
-        string(
-            defaultValue: "", 
-            description: 'Version of AVS to use, only relevant for AVS build', 
-            name: 'avs_version'
         )
         string(
             defaultValue: "", 
@@ -100,37 +83,37 @@ pipeline {
         }
 
         stage('build-assets & Gems') {
-	        parallel {
-	        	stage('checkout wire-ios-build-assets') {
-		            steps {
-		                dir("wire-ios-build-assets") {
-		                    checkout([
-		                        $class: 'GitSCM',
-		                        branches: [[name: '*/master']], // Checks out specified branch
-		                        extensions: [
-		                            [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
-		                            [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
-		                        ],
-		                        userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-build-assets.git"]]
-		                    ])
-		                }
-		            }
-	        	}
+            parallel {
+                stage('checkout wire-ios-build-assets') {
+                    steps {
+                        dir("wire-ios-build-assets") {
+                            checkout([
+                                $class: 'GitSCM',
+                                branches: [[name: '*/master']], // Checks out specified branch
+                                extensions: [
+                                    [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
+                                    [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
+                                ],
+                                userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-build-assets.git"]]
+                            ])
+                        }
+                    }
+                }
 
-	        	stage('Gems') {
-		            steps {
-		                sh """#!/bin/bash -l
-		                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
-		                    curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
+                stage('Gems') {
+                    steps {
+                        sh """#!/bin/bash -l
+                            curl -O ${DEPENDENCIES_BASE_URL}/Gemfile
+                            curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
                             bundle install --path ~/.gem
 
                             echo "setting DEVELOPER_DIR to ${XCODE_VERSION}"
                             export DEVELOPER_DIR=/Applications/Xcode_${XCODE_VERSION}.app/Contents/Developer
                         """
-    	            }
-	            }
-	        }
-	    }
+                    }
+                }
+            }
+        }
 
         stage('fastlane prepare') {
             steps {
@@ -149,45 +132,6 @@ pipeline {
             }
         }
 
-        stage('Build') {
-            steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane build \
-                    build_number:${BUILD_NUMBER} \
-                    build_type:${BUILD_TYPE} \
-                    configuration:Debug \
-                    for_simulator:true \
-                    xcode_version:${xcode_version}
-                """
-            }
-        }
-
-        stage("QA: build for simulator") {
-            steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane build_for_release \
-                    build_number:${BUILD_NUMBER} \
-                    build_type:${BUILD_TYPE} \
-                    configuration:Debug \
-                    for_simulator:true \
-                    xcode_version:${xcode_version}
-                """
-            }
-        }
-
-        stage("QA: build for device") {
-            steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane build_for_release \
-                    build_number:${BUILD_NUMBER} \
-                    build_type:${BUILD_TYPE} \
-                    configuration:Debug \
-                    for_simulator:false \
-                    xcode_version:${xcode_version}
-                """
-            }
-        }
-	    
         stage('Build for release') {
             steps {
                 sh """#!/bin/bash -l
@@ -209,6 +153,19 @@ pipeline {
                         """
                     }
                 }
+                stage ("Upload to TestFlight") {
+                    steps {
+                        withEnv([
+                            "FASTLANE_USER=${APPSTORE_CONNECT_USER}",
+                            "FASTLANE_PASSWORD=${APPSTORE_CONNECT_PASSWORD}",
+                            "FASTLANE_TEAM_ID=${APPSTORE_CONNECT_TEAM_ID}"
+                        ]) {
+                            sh """#!/bin/bash -l
+                                bundle exec fastlane upload_testflight build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
+                            """
+                        }
+                    }
+                }
             
                 stage('Upload dSyms to Datadog') {
                     steps {
@@ -218,17 +175,6 @@ pipeline {
                     }
                 }
 
-                stage('Upload to AppCenter') {
-                    steps {
-                        sh """#!/bin/bash -l
-                            bundle exec fastlane upload_app_center \
-                            build_number:${BUILD_NUMBER} \
-                            build_type:${BUILD_TYPE} \
-                            last_commit:${last_commit_for_changelog} \
-                            avs_version:${avs_version}
-                        """
-                    }
-                }
             }
         }
     }
@@ -236,16 +182,6 @@ pipeline {
         always {
 
             junit testResults: "test/*.junit", allowEmptyResults: true
-        }
-        success {
-            sh """
-            curl -s https://gist.githubusercontent.com/marcoconti83/781c13a1c3faa55e20595015d929e2ca/raw/upload_junit.py | python - \
-                --job_name ${parentBuild["name"]} \
-                --build_number ${parentBuild["number"]} \
-                "ios" \
-                "test/report.junit" \
-                || echo "FAILED TO UPLOAD TESTS"
-            """
         }
     }
 }
