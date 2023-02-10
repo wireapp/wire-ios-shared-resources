@@ -35,8 +35,6 @@ pipeline {
     
         // DATADOG API
         DATADOG_API_KEY = credentials('datadog_api_key')
-
-        XCODE_VERSION = "${xcode_version}"
     }
     
     parameters {
@@ -54,6 +52,11 @@ pipeline {
             defaultValue: "", 
             description: 'Produces changelog from all commits added since this commit.', 
             name: 'last_commit_for_changelog'
+        )
+        choice(
+            choices: ["13.2.1"],
+            description: 'Xcode version to build with.',
+            name: "xcode_version"
         )
     }
 
@@ -107,8 +110,8 @@ pipeline {
                             curl -O ${DEPENDENCIES_BASE_URL}/Gemfile.lock
                             bundle install --path ~/.gem
 
-                            echo "setting DEVELOPER_DIR to ${XCODE_VERSION}"
-                            export DEVELOPER_DIR=/Applications/Xcode_${XCODE_VERSION}.app/Contents/Developer
+                            echo "setting DEVELOPER_DIR to ${xcode_version}"
+                            export DEVELOPER_DIR=/Applications/Xcode_${xcode_version}.app/Contents/Developer
                         """
                     }
                 }
