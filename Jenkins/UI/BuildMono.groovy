@@ -71,7 +71,7 @@ pipeline {
             defaultValue: "", 
             description: 'Produces changelog from all commits added since this commit.', 
             name: 'last_commit_for_changelog'
-        ),
+        )
         choice(
             choices: ["13.2.1"],
             description: 'Xcode version to build with.',
