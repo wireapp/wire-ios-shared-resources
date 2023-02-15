@@ -39,26 +39,45 @@ pipeline {
 
         // Repository from which to fetch custom AVS binary
 	    AVS_REPO = "wireapp/avs-ios-binaries-appstore"
-
+    
         // DATADOG API
         DATADOG_API_KEY = credentials('datadog_api_key')
 
         XCODE_VERSION = "${xcode_version}"
-        CACHE_CARTHAGE = "${cache_carthage}"
     }
 	
     parameters {
-        string(defaultValue: "develop", description: 'Branch to use', name: 'branch_to_build')
+        string(
+            defaultValue: "develop", 
+            description: 'Branch to build from.', 
+            name: 'branch_to_build'
+        )
         choice(
             choices: ["Playground", "Development", "Internal", "AVS", "RC"], 
-            description: 'Type of build', 
+            description: 'The build flavor.', 
             name: "BUILD_TYPE"
         )
-        string(defaultValue: "", description: 'Version of AVS to use, only relevant for AVS build', name: 'avs_version')
-        string(defaultValue: "", description: 'Override build number with', name: 'build_number_override')
-        string(defaultValue: "", description: 'Produces changelog from all commits added since this commit', name: 'last_commit_for_changelog')
+        string(
+            defaultValue: "", 
+            description: 'Version of AVS to use, only relevant for AVS build', 
+            name: 'avs_version'
+        )
+        string(
+            defaultValue: "", 
+            description: 'Overridden build number.', 
+            name: 'build_number_override'
+        )
+        string(
+            defaultValue: "", 
+            description: 'Produces changelog from all commits added since this commit.', 
+            name: 'last_commit_for_changelog'
+        )
+        choice(
+            choices: ["13.2.1"],
+            description: 'Xcode version to build with.',
+            name: "xcode_version"
+        )
     }
-
 
     stages {
         stage('Checkout') {
@@ -79,7 +98,7 @@ pipeline {
                         [$class: 'CleanBeforeCheckout'], // Resets untracked files, just to make sure we are clean
                         [$class: 'CloneOption', timeout: 60] // Timeout after 1 hour
                     ],
-                    userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios.git"]]
+                    userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-mono.git"]]
                 ])
 
             }
@@ -118,13 +137,15 @@ pipeline {
 	        }
 	    }
 
-
         stage('fastlane prepare') {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane prepare build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} avs_version:${avs_version} xcode_version:${xcode_version} cache_carthage:${cache_carthage}
+                    bundle exec fastlane prepare \
+                    build_number:${BUILD_NUMBER} \
+                    build_type:${BUILD_TYPE} \
+                    avs_version:${avs_version} \
+                    xcode_version:${xcode_version}
                 """
-
 
                 // Make sure that all subsequent steps see the branch from main project, not from build assets
                 script {
@@ -137,27 +158,24 @@ pipeline {
             steps {
                 sh """#!/bin/bash -l
                     bundle exec fastlane build \
-                     build_number:${BUILD_NUMBER} \
-                     build_type:${BUILD_TYPE} \
-                     configuration:Debug \
-                     for_simulator:true \
-                     xcode_version:${xcode_version}
+                    build_number:${BUILD_NUMBER} \
+                    build_type:${BUILD_TYPE} \
+                    configuration:Debug \
+                    for_simulator:true \
+                    xcode_version:${xcode_version}
                 """
             }
         }
 
-        stage('Test') {
-            steps {
-                sh """#!/bin/bash -l
-                    bundle exec fastlane test xcode_version:${xcode_version}
-                """
-            }
-        }
-        
         stage("QA: build for simulator") {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} configuration:Debug for_simulator:true xcode_version:${xcode_version}
+                    bundle exec fastlane build_for_release \
+                    build_number:${BUILD_NUMBER} \
+                    build_type:${BUILD_TYPE} \
+                    configuration:Debug \
+                    for_simulator:true \
+                    xcode_version:${xcode_version}
                 """
             }
         }
@@ -165,7 +183,12 @@ pipeline {
         stage("QA: build for device") {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} configuration:Debug for_simulator:false xcode_version:${xcode_version}
+                    bundle exec fastlane build_for_release \
+                    build_number:${BUILD_NUMBER} \
+                    build_type:${BUILD_TYPE} \
+                    configuration:Debug \
+                    for_simulator:false \
+                    xcode_version:${xcode_version}
                 """
             }
         }
@@ -173,7 +196,10 @@ pipeline {
         stage('Build for release') {
             steps {
                 sh """#!/bin/bash -l
-                    bundle exec fastlane build_for_release build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} xcode_version:${xcode_version}
+                    bundle exec fastlane build_for_release \
+                    build_number:${BUILD_NUMBER} \
+                    build_type:${BUILD_TYPE} \
+                    xcode_version:${xcode_version}
                 """
             }
         }
@@ -182,35 +208,32 @@ pipeline {
                 stage("Upload to S3") {
                     steps {
                         sh """#!/bin/bash -l
-                            bundle exec fastlane upload_s3 build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
+                            bundle exec fastlane upload_s3 \
+                            build_number:${BUILD_NUMBER} \
+                            build_type:${BUILD_TYPE}
                         """
+                    }
+                }
+            
+                stage('Upload dSyms to Datadog') {
+                    steps {
+                	    sh """#!/bin/bash -l
+                       	    bundle exec fastlane upload_dsyms_datadog build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
+                        """                      
                     }
                 }
 
                 stage('Upload to AppCenter') {
                     steps {
                         sh """#!/bin/bash -l
-                            bundle exec fastlane upload_app_center build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE} last_commit:${last_commit_for_changelog} avs_version:${avs_version}
+                            bundle exec fastlane upload_app_center \
+                            build_number:${BUILD_NUMBER} \
+                            build_type:${BUILD_TYPE} \
+                            last_commit:${last_commit_for_changelog} \
+                            avs_version:${avs_version}
                         """
                     }
                 }
-
-                stage('Upload dSyms to Datadog') {
-                    steps {
-                    	sh """#!/bin/bash -l
-                       	    bundle exec fastlane upload_dsyms_datadog build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
-                        """                      
-                    }
-                }
-
-//                 stage('Slather & Cobertura') {
-//                     steps {
-//                         sh """#!/bin/bash -l
-//                             slather
-//                         """
-//                         cobertura autoUpdateHealth: false, autoUpdateStability: false, coberturaReportFile: '**/test-reports/cobertura.xml', conditionalCoverageTargets: '70, 0, 0', failUnhealthy: false, failUnstable: false, lineCoverageTargets: '80, 0, 0', maxNumberOfBuilds: 0, methodCoverageTargets: '80, 0, 0', onlyStable: false, sourceEncoding: 'ASCII', zoomCoverageChart: false
-//                     }
-//                 }
             }
         }
     }
