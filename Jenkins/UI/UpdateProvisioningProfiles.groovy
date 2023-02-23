@@ -40,10 +40,12 @@ pipeline {
 
     stages {
         stage('debug') {
-            script {
-                sh """#!/bin/bash -l
-                    echo ${APPSTORE_CONNECT_FILE};
-                """
+            steps {
+                script {
+                    sh """#!/bin/bash -l
+                        echo ${APPSTORE_CONNECT_FILE};
+                    """
+                }
             }
         }
 
