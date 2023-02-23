@@ -20,7 +20,7 @@ pipeline {
         // Turn off annoying update checks
         FASTLANE_SKIP_UPDATE_CHECK = "YES"
     }
-	
+    
     parameters {
         choice(
             choices: ["Playground", "Development", "Internal", "AVS", "RC", "Bund_RC_1", "Bund_RC_3", "Bund_AppStore_1", "Bund_AppStore_3", "Beta"], 
@@ -42,40 +42,38 @@ pipeline {
         stage('debug') {
             steps {
                 script {
-                    sh """#!/bin/bash -l
-                        echo ${APPSTORE_CONNECT_FILE};
-                    """
+                    sh('echo $APPSTORE_CONNECT_FILE')
                 }
             }
         }
 
         // stage('build-assets & Gems') {
-	    //     parallel {
-	    //     	stage('checkout wire-ios-build-assets') {
-		//             steps {
-		//                 dir("wire-ios-build-assets") {
-		//                     checkout([
-		//                         $class: 'GitSCM',
-		//                         branches: [[name: '*/master']], // Checks out specified branch
-		//                         extensions: [
-		//                             [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
-		//                             [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
-		//                         ],
-		//                         userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-build-assets.git"]]
-		//                     ])
-		//                 }
-		//             }
-	    //     	}
+        //     parallel {
+        //         stage('checkout wire-ios-build-assets') {
+        //             steps {
+        //                 dir("wire-ios-build-assets") {
+        //                     checkout([
+        //                         $class: 'GitSCM',
+        //                         branches: [[name: '*/master']], // Checks out specified branch
+        //                         extensions: [
+        //                             [$class: 'LocalBranch', localBranch: '**'], // Unless this is specified, it simply checks out by commit SHA with no branch information
+        //                             [$class: 'CleanBeforeCheckout'] // Resets untracked files, just to make sure we are clean
+        //                         ],
+        //                         userRemoteConfigs: [[url: "git@github.com:wireapp/wire-ios-build-assets.git"]]
+        //                     ])
+        //                 }
+        //             }
+        //         }
 
-	    //     	stage('Gems') {
-		//             steps {
-		//                 sh """#!/bin/bash -l
+        //         stage('Gems') {
+        //             steps {
+        //                 sh """#!/bin/bash -l
         //                     cd wire-ios-build-assets; bundle install --path ~/.gem
         //                 """
-    	//             }
-	    //         }
-	    //     }
-	    // }
+        //             }
+        //         }
+        //     }
+        // }
 
         // stage('Generate Provisioning Profiles') {
         //     when {
