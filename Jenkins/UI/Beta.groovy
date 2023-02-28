@@ -16,8 +16,9 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('s3_secret_access_key')
 
         // For uploading to AppStore
-        APPSTORE_CONNECT_USER = credentials('appstore_connect_username')
-        APPSTORE_CONNECT_PASSWORD = credentials('appstore_connect_password')
+        KEY_ID = credentials('app_store_connect_api_key_id')
+        KEY_ID_ISSUER = credentials('app_store_connect_issuer_id')
+        KEY_FILE_PATH = credentials('app_store_connect_api_keypath')
         APPSTORE_CONNECT_TEAM_ID = credentials('appstore_connect_team_id')
 
         // Most fool-proof way to make sure rbenv and ruby works fine
@@ -158,8 +159,6 @@ pipeline {
                 stage ("Upload to TestFlight") {
                     steps {
                         withEnv([
-                            "FASTLANE_USER=${APPSTORE_CONNECT_USER}",
-                            "FASTLANE_PASSWORD=${APPSTORE_CONNECT_PASSWORD}",
                             "FASTLANE_TEAM_ID=${APPSTORE_CONNECT_TEAM_ID}"
                         ]) {
                             sh """#!/bin/bash -l
@@ -171,8 +170,8 @@ pipeline {
             
                 stage('Upload dSyms to Datadog') {
                     steps {
-                	    sh """#!/bin/bash -l
-                       	    bundle exec fastlane upload_dsyms_datadog build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
+                        sh """#!/bin/bash -l
+                               bundle exec fastlane upload_dsyms_datadog build_number:${BUILD_NUMBER} build_type:${BUILD_TYPE}
                         """                      
                     }
                 }

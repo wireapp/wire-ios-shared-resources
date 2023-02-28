@@ -8,12 +8,9 @@ pipeline {
     }
     environment {
         // For uploading to AppStore
-        APPSTORE_CONNECT_USER = credentials('appstore_connect_username')
-        APPSTORE_CONNECT_PASSWORD = credentials('appstore_connect_password')
-
-        APPSTORE_CONNECT_KEY = credentials('app_store_connect_api_key')
-        APPSTORE_CONNECT_KEY_ID = credentials('app_store_connect_api_key_id')
-        APPSTORE_CONNECT_ISSUER_ID = credentials('app_store_connect_issuer_id')
+        KEY_ID = credentials('app_store_connect_api_key_id')
+        KEY_ID_ISSUER = credentials('app_store_connect_issuer_id')
+        KEY_FILE_PATH = credentials('app_store_connect_api_keypath')
 
         // For provisioning profiles update
         APPSTORE_CONNECT_TEAM_ID = credentials('appstore_connect_team_id')
@@ -90,23 +87,18 @@ pipeline {
         }
         steps {
             withEnv([
-                "FASTLANE_USER=${APPSTORE_CONNECT_USER}",
-                "FASTLANE_PASSWORD=${APPSTORE_CONNECT_PASSWORD}",
                 "FASTLANE_TEAM_ID=${APPSTORE_CONNECT_TEAM_ID}"
             ]) {
                 script {
-                    sh """#!/bin/bash -l
-                        cd wire-ios-build-assets; bundle exec fastlane run app_store_connect_api_key key_id: "$APPSTORE_CONNECT_KEY_ID" issuer_id: "$APPSTORE_CONNECT_ISSUER_ID" key_filepath: "$APPSTORE_CONNECT_KEY"
+                    if (params.REGISTER_DEVICES) {
+                        sh """#!/bin/bash -l
+                        cd wire-ios-build-assets; bundle exec fastlane devices
                         """
-                    // if (params.REGISTER_DEVICES) {
-                    //     sh """#!/bin/bash -l
-                    //     cd wire-ios-build-assets; bundle exec fastlane devices
-                    //     """
-                    // } else {
-                    //     sh """#!/bin/bash -l
-                    //         cd wire-ios-build-assets; bundle exec fastlane profiles build_type:${BUILD_TYPE} configuration:${BUILD_CONFIGURATION} force:
-                    //     """
-                    // }
+                    } else {
+                        sh """#!/bin/bash -l
+                            cd wire-ios-build-assets; bundle exec fastlane profiles build_type:${BUILD_TYPE} configuration:${BUILD_CONFIGURATION} force:
+                        """
+                    }
                 }
             }
 
