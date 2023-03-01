@@ -87,6 +87,9 @@ pipeline {
         }
         steps {
             withEnv([
+                "KEY_ID=${KEY_ID}",
+                "KEY_ID_ISSUER=${KEY_ID_ISSUER}",
+                "KEY_FILE_PATH=${KEY_FILE_PATH}",
                 "FASTLANE_TEAM_ID=${APPSTORE_CONNECT_TEAM_ID}"
             ]) {
                 script {
