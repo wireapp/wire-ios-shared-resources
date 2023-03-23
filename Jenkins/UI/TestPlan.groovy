@@ -18,7 +18,7 @@ pipeline {
         // For command line tools to be able to access API we set there env vars to values from Jenkins credentials store
         GITHUB_TOKEN = credentials('github-api-token')
         GITHUB_ACCESS_TOKEN = credentials('github-api-token')
-
+        GITHUB_AVS_ACCESS_TOKEN = credentials('github-api-token')
 
         // Most fool-proof way to make sure rbenv and ruby works fine
         PATH = "/Users/ci/.rbenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
