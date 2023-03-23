@@ -19,6 +19,7 @@ pipeline {
         // For command line tools to be able to access API we set there env vars to values from Jenkins credentials store
         GITHUB_TOKEN = credentials('github-api-token')
         GITHUB_ACCESS_TOKEN = credentials('github-api-token')
+        GITHUB_AVS_ACCESS_TOKEN = credentials('github-api-token')
 
         // For uploading builds to S3 bucket
         AWS_ACCESS_KEY_ID = credentials('s3_access_key')
