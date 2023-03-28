@@ -49,7 +49,7 @@ pipeline {
             name: 'build_number_override'
         )
         choice(
-            choices: ["13.2.1"],
+            choices: ["13.2.1", "14.2"],
             description: 'Xcode version to build with.',
             name: "xcode_version"
         )
