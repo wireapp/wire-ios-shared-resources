@@ -39,6 +39,11 @@ pipeline {
             }
         }
         stage ("Trigger build") {
+            when {
+                expression {
+                    return env.BRANCH_NAME != 'release/frida';
+                }
+            }
             steps {
                 build(
                     job: 'wire-ios-mono-build', 
