@@ -41,7 +41,7 @@ pipeline {
         stage ("Trigger build") {
             when {
                 expression {
-                    return env.BRANCH_NAME != 'release/frida';
+                    return BRANCH != 'release/frida';
                 }
             }
             steps {
