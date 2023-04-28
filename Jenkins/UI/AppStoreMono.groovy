@@ -11,7 +11,7 @@ pipeline {
     }
     parameters {
         choice(
-            choices: ["13.2.1", "14.2", "14.3"],
+            choices: ["14.2", "14.3"],
             description: 'Xcode version to build with.',
             name: "xcode_version"
         )
@@ -22,7 +22,7 @@ pipeline {
                 script {
                     def scmVars = checkout([
                         $class: 'GitSCM',
-                        branches: [[name: "origin/release/**"]],
+                        branches: [[name: "origin/release/cycle-**"]],
                         extensions: [
                             [$class: 'AuthorInChangelog'],
                             [$class: 'CloneOption', depth: 0, honorRefspec: true, noTags: true, reference: ''],
